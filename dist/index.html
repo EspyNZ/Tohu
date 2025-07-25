@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local Hidden Gems Tour Generator</title>
-  <script type="module" crossorigin src="/assets/index-J5XnCL1R.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-BfHXLysR.css">
+  <script type="module" crossorigin src="/assets/index-rdhoDkgH.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-gjfGTLUE.css">
 </head>
 <body>
     <div class="container">
@@ -72,14 +72,17 @@
             <!-- Tour Summary Section -->
             <div class="tour-summary-section">
                 <div class="tour-summary-item">
+                    <div class="item-icon">⏱️</div>
                     <strong>Approx. Duration</strong>
                     <span id="summaryDuration"></span>
                 </div>
                 <div class="tour-summary-item">
+                    <div class="item-icon">🚶</div>
                     <strong>Total Distance</strong>
                     <span id="summaryDistance"></span>
                 </div>
                 <div class="tour-summary-item">
+                    <div class="item-icon">📍</div>
                     <strong>Starting Point</strong>
                     <span id="summaryStartingPoint"></span>
                 </div>
@@ -89,8 +92,21 @@
                 </div>
             </div>
 
+            <!-- Tour Navigation -->
+            <div class="tour-navigation">
+                <a href="#tourIntro" class="nav-btn primary">
+                    🚀 Start Tour
+                </a>
+                <a href="#tourStopsContainer" class="nav-btn">
+                    📍 Jump to Stops
+                </a>
+                <a href="#tourConclusion" class="nav-btn">
+                    🏁 View Conclusion
+                </a>
+            </div>
+
             <div class="tour-section">
-                <h2 class="mt-4">Introduction</h2>
+                <h2 class="mt-4" id="tourIntroSection">Introduction</h2>
                 <p id="tourIntro"></p>
             </div>
 
@@ -99,7 +115,7 @@
             </div>
 
             <div class="tour-section">
-                <h2>Conclusion</h2>
+                <h2 id="tourConclusion">Conclusion</h2>
                 <p id="tourConclusion"></p>
             </div>
         </div>
