@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Points of Interest Map</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Apply Inter font and ensure full height for the map container */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Ensure body takes full viewport height */
+        }
+        #map {
+            height: 70vh; /* Map takes 70% of viewport height */
+            width: 100%; /* Map takes full width */
+            border-radius: 0.5rem; /* Rounded corners for the map */
+        }
+        /* Custom styling for info window content */
+        .info-window-content {
+            font-size: 0.875rem; /* Small text size */
+            color: #333; /* Darker text */
+        }
+        .info-window-content h3 {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            color: #1a202c; /* Darker heading */
+        }
+        /* Style for the input form container */
+        .input-form {
+            background-color: #ffffff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 800px; /* Limit form width */
+        }
+        .input-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        .input-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+            box-sizing: border-box; /* Include padding in width */
+            min-height: 120px; /* Minimum height for textarea */
+            resize: vertical; /* Allow vertical resizing */
+        }
+        .input-form button {
+            background-color: #4299e1; /* Blue */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .input-form button:hover {
+            background-color: #3182ce; /* Darker blue on hover */
+        }
+        .message-box {
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+        }
+        .message-box.error {
+            background-color: #fee2e2; /* Red-100 */
+            color: #dc2626; /* Red-600 */
+            border: 1px solid #ef4444; /* Red-500 */
+        }
+        .message-box.success {
+            background-color: #d1fae5; /* Green-100 */
+            color: #047857; /* Green-700 */
+            border: 1px solid #10b981; /* Green-500 */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 flex flex-col items-center">
+    <div class="container mx-auto flex-grow rounded-lg shadow-lg overflow-hidden w-full max-w-4xl">
+        <!-- The map will be rendered here -->
+        <div id="map"></div>
+    </div>
+
+    <div class="input-form w-full max-w-4xl">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Add New Points of Interest (Batch Input)</h2>
+        <p class="text-sm text-gray-600 mb-4">
+            Enter points one per line, formatted as: <br>
+            `latitude,longitude,Title,Description` <br>
+            Example: `37.7749,-122.4194,Golden Gate Bridge,Iconic bridge in San Francisco.`
+        </p>
+        <label for="pointsInput">Points Data:</label>
+        <textarea id="pointsInput" placeholder="e.g., 37.7749,-122.4194,Golden Gate Bridge,Iconic bridge&#10;37.8267,-122.4233,Alcatraz Island,Historic prison island" required></textarea>
+        <div id="messageBox" class="message-box hidden"></div>
+        <button id="addPointsBtn">Add Points to Map</button>
+    </div>
+
+    <script>
+        let map; // Declare map variable globally
+        let infoWindow; // Declare infoWindow globally, but initialize inside initMap
+        const pointsOfInterest = []; // Array to store all points, initially empty
+
+        // Function to display a message in the UI
+        function showMessage(message, isError = false) {
+            const messageBox = document.getElementById('messageBox');
+            messageBox.textContent = message;
+            messageBox.classList.remove('hidden', 'error', 'success');
+            if (isError) {
+                messageBox.classList.add('error');
+            } else {
+                messageBox.classList.add('success');
+            }
+            setTimeout(() => {
+                messageBox.classList.add('hidden');
+                messageBox.textContent = '';
+            }, 5000); // Hide after 5 seconds
+        }
+
+        // Function to add a single point to the map
+        function addPointToMap(point) {
+            if (!map) {
+                console.error("Map object is not initialized. Cannot add marker.");
+                showMessage("Map is not ready. Please check your API key and console for errors.", true);
+                return;
+            }
+            if (!infoWindow) { // Also check if infoWindow is initialized
+                console.error("InfoWindow object is not initialized. Cannot add marker click listener.");
+                showMessage("InfoWindow is not ready. Please check your console for errors.", true);
+                return;
+            }
+
+            const marker = new google.maps.Marker({
+                position: point.position,
+                map: map,
+                title: point.title,
+                animation: google.maps.Animation.DROP,
+            });
+
+            marker.addListener("click", () => {
+                infoWindow.setContent(`
+                    <div class="info-window-content">
+                        <h3>${point.title}</h3>
+                        <p>${point.description}</p>
+                    </div>
+                `);
+                infoWindow.open(map, marker);
+            });
+
+            // Add the new point to our internal array
+            pointsOfInterest.push(point);
+
+            // Extend map bounds to include the new marker and fit the map
+            const bounds = new google.maps.LatLngBounds();
+            pointsOfInterest.forEach(p => {
+                bounds.extend(p.position);
+            });
+            map.fitBounds(bounds);
+        }
+
+        // Initialize and add the map
+        function initMap() {
+            console.log("initMap function called.");
+            try {
+                // Default location for the map center (e.g., San Francisco)
+                // This will be the initial center before any points are added.
+                const defaultCenter = { lat: 37.7749, lng: -122.4194 };
+
+                // Create a new map instance
+                map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 2, // Start with a low zoom to show more of the world
+                    center: defaultCenter,
+                    mapTypeId: "roadmap",
+                });
+                console.log("Map initialized successfully.");
+
+                // Initialize infoWindow AFTER map is initialized and google object is available
+                infoWindow = new google.maps.InfoWindow();
+
+                // Removed initial hardcoded points.
+                // The map will now start empty.
+
+                // Get references to input elements and button
+                const pointsInput = document.getElementById('pointsInput');
+                const addPointsBtn = document.getElementById('addPointsBtn');
+
+                // Add event listener to the button
+                addPointsBtn.addEventListener('click', () => {
+                    const inputText = pointsInput.value.trim();
+                    if (inputText === '') {
+                        showMessage("Please enter points data.", true);
+                        return;
+                    }
+
+                    const lines = inputText.split('\n');
+                    let pointsAddedCount = 0;
+                    let errorsFound = 0;
+
+                    lines.forEach((line, index) => {
+                        const parts = line.split(',').map(part => part.trim());
+
+                        if (parts.length >= 4) {
+                            const lat = parseFloat(parts[0]);
+                            const lng = parseFloat(parts[1]);
+                            const title = parts[2];
+                            const description = parts.slice(3).join(','); // Join remaining parts for description
+
+                            if (!isNaN(lat) && !isNaN(lng) && title !== '' && description !== '') {
+                                const newPoint = {
+                                    position: { lat: lat, lng: lng },
+                                    title: title,
+                                    description: description
+                                };
+                                addPointToMap(newPoint);
+                                pointsAddedCount++;
+                            } else {
+                                errorsFound++;
+                                console.error(`Error parsing line ${index + 1}: Invalid data - "${line}"`);
+                            }
+                        } else if (line !== '') { // Only count non-empty lines as errors if format is wrong
+                            errorsFound++;
+                            console.error(`Error parsing line ${index + 1}: Incorrect format - "${line}"`);
+                        }
+                    });
+
+                    if (pointsAddedCount > 0) {
+                        showMessage(`Successfully added ${pointsAddedCount} point(s).`, false);
+                    }
+                    if (errorsFound > 0) {
+                        showMessage(`Encountered ${errorsFound} error(s) in input. Check console for details.`, true);
+                    }
+                    if (pointsAddedCount === 0 && errorsFound === 0) {
+                        showMessage("No valid points found in the input.", true);
+                    }
+
+                    // Clear input field after processing
+                    pointsInput.value = '';
+                });
+            } catch (error) {
+                console.error("Error during map initialization:", error);
+                showMessage("Failed to initialize map. Check console for API key errors.", true);
+            }
+        }
+    </script>
+
+    <!--
+        Load the Google Maps JavaScript API
+        Replace 'YOUR_API_KEY' with your actual Google Maps API key.
+        You can get one from the Google Cloud Console:
+        https://developers.google.com/maps/documentation/javascript/get-api-key
+    -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJ4MO0ke4jgEFq7f27KWyeg9_ehPR7xME&callback=initMap"></script>
+</body>
+</html>
