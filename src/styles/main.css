@@ -1,0 +1,824 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(ellipse at center, #fdf7f5 0%, #f9f1ee 100%);
+    min-height: 100vh;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 1rem;
+}
+
+.container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+h1, h2, h3 {
+    font-weight: 700;
+    color: #3a2e39; /* Raisin black for headings */
+}
+
+h1 {
+    font-size: 3.5rem; /* Much larger main title */
+    font-weight: 800; /* Heavy weight for prominence */
+    margin-bottom: 0.5rem;
+    text-align: center;
+    color: #053b06; /* Pakistan green for main title */
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* Subtle shadow for title */
+}
+
+.subtitle {
+    margin-bottom: 3rem;
+}
+
+h2 {
+    font-size: 2.2rem; /* Larger section title */
+    font-weight: 600; /* Consistent medium weight */
+    margin-top: 2.5rem;
+    margin-bottom: 1.2rem;
+    border-bottom: 3px solid #f4d8cd; /* Thicker pale dogwood border */
+    padding-bottom: 0.8rem;
+    color: #053b06; /* Pakistan green */
+}
+
+h3 {
+    font-size: 1.6rem; /* Larger subheading */
+    font-weight: 600; /* Consistent medium weight */
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+    color: #043105; /* Darker pakistan green for subheadings */
+}
+
+/* Styling for the input screen section */
+.input-section-container {
+    background-color: #ffffff; /* White background */
+    background-color: #fefefe; /* Very subtle off-white */
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 3rem; /* Even more padding for breathing room */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Consistent soft shadow */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04), 0 5px 15px rgba(0, 0, 0, 0.02); /* Much softer shadow */
+    border: 1px solid #f4d8cd; /* Subtle light pale dogwood border */
+    margin-bottom: 3rem; /* Increased bottom margin */
+    transition: all 0.3s ease-in-out;
+}
+
+/* New Tour Button Styling */
+.new-tour-btn-container {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.new-tour-btn {
+    background: #6b7280;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-size: 0.95rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.new-tour-btn:hover {
+    background: #4b5563;
+    transform: translateY(-1px);
+}
+
+.new-tour-btn:active {
+    transform: translateY(0);
+}
+
+.input-label {
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #4a5568;
+    margin-bottom: 1rem;
+    text-transform: none;
+    text-align: center;
+}
+
+.input-with-icon {
+    position: relative;
+    margin-bottom: 1.75rem; /* Slightly more compact spacing */
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #053b06;
+    opacity: 0.7;
+    z-index: 2;
+}
+
+.btn {
+    background: #053b06; /* Solid background */
+    color: white;
+    padding: 1rem 2rem; /* Larger button */
+    border-radius: 0.5rem; /* Squared corners */
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 15px rgba(5, 59, 6, 0.2); /* More subtle shadow */
+    font-weight: 600; /* Consistent medium weight */
+    cursor: pointer;
+    border: none;
+    letter-spacing: 0.05em; /* Slight letter spacing */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #053b06 0%, #043105 100%); /* Subtle gradient only on hover */
+    transform: translateY(-3px); /* More pronounced lift */
+    box-shadow: 0 8px 20px rgba(5, 59, 6, 0.25); /* More refined hover shadow */
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 15px rgba(5, 59, 6, 0.25);
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-right: 0.5rem; /* More breathing room between icon and text */
+}
+
+.input-field {
+    padding: 1rem 1.25rem 1rem 3rem; /* Left padding for icon */
+    border: 2px solid #f4d8cd; /* More prominent, light pale dogwood border */
+    border-radius: 0.5rem; /* Squared corners */
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #6b7280;
+    background-color: #ffffff; /* Clean white background */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #053b06; /* Pakistan green border on focus */
+    box-shadow: 0 0 0 3px rgba(5, 59, 6, 0.15); /* More subtle focus glow */
+}
+
+.loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #053b06; /* Pakistan green spinner */
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.tour-section {
+    background-color: #f7fafc; /* Lighter background for sections */
+    padding: 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e2e8f0; /* Light border */
+}
+
+/* New Summary Section Styling */
+.tour-summary-section {
+    background-color: #fdf7f5; /* Light pale dogwood background */
+    padding: 2rem;
+    border-radius: 1.25rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f4d8cd; /* Complementary pale dogwood border */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive columns */
+    gap: 1.5rem;
+}
+
+.tour-summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.tour-summary-item strong {
+    font-size: 1.1rem;
+    color: #053b06; /* Pakistan green */
+    font-weight: 600; /* Consistent medium weight */
+    margin-bottom: 0.5rem;
+}
+
+.tour-summary-item span {
+    font-size: 1.2rem;
+    font-weight: 400; /* Regular weight for values */
+    color: #4a5568;
+}
+
+.tour-summary-notable-stops {
+    grid-column: 1 / -1; /* Span full width */
+    text-align: left;
+    margin-top: 1rem;
+}
+
+.tour-summary-notable-stops strong {
+    font-size: 1.1rem;
+    color: #053b06; /* Pakistan green */
+    font-weight: 600; /* Consistent medium weight */
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.tour-summary-notable-stops ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    color: #4a5568;
+}
+
+.tour-summary-notable-stops li {
+    margin-bottom: 0.25rem;
+}
+
+/* Enhanced Tour Stop Styling */
+.tour-stop {
+    background-color: #ffffff;
+    background-image: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); /* Subtle gradient */
+    padding: 2.5rem;
+    border-radius: 1.25rem;
+    margin-bottom: 3.5rem; /* Increased space between stops */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    border-left: 8px solid #053b06; /* Pakistan green left border */
+    position: relative;
+    overflow: hidden;
+}
+
+.tour-stop-number {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #053b06; /* Pakistan green */
+    color: white;
+    border-bottom-right-radius: 1.25rem;
+    padding: 0.75rem 1.25rem;
+    font-weight: 600; /* Consistent medium weight */
+    font-size: 1.3rem;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+}
+
+.tour-stop-content {
+    padding-top: 0.5rem; /* Space below the number/title area */
+}
+
+.tour-stop h3 {
+    font-size: 1.8rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1.2rem;
+    color: #053b06; /* Pakistan green */
+    padding-left: 0.5rem;
+    border-bottom: 2px dashed #f4d8cd; /* Pale dogwood dashed border */
+    padding-bottom: 0.5rem;
+}
+
+.tour-journey-between-stops {
+    font-style: italic;
+    color: #4a5568;
+    margin: 3rem 0;
+    padding: 2rem 2.5rem;
+    border-left: 5px solid #f4d8cd; /* Pale dogwood border */
+    background-color: #fdf7f5; /* Light pale dogwood background */
+    border-radius: 1.25rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    line-height: 1.8;
+    font-size: 1.1rem;
+    position: relative;
+}
+
+.tour-journey-between-stops::before {
+    content: "🚶";
+    position: absolute;
+    top: 1.5rem;
+    left: 1rem;
+    font-size: 1.5rem;
+    opacity: 0.6;
+}
+
+.error-message {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #6b7280;
+    background-color: #fed7d7;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-top: 1rem;
+    border: 1px solid #fc8181;
+    text-transform: none;
+}
+
+.info-message {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #6b7280;
+    background-color: #bee3f8;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    margin-top: 1rem;
+    border: 1px solid #90cdf4;
+    text-transform: none;
+}
+
+.tour-image {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.map-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+    color: #053b06; /* Pakistan green */
+    font-weight: 600; /* Keep consistent */
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+    font-size: 1.05rem;
+}
+
+.map-link:hover {
+    color: #043105; /* Darker pakistan green on hover */
+    text-decoration: underline;
+    transform: translateX(3px);
+}
+
+.map-icon {
+    width: 1.3em;
+    height: 1.3em;
+    fill: currentColor;
+    vertical-align: middle;
+}
+
+.tour-detail-heading {
+    font-weight: 600; /* Consistent medium weight */
+    color: #2d3748;
+    margin-top: 1.5rem;
+    margin-bottom: 0.7rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid #edf2f7;
+}
+
+.tour-detail-content {
+    margin-bottom: 1.2rem;
+    font-size: 1.05rem;
+    color: #2d3748;
+}
+
+/* Enhanced Tour Stop Section Styling */
+.you-are-here {
+    background: linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 100%);
+    border: 2px solid #4a90e2;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+}
+
+.story-section {
+    background: linear-gradient(135deg, #fdf2f8 0%, #f3e8ff 100%);
+    border-left: 5px solid #8b5cf6;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+}
+
+.story-section .hook-content {
+    font-style: italic;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+.story-section .stories-content {
+    margin: 0.5rem 0 0 0;
+    padding: 0;
+    font-style: italic;
+    color: #4a5568;
+    line-height: 1.7;
+    border: none;
+}
+
+.fascinating-facts {
+    background: linear-gradient(135deg, #f0fff4 0%, #e8f5e8 100%);
+    border: 2px solid #27ae60;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(39, 174, 96, 0.15);
+}
+
+.facts-list {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+    list-style-type: disc;
+}
+
+.facts-list li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+    color: #2d3748;
+    padding-left: 0.25rem;
+}
+
+.capture-moment-section {
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border: 2px solid #e53e3e;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.15);
+}
+
+.capture-moment-section .interactive-content,
+.capture-moment-section .photo-content {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: #2d3748;
+}
+
+.capture-moment-section .interactive-content:last-child,
+.capture-moment-section .photo-content:last-child {
+    margin-bottom: 0;
+}
+
+.capture-moment-section strong {
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* Section styling for all enhanced sections */
+.you-are-here .section-title,
+.story-section .section-title,
+.fascinating-facts .section-title,
+.capture-moment-section .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.section-icon {
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+
+.you-are-here p {
+    margin: 0;
+    line-height: 1.6;
+    color: #2d3748;
+}
+
+p {
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+    color: #2d3748;
+    letter-spacing: 0.01em; /* Improved readability */
+}
+
+/* Specific styling for introduction and conclusion paragraphs */
+#tourIntro, #tourConclusion {
+    font-size: 1.15rem; /* Slightly larger font */
+    line-height: 1.7; /* More generous line height */
+    letter-spacing: 0.01em; /* Slight letter spacing for readability */
+    color: #2d3748; /* Ensure good contrast */
+}
+
+.slider-group {
+    margin-bottom: 2rem; /* More compact spacing */
+}
+
+.slider-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.slider-title {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #4a5568;
+    margin-bottom: 0.75rem;
+}
+
+input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 12px; /* Slightly thicker track */
+    background: linear-gradient(to right, #053b06 0%, #f4d8cd 0%, #f4d8cd 100%);
+    border-radius: 0.25rem; /* Squared corners */
+    outline: none;
+    opacity: 0.8;
+    transition: opacity .2s;
+}
+
+input[type="range"]:hover {
+    opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 26px;
+    border-radius: 0;
+    background: #053b06;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(5, 59, 6, 0.3);
+    border: none;
+    margin-top: -7px;
+    clip-path: polygon(50% 100%, 0% 25%, 0% 0%, 100% 0%, 100% 25%);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 26px;
+    border-radius: 0;
+    background: #053b06;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(5, 59, 6, 0.3);
+    border: none;
+    clip-path: polygon(50% 100%, 0% 25%, 0% 0%, 100% 0%, 100% 25%);
+}
+
+/* Style the datalist ticks */
+datalist {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    padding: 0 10px; /* Adjusted for smaller thumb */
+}
+
+datalist option {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 400;
+}
+
+.debug-info {
+    background-color: #f0f0f0;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    font-family: monospace;
+    font-size: 0.9rem;
+    display: none;
+}
+
+/* Map Container Styles */
+#mapContainer {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 1.25rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f4d8cd;
+}
+
+#map {
+    height: 70vh;
+    width: 100%;
+    border-radius: 1rem;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    border: 2px solid #f4d8cd;
+}
+
+/* Info Window Content Styles */
+.info-window-content {
+    font-size: 0.875rem;
+    color: #333;
+    max-width: 250px;
+}
+
+.info-window-content h3 {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #053b06;
+    font-size: 1rem;
+}
+
+.info-window-content p {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.info-window-content small {
+    color: #6b7280;
+    font-style: italic;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-gray-600 {
+    color: #718096;
+}
+
+.text-gray-700 {
+    color: #4a5568;
+}
+
+.text-gray-800 {
+    color: #2d3748;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.ml-10 {
+    margin-left: 2.5rem;
+}
+
+.block {
+    display: block;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+}
+
+.font-medium {
+    font-weight: 500;
+}
+
+/* Loading Screen Styles */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #fdf7f5 0%, #f9f1ee 50%, #fdf7f5 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.loading-content {
+    text-align: center;
+    max-width: 500px;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 2rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.loading-animation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.walking-person {
+    font-size: 3rem;
+    animation: walk 2s ease-in-out infinite;
+}
+
+.loading-dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.loading-dots span {
+    width: 12px;
+    height: 12px;
+    background: #053b06;
+    border-radius: 50%;
+    animation: bounce 1.4s ease-in-out infinite both;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+.loading-dots span:nth-child(3) { animation-delay: 0s; }
+
+.loading-title {
+    font-size: 2rem;
+    color: #053b06;
+    margin-bottom: 1rem;
+    font-weight: 600; /* Consistent medium weight */
+}
+
+.loading-message {
+    font-size: 1.2rem;
+    color: #4a5568;
+    margin-bottom: 2rem;
+    min-height: 1.5rem;
+    font-style: italic;
+    animation: fadeInOut 3s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes walk {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-10px) rotate(-5deg); }
+    50% { transform: translateY(0px) rotate(0deg); }
+    75% { transform: translateY(-5px) rotate(5deg); }
+}
+
+@keyframes bounce {
+    0%, 80%, 100% { 
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% { 
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
