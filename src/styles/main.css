@@ -73,7 +73,14 @@ h3 {
 /* New Tour Button Styling */
 .new-tour-btn-container {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 4rem;
+    font-size: 1.2rem;
+    color: #5a6c7d;
+    font-weight: 400;
+    line-height: 1.7;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .new-tour-btn {
@@ -131,32 +138,49 @@ h3 {
 }
 
 .btn {
-    background: #053b06; /* Solid background */
+    background: linear-gradient(135deg, #053b06 0%, #065f46 100%);
     color: white;
-    padding: 1rem 2rem; /* Larger button */
-    border-radius: 0.5rem; /* Squared corners */
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 8px 20px rgba(5, 59, 6, 0.3);
-    font-weight: 600; /* Consistent medium weight */
+    padding: 1.1rem 2.5rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 10px 25px rgba(5, 59, 6, 0.25), 0 4px 10px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
     cursor: pointer;
     border: none;
-    letter-spacing: 0.05em; /* Slight letter spacing */
+    letter-spacing: 0.02em;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    font-size: 1rem;
+    font-size: 1.05rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
 }
 
 .btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #053b06 0%, #043105 100%); /* Subtle gradient only on hover */
-    transform: translateY(-4px);
-    box-shadow: 0 12px 30px rgba(5, 59, 6, 0.4);
+    background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(5, 59, 6, 0.35), 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn:hover::before {
+    left: 100%;
 }
 
 .btn:active {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(5, 59, 6, 0.3);
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 8px 20px rgba(5, 59, 6, 0.3), 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn:disabled {
@@ -208,24 +232,135 @@ h3 {
 }
 
 .tour-section {
-    background-color: #f7fafc; /* Lighter background for sections */
-    padding: 1.5rem;
-    border-radius: 1rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid #e2e8f0; /* Light border */
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    padding: 2.5rem;
+    border-radius: 1.25rem;
+    margin-bottom: 2.5rem;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04), 0 3px 8px rgba(0, 0, 0, 0.02);
+    position: relative;
+}
+
+.tour-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #053b06, transparent);
+    border-radius: 1.25rem 1.25rem 0 0;
+}
+
+/* Navigation buttons */
+.tour-navigation {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    color: #4a5568;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    border: 1px solid #cbd5e0;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.nav-btn:hover {
+    background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    color: #2d3748;
+}
+
+.nav-btn.primary {
+    background: linear-gradient(135deg, #053b06 0%, #065f46 100%);
+    color: white;
+    border-color: #053b06;
+}
+
+.nav-btn.primary:hover {
+    background: linear-gradient(135deg, #065f46 0%, #047857 100%);
+    color: white;
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .tour-summary-section {
+        padding: 2rem 1.5rem;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .tour-summary-item {
+        padding: 1.5rem;
+    }
+    
+    .tour-summary-notable-stops {
+        padding: 2rem 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 1.25rem 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .tour-navigation {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .nav-btn {
+        justify-content: center;
+        padding: 1rem 1.5rem;
+    }
+    
+    h2 {
+        font-size: 2rem;
+        margin-top: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 3rem;
+    }
 }
 
 /* New Summary Section Styling */
 .tour-summary-section {
-    background-color: #fdf7f5; /* Light pale dogwood background */
-    padding: 2.5rem;
-    border-radius: 1.25rem;
-    margin-bottom: 2.5rem;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-    border: 1px solid #f4d8cd; /* Complementary pale dogwood border */
+    background: linear-gradient(135deg, #fdf7f5 0%, #f8f4f1 100%);
+    padding: 3rem;
+    border-radius: 1.5rem;
+    margin-bottom: 3rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(244, 216, 205, 0.6);
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive columns */
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2.5rem;
+    position: relative;
+}
+
+.tour-summary-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #053b06, #065f46, #053b06);
+    border-radius: 1.5rem 1.5rem 0 0;
 }
 
 .tour-summary-item {
@@ -233,71 +368,157 @@ h3 {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 1.5rem;
-    background-color: #ffffff;
-    border-radius: 0.75rem;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid #e2e8f0;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 2rem 1.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 3px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.tour-summary-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #053b06, transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.tour-summary-item .item-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 50%;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(5, 59, 6, 0.1);
 }
 
 .tour-summary-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+.tour-summary-item:hover::before {
+    opacity: 1;
+}
+
+.tour-summary-item:hover .item-icon {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(5, 59, 6, 0.15);
 }
 
 .tour-summary-item strong {
-    font-size: 1.2rem;
-    color: #053b06; /* Pakistan green */
-    font-weight: 700;
-    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    color: #4a5568;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .tour-summary-item span {
-    font-size: 1.3rem;
-    font-weight: 400; /* Regular weight for values */
-    color: #4a5568;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #053b06;
+    line-height: 1.2;
 }
 
 .tour-summary-notable-stops {
-    grid-column: 1 / -1; /* Span full width */
+    grid-column: 1 / -1;
     text-align: left;
-    margin-top: 1.5rem;
-    background-color: #ffffff;
-    padding: 1.5rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
+    margin-top: 2rem;
+    background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+    padding: 2.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06), 0 3px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    position: relative;
+}
+
+.tour-summary-notable-stops::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #053b06, #065f46, #053b06);
+    border-radius: 1rem 1rem 0 0;
 }
 
 .tour-summary-notable-stops strong {
-    font-size: 1.2rem;
-    color: #053b06; /* Pakistan green */
+    font-size: 1.3rem;
+    color: #053b06;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     display: block;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.tour-summary-notable-stops strong::before {
+    content: '🗺️';
+    font-size: 1.5rem;
 }
 
 .tour-summary-notable-stops ul {
     list-style: none;
     padding-left: 0;
     color: #4a5568;
+    display: grid;
+    gap: 1rem;
 }
 
 .tour-summary-notable-stops li {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
     position: relative;
-    padding-left: 1.5rem;
-    font-size: 1.05rem;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    background: rgba(5, 59, 6, 0.02);
+    border-radius: 0.75rem;
+    border-left: 4px solid #053b06;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tour-summary-notable-stops li:hover {
+    background: rgba(5, 59, 6, 0.05);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(5, 59, 6, 0.1);
 }
 
 .tour-summary-notable-stops li::before {
-    content: "📍";
-    position: absolute;
-    left: 0;
-    top: 0;
-    font-size: 0.9rem;
-    opacity: 0.8;
+    content: counter(stop-counter);
+    counter-increment: stop-counter;
+    background: #053b06;
+    color: white;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.tour-summary-notable-stops ul {
+    counter-reset: stop-counter;
 }
 
 /* Enhanced Tour Stop Styling */
