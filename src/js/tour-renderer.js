@@ -31,7 +31,17 @@ export class TourRenderer {
   renderSummary(tour) {
     this.elements.summaryDuration.textContent = tour.duration
     this.elements.summaryDistance.textContent = tour.distance
-    this.elements.summaryStartingPoint.textContent = tour.startingPoint
+    
+    // Parse starting point to separate name from description
+    const startingPointParts = tour.startingPoint.split(' - ')
+    const startingPointName = startingPointParts[0] || tour.startingPoint
+    const startingPointDescription = startingPointParts[1] || ''
+    
+    // Create the starting point content with name and description
+    this.elements.summaryStartingPoint.innerHTML = `
+      <span class="starting-point-name">${startingPointName}</span>
+      ${startingPointDescription ? `<span class="starting-point-description">${startingPointDescription}</span>` : ''}
+    `
 
     // Clear and populate notable stops
     this.elements.summaryNotableStops.innerHTML = ''
