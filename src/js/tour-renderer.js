@@ -43,7 +43,16 @@ export class TourRenderer {
   }
 
   renderIntroduction(tour) {
-    this.elements.tourIntro.textContent = tour.introduction
+    // Halve the introduction and make it more practical
+    const introduction = tour.introduction
+    const sentences = introduction.split('. ')
+    const halfLength = Math.ceil(sentences.length / 2)
+    const shortenedIntro = sentences.slice(0, halfLength).join('. ')
+    
+    // Add practical information
+    const practicalInfo = ` We'll start at ${tour.startingPoint || 'our meeting point'} and follow a carefully planned route covering ${tour.distance || 'the local area'}. The entire experience should take approximately ${tour.duration || '90 minutes'} at a comfortable walking pace.`
+    
+    this.elements.tourIntro.textContent = shortenedIntro + practicalInfo
   }
 
   renderStops(tour) {
@@ -171,6 +180,12 @@ export class TourRenderer {
   }
 
   renderConclusion(tour) {
-    this.elements.tourConclusion.textContent = tour.conclusion
+    // Halve the conclusion
+    const conclusion = tour.conclusion
+    const sentences = conclusion.split('. ')
+    const halfLength = Math.ceil(sentences.length / 2)
+    const shortenedConclusion = sentences.slice(0, halfLength).join('. ')
+    
+    this.elements.tourConclusion.textContent = shortenedConclusion
   }
 }
