@@ -520,9 +520,10 @@ h3 {
 }
 
 .tour-summary-starting-point span {
-    font-size: 1.1rem; /* Match notable stops font size */
-    font-weight: 400; /* Match notable stops font weight */
-    line-height: 1.6; /* Match notable stops line height */
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-secondary);
 }
 
 .tour-summary-item {
