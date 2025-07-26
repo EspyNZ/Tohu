@@ -19,11 +19,6 @@ export class TourParser {
       tour.distance = this.extractField(text, 'DISTANCE') || 'N/A'
       tour.startingPoint = this.extractField(text, 'STARTING POINT') || 'N/A'
       
-      // Parse notable stops
-      const notableStopsText = this.extractField(text, 'NOTABLE STOPS')
-      if (notableStopsText) {
-        tour.notableStops = notableStopsText.split(',').map(stop => stop.trim())
-      }
 
       // Parse introduction and conclusion
       tour.introduction = this.extractSection(text, 'INTRODUCTION', 'STOPS') || 'Welcome to this hidden gems tour!'

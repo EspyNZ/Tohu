@@ -36,14 +36,8 @@ export class TourRenderer {
     // Clear and populate notable stops
     this.elements.summaryNotableStops.innerHTML = ''
 
-    // Use tour stops names if notable stops are missing or incomplete
-    let stopsToDisplay = []
-    if (tour.notableStops && tour.notableStops.length > 0 && tour.notableStops[0].trim() !== '') {
-      stopsToDisplay = tour.notableStops
-    } else {
-      // Fallback to tour stop names
-      stopsToDisplay = tour.stops.slice(0, 5).map(stop => stop.name || `Stop ${stop.number}`)
-    }
+    // Always display all generated stops
+    const stopsToDisplay = tour.stops.map(stop => stop.name || `Stop ${stop.number}`)
 
     stopsToDisplay.forEach(stop => {
       const li = document.createElement('li')
