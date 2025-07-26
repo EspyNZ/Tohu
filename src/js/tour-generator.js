@@ -54,7 +54,7 @@ Create a detailed walking tour guide for "${location}" with exactly ${numberOfSt
 **TOUR TITLE:** [Create an evocative title]
 **DURATION:** [e.g., "90 minutes"]
 **DISTANCE:** [e.g., "2.5 km"]
-**STARTING POINT:** [Name and brief description]
+**STARTING POINT:** [Name of starting location - Brief description of where it is located and how to find it]
 
 **INTRODUCTION:**
 [Write a warm, engaging 150-200 word introduction that sets the scene and promises discovery. Use 'we' language, like a local showing a friend around. Start with a compelling hook - a question, surprising fact, or intriguing promise. Paint a picture of what makes this particular route special and hint at the unexpected stories you'll share. End with clear expectations about pace, duration, and what to bring.]
