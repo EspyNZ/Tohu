@@ -431,8 +431,18 @@ h3 {
 }
 
 .tour-top-navigation .btn {
+    background: linear-gradient(135deg, var(--neutral-200), var(--neutral-300));
+    color: var(--text-secondary);
+    border: 1px solid var(--border-medium);
     padding: 0.75rem 1.5rem;
     font-size: 0.95rem;
+}
+
+.tour-top-navigation .btn:hover {
+    background: linear-gradient(135deg, var(--neutral-300), var(--neutral-400));
+    color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 @media (max-width: 768px) {

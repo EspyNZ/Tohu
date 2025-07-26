@@ -96,6 +96,14 @@ export class UIController {
     this.elements.backToTourBtn.addEventListener('click', () => {
       this.showTourPage()
     })
+
+    // New tour navigation button event listener
+    const newTourNavBtn = document.querySelector('.new-tour-nav-btn')
+    if (newTourNavBtn) {
+      newTourNavBtn.addEventListener('click', () => {
+        this.showSearchInterface()
+      })
+    }
   }
 
   initializeSliders() {
