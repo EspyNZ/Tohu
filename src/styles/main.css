@@ -138,7 +138,7 @@ h3 {
 }
 
 .btn {
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--sage-green) 100%);
+    background: linear-gradient(135deg, #1a281f 0%, #839073 100%);
     color: white;
     padding: 1.1rem 2.5rem;
     border-radius: 0.75rem;
@@ -169,7 +169,7 @@ h3 {
 }
 
 .btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--sage-green) 0%, var(--light-green) 100%);
+    background: linear-gradient(135deg, #839073 0%, #7cae7a 100%);
     transform: translateY(-3px) scale(1.02);
     box-shadow: 0 15px 35px rgba(26, 40, 31, 0.35), 0 8px 15px rgba(0, 0, 0, 0.15);
 }
@@ -180,7 +180,7 @@ h3 {
 
 .btn:active {
     transform: translateY(-1px) scale(1.01);
-    box-shadow: 0 8px 20px rgba(5, 59, 6, 0.3), 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 20px rgba(26, 40, 31, 0.3), 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn:disabled {
