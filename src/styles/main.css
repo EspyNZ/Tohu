@@ -453,29 +453,129 @@ h3 {
 }
 
 @media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+    
+    .input-section-container {
+        padding: 2rem 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .input-field {
+        padding: 1.2rem 1.25rem 1.2rem 3rem;
+        font-size: 1.1rem;
+    }
+    
     .tour-top-navigation {
         flex-direction: column;
         align-items: stretch;
+        gap: 0.75rem;
+        margin: 1.5rem 0;
     }
     
     .tour-top-navigation .btn {
         justify-content: center;
-        padding: 1rem 1.5rem;
+        padding: 1.2rem 1.5rem;
+        font-size: 1rem;
     }
     
     .tour-summary-section {
         padding: 2rem 1.5rem;
         grid-template-columns: 1fr;
         gap: 1.5rem;
+        margin-bottom: 2rem;
     }
     
     .tour-summary-item {
         padding: 1.5rem;
     }
     
+    .tour-summary-item .item-icon {
+        font-size: 1.8rem;
+        width: 3rem;
+        height: 3rem;
+    }
+    
+    .tour-summary-item span {
+        font-size: 1.2rem;
+    }
+    
     .tour-summary-notable-stops {
         padding: 2rem 1.5rem;
         margin-top: 1.5rem;
+    }
+    
+    .tour-summary-notable-stops ul {
+        gap: 0.75rem;
+    }
+    
+    .tour-summary-notable-stops li {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.95rem;
+    }
+    
+    .tour-section {
+        padding: 2rem 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .tour-stop {
+        padding: 2rem 1.5rem;
+        margin-bottom: 2.5rem;
+        border-left-width: 6px;
+    }
+    
+    .tour-stop-number {
+        padding: 0.6rem 1rem;
+        font-size: 1.2rem;
+    }
+    
+    .tour-stop h3 {
+        font-size: 1.3rem;
+        margin-left: 0;
+        padding-left: 0;
+    }
+    
+    .tour-stop-content {
+        padding-top: 0.75rem;
+    }
+    
+    .tour-image {
+        height: 220px;
+        margin: 1.5rem 0;
+    }
+    
+    .you-are-here,
+    .story-section,
+    .fascinating-facts,
+    .capture-moment-section {
+        padding: 1.25rem;
+        margin: 1.25rem 0;
+    }
+    
+    .section-icon {
+        font-size: 1.3rem;
+    }
+    
+    .you-are-here .section-title,
+    .story-section .section-title,
+    .fascinating-facts .section-title,
+    .capture-moment-section .section-title {
+        font-size: 1.1rem;
+        gap: 0.5rem;
+    }
+    
+    .tour-journey-between-stops {
+        padding: 1.5rem 2rem;
+        margin: 2rem 0;
+        font-size: 0.95rem;
+    }
+    
+    .map-link {
+        font-size: 1rem;
+        gap: 0.5rem;
     }
     
     .btn {
@@ -484,14 +584,87 @@ h3 {
         font-size: 1.1rem;
     }
     
+    .btn-icon {
+        width: 1.1rem;
+        height: 1.1rem;
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+    }
+    
     h2 {
-        font-size: 2rem;
+        font-size: 1.8rem;
         margin-top: 2.5rem;
+        margin-bottom: 1.25rem;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+        margin-top: 1.5rem;
+    }
+    
+    p {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    
+    #tourIntro, #tourConclusion {
+        font-size: 1.05rem;
+        line-height: 1.6;
     }
     
     .subtitle {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         margin-bottom: 3rem;
+        padding: 0 1rem;
+    }
+    
+    #tohuLogo {
+        max-width: 250px;
+    }
+    
+    .loading-content {
+        padding: 2rem 1.5rem;
+        margin: 0 1rem;
+    }
+    
+    .loading-title {
+        font-size: 1.8rem;
+    }
+    
+    .loading-message {
+        font-size: 1.1rem;
+    }
+    
+    #mapContainer {
+        padding: 1.5rem;
+    }
+    
+    #map {
+        height: 60vh;
+        border-width: 1px;
+    }
+    
+    .info-window-content {
+        max-width: 200px;
+    }
+    
+    .slider-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .input-label {
+        font-size: 1.05rem;
+        margin-bottom: 1.25rem;
+        padding: 0 0.5rem;
+    }
+    
+    .new-tour-btn-container {
+        margin-bottom: 3rem;
+        font-size: 1.1rem;
+        padding: 0 1rem;
     }
 }
 
