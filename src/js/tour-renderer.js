@@ -50,7 +50,6 @@ export class TourRenderer {
       li.textContent = stop.trim()
       this.elements.summaryNotableStops.appendChild(li)
     })
-    }
   }
 
   renderIntroduction(tour) {
