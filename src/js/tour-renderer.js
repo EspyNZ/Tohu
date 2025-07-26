@@ -36,12 +36,14 @@ export class TourRenderer {
     // Clear and populate notable stops
     this.elements.summaryNotableStops.innerHTML = ''
 
-    // Always display all generated stops
-    const stopsToDisplay = tour.stops.map(stop => stop.name || `Stop ${stop.number}`)
-
-    stopsToDisplay.forEach(stop => {
+    // Always display all generated stops as clickable links
+    tour.stops.forEach(stop => {
       const li = document.createElement('li')
-      li.textContent = stop.trim()
+      const link = document.createElement('a')
+      link.href = `#stop-${stop.number}`
+      link.textContent = (stop.name || `Stop ${stop.number}`).trim()
+      link.className = 'stop-link'
+      li.appendChild(link)
       this.elements.summaryNotableStops.appendChild(li)
     })
   }
@@ -76,6 +78,7 @@ export class TourRenderer {
   renderTourStop(stop) {
     const stopDiv = document.createElement('div')
     stopDiv.className = 'tour-stop'
+    stopDiv.id = `stop-${stop.number}`
 
     // Use specific Pexels photo ID if available, otherwise use a more neutral default
     const photoId = stop.pexelsPhotoId || '2387873'
