@@ -536,6 +536,7 @@ h3 {
     .tour-summary-item {
         padding: 1.25rem 1rem;
         margin: 0;
+        grid-column: 1 / -1;
     }
     
     .tour-summary-item .item-icon {
