@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Local Hidden Gems Tour Generator</title>
-  <script type="module" crossorigin src="/assets/index-rdhoDkgH.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-gjfGTLUE.css">
+  <script type="module" crossorigin src="/assets/index-DQx51om_.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B-DqHU1b.css">
 </head>
 <body>
     <div class="container">
@@ -16,12 +16,6 @@
 
         <!-- New Tour Button (hidden by default) -->
         <div id="newTourBtn" class="new-tour-btn-container hidden">
-            <button class="new-tour-btn">
-                <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
-                </svg>
-                New tour
-            </button>
         </div>
 
         <div id="inputSectionContainer" class="input-section-container">
@@ -59,13 +53,25 @@
         <div id="tourOutput" class="hidden">
             <h2 id="tourTitle" class="text-center"></h2>
             
-            <!-- View Map Button -->
-            <div class="text-center mb-4">
+            <!-- All Navigation Buttons -->
+            <div class="tour-top-navigation">
                 <button id="viewMapBtn" class="btn">
                     <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
                     </svg>
                     View Map
+                </button>
+                <a href="#tourIntro" class="btn">
+                    Start Tour
+                </a>
+                <a href="#tourStopsContainer" class="btn">
+                    View Stops
+                </a>
+                <button class="btn new-tour-nav-btn">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                    </svg>
+                    New Tour
                 </button>
             </div>
 
@@ -81,7 +87,7 @@
                     <strong>Total Distance</strong>
                     <span id="summaryDistance"></span>
                 </div>
-                <div class="tour-summary-item">
+                <div class="tour-summary-item tour-summary-starting-point">
                     <div class="item-icon">📍</div>
                     <strong>Starting Point</strong>
                     <span id="summaryStartingPoint"></span>
@@ -90,19 +96,6 @@
                     <strong>Notable Stops</strong>
                     <ul id="summaryNotableStops"></ul>
                 </div>
-            </div>
-
-            <!-- Tour Navigation -->
-            <div class="tour-navigation">
-                <a href="#tourIntro" class="nav-btn primary">
-                    🚀 Start Tour
-                </a>
-                <a href="#tourStopsContainer" class="nav-btn">
-                    📍 Jump to Stops
-                </a>
-                <a href="#tourConclusion" class="nav-btn">
-                    🏁 View Conclusion
-                </a>
             </div>
 
             <div class="tour-section">
