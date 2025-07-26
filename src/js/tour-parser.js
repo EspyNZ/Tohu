@@ -22,7 +22,22 @@ export class TourParser {
       // Parse notable stops
       const notableStopsText = this.extractField(text, 'NOTABLE STOPS')
       if (notableStopsText) {
-        tour.notableStops = notableStopsText.split(',').map(stop => stop.trim())
+        // Handle different formats of notable stops
+        let stops = []
+        if (notableStopsText.includes(',')) {
+          stops = notableStopsText.split(',').map(stop => stop.trim())
+        } else if (notableStopsText.includes('\n')) {
+          stops = notableStopsText.split('\n').map(stop => stop.trim()).filter(stop => stop.length > 0)
+        } else if (notableStopsText.includes(';')) {
+          stops = notableStopsText.split(';').map(stop => stop.trim())
+        } else {
+          // If no clear separator, try to split by common patterns
+          stops = notableStopsText.split(/[,;•\n]/).map(stop => stop.trim()).filter(stop => stop.length > 0)
+        }
+        
+        // Remove any numbering or bullet points from the beginning
+        tour.notableStops = stops.map(stop => stop.replace(/^\d+\.?\s*/, '').replace(/^[•\-]\s*/, '').trim())
+          .filter(stop => stop.length > 0)
       }
 
       // Parse introduction and conclusion

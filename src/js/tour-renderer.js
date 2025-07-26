@@ -35,11 +35,29 @@ export class TourRenderer {
 
     // Clear and populate notable stops
     this.elements.summaryNotableStops.innerHTML = ''
-    tour.notableStops.forEach(stop => {
-      const li = document.createElement('li')
-      li.textContent = stop
-      this.elements.summaryNotableStops.appendChild(li)
-    })
+    
+    console.log('Notable stops array:', tour.notableStops) // Debug log
+    
+    if (tour.notableStops && tour.notableStops.length > 0) {
+      tour.notableStops.forEach((stop, index) => {
+        if (stop && stop.trim()) {
+          const li = document.createElement('li')
+          li.textContent = stop.trim()
+          this.elements.summaryNotableStops.appendChild(li)
+          console.log(`Added stop ${index + 1}:`, stop.trim()) // Debug log
+        }
+      })
+    } else {
+      console.warn('No notable stops found or empty array')
+      // Fallback: try to extract from tour stops if notable stops are missing
+      if (tour.stops && tour.stops.length > 0) {
+        tour.stops.slice(0, 5).forEach((stop, index) => {
+          const li = document.createElement('li')
+          li.textContent = stop.name || `Stop ${index + 1}`
+          this.elements.summaryNotableStops.appendChild(li)
+        })
+      }
+    }
   }
 
   renderIntroduction(tour) {

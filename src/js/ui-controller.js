@@ -127,6 +127,13 @@ export class UIController {
 
       const tour = this.tourParser.parse(tourText)
       
+      // Debug log to check parsed tour data
+      console.log('Parsed tour data:', {
+        title: tour.title,
+        notableStops: tour.notableStops,
+        stopsCount: tour.stops.length
+      })
+      
       // Store the current tour for map display
       this.currentTour = tour
       
