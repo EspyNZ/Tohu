@@ -2,54 +2,128 @@
 
 /* ===== TOHU COLOR PALETTE ===== */
 :root {
-  /* Primary Brand Colors */
-  --tohu-green-50: #f0fdf4;
-  --tohu-green-100: #dcfce7;
-  --tohu-green-200: #bbf7d0;
-  --tohu-green-300: #86efac;
-  --tohu-green-400: #4ade80;
-  --tohu-green-500: #22c55e;
-  --tohu-green-600: #059669;
-  --tohu-green-700: #047857;
-  --tohu-green-800: #065f46;
-  --tohu-green-900: #064e3b;
+  /* ===== CORE PALETTE COLORS ===== */
+  /* Dark Forest Green (#1a281f) - Deep, grounding base */
+  --palette-dark-green-50: #f4f6f5;
+  --palette-dark-green-100: #e8ebe9;
+  --palette-dark-green-200: #d1d7d3;
+  --palette-dark-green-300: #a8b5ad;
+  --palette-dark-green-400: #7a8c81;
+  --palette-dark-green-500: #556b5e;
+  --palette-dark-green-600: #42544a;
+  --palette-dark-green-700: #36453c;
+  --palette-dark-green-800: #2d3832;
+  --palette-dark-green-900: #1a281f;
   
-  /* Neutral Colors */
-  --neutral-50: #f9fafb;
-  --neutral-100: #f3f4f6;
-  --neutral-200: #e5e7eb;
-  --neutral-300: #d1d5db;
-  --neutral-400: #9ca3af;
-  --neutral-500: #6b7280;
-  --neutral-600: #4b5563;
-  --neutral-700: #374151;
-  --neutral-800: #1f2937;
-  --neutral-900: #111827;
+  /* Vibrant Red (#e63946) - Energy and action */
+  --palette-vibrant-red-50: #fef2f2;
+  --palette-vibrant-red-100: #fee2e2;
+  --palette-vibrant-red-200: #fecaca;
+  --palette-vibrant-red-300: #fca5a5;
+  --palette-vibrant-red-400: #f87171;
+  --palette-vibrant-red-500: #ef4444;
+  --palette-vibrant-red-600: #e63946;
+  --palette-vibrant-red-700: #c53030;
+  --palette-vibrant-red-800: #9b2c2c;
+  --palette-vibrant-red-900: #742a2a;
   
-  /* Accent Colors */
-  --accent-warm-50: #fdf7f5;
-  --accent-warm-100: #f9f1ee;
-  --accent-warm-200: #f4d8cd;
-  --accent-warm-300: #e8b4a0;
-  --accent-warm-400: #d69e2e;
+  /* Sage Green (#839073) - Calm, natural middle tone */
+  --palette-sage-green-50: #f7f8f7;
+  --palette-sage-green-100: #eff1ee;
+  --palette-sage-green-200: #dfe3dc;
+  --palette-sage-green-300: #c4cbbf;
+  --palette-sage-green-400: #a3ad9b;
+  --palette-sage-green-500: #839073;
+  --palette-sage-green-600: #6d7a60;
+  --palette-sage-green-700: #5a6550;
+  --palette-sage-green-800: #4a5343;
+  --palette-sage-green-900: #3e4539;
+  
+  /* Light Green (#7cae7a) - Fresh, vibrant nature */
+  --palette-light-green-50: #f6faf6;
+  --palette-light-green-100: #ecf5ec;
+  --palette-light-green-200: #d9ebd8;
+  --palette-light-green-300: #bdd9bb;
+  --palette-light-green-400: #9bc498;
+  --palette-light-green-500: #7cae7a;
+  --palette-light-green-600: #659863;
+  --palette-light-green-700: #538052;
+  --palette-light-green-800: #456a44;
+  --palette-light-green-900: #3a5739;
+  
+  /* Dark Purple (#59344f) - Sophisticated depth */
+  --palette-dark-purple-50: #f6f4f5;
+  --palette-dark-purple-100: #ede8eb;
+  --palette-dark-purple-200: #dbd1d7;
+  --palette-dark-purple-300: #c0b0b8;
+  --palette-dark-purple-400: #a08a95;
+  --palette-dark-purple-500: #836a77;
+  --palette-dark-purple-600: #6d5562;
+  --palette-dark-purple-700: #59344f;
+  --palette-dark-purple-800: #4a3e44;
+  --palette-dark-purple-900: #3f353a;
+  
+  /* ===== FUNCTIONAL COLOR MAPPING ===== */
+  /* Primary Brand Colors (Light Green) */
+  --tohu-green-50: var(--palette-light-green-50);
+  --tohu-green-100: var(--palette-light-green-100);
+  --tohu-green-200: var(--palette-light-green-200);
+  --tohu-green-300: var(--palette-light-green-300);
+  --tohu-green-400: var(--palette-light-green-400);
+  --tohu-green-500: var(--palette-light-green-500);
+  --tohu-green-600: var(--palette-light-green-600);
+  --tohu-green-700: var(--palette-light-green-700);
+  --tohu-green-800: var(--palette-light-green-800);
+  --tohu-green-900: var(--palette-light-green-900);
+  
+  /* Neutral Colors (Sage + Dark Green blend) */
+  --neutral-50: var(--palette-sage-green-50);
+  --neutral-100: var(--palette-sage-green-100);
+  --neutral-200: var(--palette-sage-green-200);
+  --neutral-300: var(--palette-sage-green-300);
+  --neutral-400: var(--palette-sage-green-400);
+  --neutral-500: var(--palette-sage-green-500);
+  --neutral-600: var(--palette-dark-green-600);
+  --neutral-700: var(--palette-dark-green-700);
+  --neutral-800: var(--palette-dark-green-800);
+  --neutral-900: var(--palette-dark-green-900);
+  
+  /* Accent Colors (Vibrant Red) */
+  --accent-warm-50: var(--palette-vibrant-red-50);
+  --accent-warm-100: var(--palette-vibrant-red-100);
+  --accent-warm-200: var(--palette-vibrant-red-200);
+  --accent-warm-300: var(--palette-vibrant-red-300);
+  --accent-warm-400: var(--palette-vibrant-red-400);
+  
+  /* Secondary Accent (Dark Purple) */
+  --accent-secondary-50: var(--palette-dark-purple-50);
+  --accent-secondary-100: var(--palette-dark-purple-100);
+  --accent-secondary-200: var(--palette-dark-purple-200);
+  --accent-secondary-300: var(--palette-dark-purple-300);
+  --accent-secondary-400: var(--palette-dark-purple-400);
+  --accent-secondary-500: var(--palette-dark-purple-500);
+  --accent-secondary-600: var(--palette-dark-purple-600);
+  --accent-secondary-700: var(--palette-dark-purple-700);
+  --accent-secondary-800: var(--palette-dark-purple-800);
+  --accent-secondary-900: var(--palette-dark-purple-900);
   
   /* Semantic Colors */
-  --success-50: #f0fdf4;
-  --success-500: #22c55e;
-  --success-600: #059669;
-  --success-700: #047857;
+  --success-50: var(--palette-light-green-50);
+  --success-500: var(--palette-light-green-500);
+  --success-600: var(--palette-light-green-600);
+  --success-700: var(--palette-light-green-700);
   
-  --warning-50: #fffbeb;
-  --warning-500: #f59e0b;
-  --warning-600: #d97706;
+  --warning-50: var(--palette-vibrant-red-50);
+  --warning-500: var(--palette-vibrant-red-500);
+  --warning-600: var(--palette-vibrant-red-600);
   
-  --error-50: #fef2f2;
-  --error-500: #ef4444;
-  --error-600: #dc2626;
+  --error-50: var(--palette-vibrant-red-50);
+  --error-500: var(--palette-vibrant-red-500);
+  --error-600: var(--palette-vibrant-red-600);
   
-  --info-50: #eff6ff;
-  --info-500: #3b82f6;
-  --info-600: #2563eb;
+  --info-50: var(--palette-dark-green-50);
+  --info-500: var(--palette-dark-green-500);
+  --info-600: var(--palette-dark-green-600);
   
   /* Text Colors */
   --text-primary: var(--neutral-900);
@@ -77,13 +151,13 @@
   /* Component Specific */
   --btn-primary-bg: linear-gradient(135deg, var(--tohu-green-600), var(--tohu-green-700));
   --btn-primary-hover: linear-gradient(135deg, var(--tohu-green-700), var(--tohu-green-800));
-  --btn-secondary-bg: linear-gradient(135deg, var(--neutral-400), var(--neutral-500));
-  --btn-secondary-hover: linear-gradient(135deg, var(--neutral-500), var(--neutral-600));
+  --btn-secondary-bg: linear-gradient(135deg, var(--neutral-500), var(--neutral-600));
+  --btn-secondary-hover: linear-gradient(135deg, var(--neutral-600), var(--neutral-700));
 }
 
 body {
     font-family: 'Inter', sans-serif;
-    background: radial-gradient(ellipse at center, var(--accent-warm-50) 0%, var(--accent-warm-100) 100%);
+    background: radial-gradient(ellipse at center, var(--neutral-50) 0%, var(--neutral-100) 100%);
     min-height: 100vh;
     color: var(--text-primary);
     line-height: 1.6;
@@ -107,7 +181,7 @@ h1 {
     font-weight: 800; /* Heavy weight for prominence */
     margin-bottom: 0.5rem;
     text-align: center;
-    color: var(--tohu-green-800);
+    color: var(--tohu-green-700);
     text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* Subtle shadow for title */
 }
 
@@ -124,9 +198,9 @@ h2 {
     font-weight: 600; /* Consistent medium weight */
     margin-top: 3rem;
     margin-bottom: 1.5rem;
-    border-bottom: 3px solid var(--border-accent);
+    border-bottom: 3px solid var(--tohu-green-200);
     padding-bottom: 0.8rem;
-    color: var(--text-primary);
+    color: var(--tohu-green-800);
 }
 
 h3 {
@@ -134,7 +208,7 @@ h3 {
     font-weight: 600; /* Consistent medium weight */
     margin-top: 2rem;
     margin-bottom: 1rem;
-    color: var(--text-primary);
+    color: var(--tohu-green-700);
 }
 
 /* Styling for the input screen section */
@@ -211,7 +285,7 @@ h3 {
     transform: translateY(-50%);
     width: 1.25rem;
     height: 1.25rem;
-    color: var(--tohu-green-700);
+    color: var(--tohu-green-600);
     opacity: 0.7;
     z-index: 2;
 }
@@ -306,13 +380,13 @@ h3 {
 
 .input-field:focus {
     outline: none;
-    border-color: var(--tohu-green-700);
-    box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.15);
+    border-color: var(--tohu-green-600);
+    box-shadow: 0 0 0 3px rgba(124, 174, 122, 0.15);
 }
 
 .loading-spinner {
     border: 4px solid rgba(0, 0, 0, 0.1);
-    border-left-color: var(--tohu-green-700);
+    border-left-color: var(--tohu-green-600);
     border-radius: 50%;
     width: 24px;
     height: 24px;
@@ -343,7 +417,7 @@ h3 {
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, transparent, var(--tohu-green-700), transparent);
+    background: linear-gradient(90deg, transparent, var(--tohu-green-600), transparent);
     border-radius: 1.25rem 1.25rem 0 0;
 }
 
@@ -406,12 +480,12 @@ h3 {
 
 /* New Summary Section Styling */
 .tour-summary-section {
-    background: linear-gradient(135deg, var(--accent-warm-50) 0%, var(--bg-secondary) 100%);
+    background: linear-gradient(135deg, var(--neutral-50) 0%, var(--bg-secondary) 100%);
     padding: 3rem;
     border-radius: 1.5rem;
     margin-bottom: 3rem;
     box-shadow: var(--shadow-xl);
-    border: 1px solid var(--border-accent);
+    border: 1px solid var(--tohu-green-200);
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
@@ -426,7 +500,7 @@ h3 {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--tohu-green-800), var(--tohu-green-600), var(--tohu-green-800));
+    background: linear-gradient(90deg, var(--tohu-green-700), var(--tohu-green-600), var(--tohu-green-700));
     border-radius: 1.5rem 1.5rem 0 0;
 }
 
@@ -452,7 +526,7 @@ h3 {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, transparent, var(--tohu-green-700), transparent);
+    background: linear-gradient(90deg, transparent, var(--tohu-green-600), transparent);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -521,7 +595,7 @@ h3 {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, var(--tohu-green-800), var(--tohu-green-600), var(--tohu-green-800));
+    background: linear-gradient(90deg, var(--tohu-green-700), var(--tohu-green-600), var(--tohu-green-700));
     border-radius: 1rem 1rem 0 0;
 }
 
@@ -554,9 +628,9 @@ h3 {
     position: relative;
     padding: 1rem 1.5rem;
     font-size: 1.1rem;
-    background: var(--tohu-green-50);
+    background: var(--tohu-green-100);
     border-radius: 0.75rem;
-    border-left: 4px solid var(--tohu-green-700);
+    border-left: 4px solid var(--tohu-green-600);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
@@ -564,15 +638,15 @@ h3 {
 }
 
 .tour-summary-notable-stops li:hover {
-    background: var(--tohu-green-100);
+    background: var(--tohu-green-200);
     transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
+    box-shadow: 0 4px 12px rgba(124, 174, 122, 0.15);
 }
 
 .tour-summary-notable-stops li::before {
     content: counter(stop-counter);
     counter-increment: stop-counter;
-    background: var(--tohu-green-700);
+    background: var(--tohu-green-600);
     color: white;
     width: 1.5rem;
     height: 1.5rem;
@@ -596,7 +670,7 @@ h3 {
     border-radius: 1.25rem;
     margin-bottom: 3.5rem; /* Increased space between stops */
     box-shadow: var(--shadow-xl);
-    border-left: 8px solid var(--tohu-green-700);
+    border-left: 8px solid var(--tohu-green-600);
     position: relative;
     overflow: hidden;
 }
@@ -605,7 +679,7 @@ h3 {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: var(--tohu-green-700);
+    background-color: var(--tohu-green-600);
     color: white;
     border-bottom-right-radius: 1.25rem;
     padding: 0.75rem 1.25rem;
@@ -623,9 +697,9 @@ h3 {
     font-size: 1.8rem;
     margin-top: 0.5rem;
     margin-bottom: 1.2rem;
-    color: var(--tohu-green-700);
+    color: var(--tohu-green-600);
     padding-left: 0.5rem;
-    border-bottom: 2px dashed var(--border-accent);
+    border-bottom: 2px dashed var(--tohu-green-200);
     padding-bottom: 0.5rem;
 }
 
@@ -634,8 +708,8 @@ h3 {
     color: var(--text-secondary);
     margin: 3rem 0;
     padding: 2rem 2.5rem;
-    border-left: 5px solid var(--border-accent);
-    background-color: var(--accent-warm-50);
+    border-left: 5px solid var(--tohu-green-300);
+    background-color: var(--neutral-50);
     border-radius: 1.25rem;
     box-shadow: var(--shadow-md);
     line-height: 1.8;
@@ -699,7 +773,7 @@ h3 {
 }
 
 .map-link:hover {
-    color: var(--tohu-green-800);
+    color: var(--tohu-green-700);
     text-decoration: underline;
     transform: translateX(3px);
 }
@@ -1089,7 +1163,7 @@ datalist option {
 .loading-dots span {
     width: 12px;
     height: 12px;
-    background: var(--tohu-green-700);
+    background: var(--tohu-green-600);
     border-radius: 50%;
     animation: bounce 1.4s ease-in-out infinite both;
 }
@@ -1100,7 +1174,7 @@ datalist option {
 
 .loading-title {
     font-size: 2rem;
-    color: var(--tohu-green-700);
+    color: var(--tohu-green-600);
     margin-bottom: 1rem;
     font-weight: 600; /* Consistent medium weight */
 }
