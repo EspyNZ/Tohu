@@ -277,7 +277,7 @@ h3 {
         justify-content: center;
         padding: 1rem 1.5rem;
     }
-}
+    
     .tour-summary-section {
         padding: 2rem 1.5rem;
         grid-template-columns: 1fr;
@@ -308,6 +308,7 @@ h3 {
         font-size: 1.1rem;
         margin-bottom: 3rem;
     }
+}
 }
 
 /* New Summary Section Styling */
