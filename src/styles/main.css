@@ -549,6 +549,23 @@ h3 {
         font-size: 1.1rem;
     }
     
+    .starting-point-name {
+        font-size: 1.25rem !important;
+        font-weight: 700 !important;
+        color: var(--text-primary) !important;
+        line-height: 1.3 !important;
+        margin-bottom: 0.5rem !important;
+        display: block !important;
+    }
+    
+    .starting-point-description {
+        font-size: 0.9rem !important;
+        font-weight: 400 !important;
+        color: var(--text-secondary) !important;
+        line-height: 1.4 !important;
+        display: block !important;
+    }
+    
     .tour-summary-notable-stops {
         padding: 1.5rem 1rem;
         margin-top: 1rem;
