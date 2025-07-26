@@ -177,7 +177,7 @@ h1, h2, h3 {
 }
 
 h1 {
-    font-size: 3.5rem; /* Much larger main title */
+    font-size: 3rem; /* Reduced main title size */
     font-weight: 800; /* Heavy weight for prominence */
     margin-bottom: 0.5rem;
     text-align: center;
@@ -194,7 +194,7 @@ h1 {
 }
 
 h2 {
-    font-size: 2.2rem; /* Larger section title */
+    font-size: 2rem; /* Reduced section title size */
     font-weight: 600; /* Consistent medium weight */
     margin-top: 3rem;
     margin-bottom: 1.5rem;
@@ -204,7 +204,7 @@ h2 {
 }
 
 h3 {
-    font-size: 1.6rem; /* Larger subheading */
+    font-size: 1.4rem; /* Reduced subheading size */
     font-weight: 600; /* Consistent medium weight */
     margin-top: 2rem;
     margin-bottom: 1rem;
@@ -520,7 +520,7 @@ h3 {
 }
 
 .tour-summary-starting-point span {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 400;
   line-height: 1.6;
   color: var(--text-secondary);
@@ -591,7 +591,7 @@ h3 {
 }
 
 .tour-summary-item span {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;
@@ -650,7 +650,7 @@ h3 {
     margin-bottom: 0;
     position: relative;
     padding: 1rem 1.5rem;
-    font-size: 1.1rem;
+    font-size: 1rem;
     background: var(--tohu-green-100);
     border-radius: 0.75rem;
     border-left: 4px solid var(--tohu-green-600);
@@ -729,7 +729,7 @@ h3 {
 }
 
 .tour-stop h3 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     margin-top: 0.5rem;
     margin-bottom: 1.2rem;
     color: var(--tohu-green-600);
@@ -748,7 +748,7 @@ h3 {
     border-radius: 1.25rem;
     box-shadow: var(--shadow-md);
     line-height: 1.8;
-    font-size: 1.1rem;
+    font-size: 1rem;
     position: relative;
 }
 
@@ -954,7 +954,7 @@ p {
 
 /* Specific styling for introduction and conclusion paragraphs */
 #tourIntro, #tourConclusion {
-    font-size: 1.15rem; /* Slightly larger font */
+    font-size: 1.1rem; /* Reduced font size */
     line-height: 1.7; /* More generous line height */
     letter-spacing: 0.01em; /* Slight letter spacing for readability */
     color: var(--text-primary);
