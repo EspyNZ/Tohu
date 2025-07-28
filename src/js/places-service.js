@@ -157,7 +157,7 @@ export class PlacesService {
       // Use searchByText to find places matching the name
       const request = {
         textQuery: name,
-        fields: ['places.id', 'places.displayName', 'places.location'],
+        fields: ['id', 'displayName', 'location'],
         locationBias: {
           center: { lat: latitude, lng: longitude },
           radius: 500 // 500 meter radius
