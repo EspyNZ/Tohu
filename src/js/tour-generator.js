@@ -60,14 +60,11 @@ export class TourGenerator {
   }
 
   createPrompt(location, numberOfStops, locationData, nearbyPlaces) {
-    const placesContext = nearbyPlaces.length > 0 ? 
-      `\n\nNEARBY PLACES CONTEXT:\nHere are some interesting places near ${location} that you can consider including in the tour:\n${nearbyPlaces.slice(0, 15).map(place => 
-        `- ${place.name} (${place.types?.[0] || 'attraction'}) - Rating: ${place.rating || 'N/A'} - ${place.vicinity || ''}`
-      ).join('\n')}\n\nUse these as inspiration but feel free to include other hidden gems and local spots that aren't necessarily in this list.` : ''
-
     return `You are a local tour guide with loads of amazing reviews on your ability to create fun, immersive local tours.
 
-Create a detailed walking tour guide for "${location}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.${placesContext}
+CRITICAL REQUIREMENT: For every single stop in this tour, you MUST provide accurate coordinates (latitude, longitude) and a valid Google Place ID. These are essential for displaying images and maps. Research real locations in ${location} and use their actual coordinates and Google Place IDs. Do not make up or approximate these values.
+
+Create a detailed walking tour guide for "${location}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.
 
 Structure your response EXACTLY as follows:
 
@@ -85,6 +82,7 @@ Structure your response EXACTLY as follows:
 - **You Are Here:** [Describe exactly where to position yourself and what you should see. E.g., "You should be standing in front of the large red brick building with white columns. If you look to your right, you'll see the green park with the fountain. Behind you is the busy main street with the coffee shops."]
 - **Description:** [100-150 words of vivid, sensory-rich storytelling. Make the place come alive with specific architectural details, atmosphere, sounds, smells, or visual elements.]
 - **Coordinates:** [latitude, longitude]
+- **Google Place ID:** [Google Place ID]
 - **The Hook:** [Start with an intriguing question, surprising revelation, or "Wait until you hear this..." moment that immediately grabs attention and makes people want to know more.]
 - **Fascinating Facts:** [2-3 specific, lesser-known facts about this location - could be historical, architectural, cultural, or statistical. Include dates, numbers, or specific details that bring the place to life.]
 - **Stories & Voices:** [Include a compelling anecdote, local legend, or actual quote from a historical figure, resident, or visitor connected to this place. If using a quote, attribute it properly.]
