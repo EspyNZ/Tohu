@@ -1555,25 +1555,11 @@ datalist option {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     font-weight: 600; /* Consistent medium weight */
     min-height: 2rem;
     text-shadow: 0 2px 4px rgba(124, 174, 122, 0.1);
     position: relative;
-}
-
-.loading-title::after {
-    content: '';
-    position: absolute;
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--tohu-green-700), var(--tohu-green-600), var(--tohu-green-700));
-    border-radius: 2px;
-    opacity: 0.8;
-    animation: dramaticGlow 3s ease-in-out infinite;
 }
 
 .loading-message {
@@ -1638,18 +1624,6 @@ datalist option {
     }
 }
 
-@keyframes dramaticGlow {
-    0%, 100% { 
-        opacity: 0.6;
-        width: 80px;
-        box-shadow: 0 0 10px rgba(124, 174, 122, 0.3);
-    }
-    50% { 
-        opacity: 1;
-        width: 120px;
-        box-shadow: 0 0 20px rgba(124, 174, 122, 0.6);
-    }
-}
 
 @keyframes messageGlow {
     0%, 100% { 
