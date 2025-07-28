@@ -489,6 +489,10 @@ h3 {
     .toggle-label {
         font-size: 0.75rem;
     }
+    
+    .slider-group {
+        margin-bottom: 1.5rem;
+    }
 }
 
 .loading-spinner {

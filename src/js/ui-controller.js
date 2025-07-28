@@ -27,6 +27,7 @@ export class UIController {
   bindElements() {
     this.elements = {
       locationInput: document.getElementById('locationInput'),
+      tourLengthSlider: document.getElementById('tourLengthSlider'),
       generateTourBtn: document.getElementById('generateTourBtn'),
       buttonText: document.getElementById('buttonText'),
       loadingSpinner: document.getElementById('loadingSpinner'),
@@ -162,19 +163,19 @@ export class UIController {
   }
 
   initializeSliders() {
-    // No longer needed - sliders removed
+    // Tour length slider is handled automatically by the browser
   }
 
   handleToggleClick(button) {
     const toggleType = button.dataset.toggle
     
-    // Handle mutually exclusive toggles
-    if (toggleType === 'short' || toggleType === 'long') {
-      // Remove both short and long if either is clicked
-      this.activeToggles.delete('short')
-      this.activeToggles.delete('long')
+    // Handle mutually exclusive toggles for transportation
+    if (toggleType === 'driving' || toggleType === 'biking') {
+      // Remove both driving and biking if either is clicked
+      this.activeToggles.delete('driving')
+      this.activeToggles.delete('biking')
       this.toggleButtons.forEach(btn => {
-        if (btn.dataset.toggle === 'short' || btn.dataset.toggle === 'long') {
+        if (btn.dataset.toggle === 'driving' || btn.dataset.toggle === 'biking') {
           btn.classList.remove('active')
         }
       })
@@ -192,6 +193,7 @@ export class UIController {
 
   async generateTour() {
     const location = this.elements.locationInput.value.trim()
+    const tourLength = parseInt(this.elements.tourLengthSlider.value)
     const toggleOptions = Array.from(this.activeToggles)
     let capturedPrompt = ''
 
@@ -205,7 +207,7 @@ export class UIController {
     this.showLoadingScreen()
 
     try {
-      const result = await this.tourGenerator.generateTour(location, toggleOptions)
+      const result = await this.tourGenerator.generateTour(location, toggleOptions, tourLength)
       const tourText = result.tourText
       capturedPrompt = result.prompt
       

@@ -8,7 +8,7 @@ export class TourGenerator {
     this.placesService = new PlacesService()
   }
 
-  async generateTour(location, toggleOptions = []) {
+  async generateTour(location, toggleOptions = [], tourLength = 5) {
     // First, get location coordinates and nearby places
     const locationData = await this.placesService.geocodeLocation(location)
     if (!locationData) {
@@ -18,13 +18,13 @@ export class TourGenerator {
     const centerLocation = `${locationData.lat},${locationData.lng}`
     const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation)
     
-    const prompt = this.createPrompt(location, toggleOptions, locationData, nearbyPlaces)
+    const prompt = this.createPrompt(location, toggleOptions, tourLength, locationData, nearbyPlaces)
     
     try {
       // For development, use mock data first
       if (this.shouldUseMockData()) {
         return {
-          tourText: this.generateMockTour(location, toggleOptions),
+          tourText: this.generateMockTour(location, toggleOptions, tourLength),
           prompt: prompt
         }
       }
@@ -59,33 +59,30 @@ export class TourGenerator {
     }
   }
 
-  createPrompt(location, toggleOptions, locationData, nearbyPlaces) {
+  createPrompt(location, toggleOptions, tourLength, locationData, nearbyPlaces) {
     // Determine tour parameters based on toggles
-    const isShort = toggleOptions.includes('short')
-    const isLong = toggleOptions.includes('long')
     const isBiking = toggleOptions.includes('biking')
+    const isDriving = toggleOptions.includes('driving')
     const includeCafe = toggleOptions.includes('cafe')
     const includePub = toggleOptions.includes('pub')
     const includeCelebs = toggleOptions.includes('celebs')
+    const includeHistory = toggleOptions.includes('history')
     
-    // Calculate number of stops and distance based on toggles
-    let numberOfStops = 5 // default
-    let maxDistance = '3 km' // default
-    let tourDuration = '90 minutes' // default
+    // Calculate number of stops and distance based on tour length slider (1-10)
+    const numberOfStops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))
+    let maxDistance = `${Math.round(1 + (tourLength * 0.5))} km`
+    let tourDuration = `${Math.round(45 + (tourLength * 15))} minutes`
     
-    if (isShort) {
-      numberOfStops = 3
-      maxDistance = '1.5 km'
-      tourDuration = '60 minutes'
-    } else if (isLong) {
-      numberOfStops = 8
-      maxDistance = '5 km'
-      tourDuration = '2.5 hours'
-    }
-    
-    if (isBiking) {
-      maxDistance = '10 km'
-      tourDuration = isShort ? '90 minutes' : isLong ? '3 hours' : '2 hours'
+    // Determine transportation mode
+    let transportation = 'Walking'
+    if (isDriving) {
+      transportation = 'Driving'
+      maxDistance = `${Math.round(5 + (tourLength * 2))} km`
+      tourDuration = `${Math.round(60 + (tourLength * 20))} minutes`
+    } else if (isBiking) {
+      transportation = 'Bicycle'
+      maxDistance = `${Math.round(3 + (tourLength * 1.2))} km`
+      tourDuration = `${Math.round(50 + (tourLength * 12))} minutes`
     }
     
     // Build special requirements text
@@ -99,7 +96,12 @@ export class TourGenerator {
     if (includeCelebs) {
       specialRequirements += '\n- MANDATORY: Research and mention any famous people, celebrities, historical figures, or notable personalities connected to each location. Include specific names and their connection to the place.'
     }
-    if (isBiking) {
+    if (includeHistory) {
+      specialRequirements += '\n- MANDATORY: Emphasize historical facts, hidden history, and historical stories at each location. Include specific dates, historical events, and how the past connects to the present.'
+    }
+    if (isDriving) {
+      specialRequirements += '\n- MANDATORY: This is a DRIVING tour. Mention parking availability, driving routes between stops, and any driving-specific considerations. Stops should be accessible by car with nearby parking.'
+    } else if (isBiking) {
       specialRequirements += '\n- MANDATORY: This is a BIKING tour. Mention bike-friendly routes, where to park bikes safely, and any cycling-specific considerations. Adjust distances and timing for cycling pace.'
     }
     
@@ -107,12 +109,12 @@ export class TourGenerator {
 
 CRITICAL REQUIREMENT: For every single stop in this tour, you MUST provide accurate coordinates (latitude, longitude) and a valid Google Place ID. These are essential for displaying images and maps. Research real locations in ${location} and use their actual coordinates and Google Place IDs. Do not make up or approximate these values.
 
-Create a detailed ${isBiking ? 'biking' : 'walking'} tour guide for "${location}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.
+Create a detailed ${transportation.toLowerCase()} tour guide for "${location}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.
 
 TOUR CONSTRAINTS:
 - Maximum total distance: ${maxDistance}
 - Target duration: ${tourDuration}
-- Transportation: ${isBiking ? 'Bicycle' : 'Walking'}${specialRequirements}
+- Transportation: ${transportation}${specialRequirements}
 
 BUSINESS RECOMMENDATIONS REQUIREMENT:
 For each stop, research and mention 2-3 highly-rated nearby businesses such as:
@@ -219,28 +221,21 @@ Structure your response EXACTLY as follows:
     return !this.apiKey || this.apiKey === "YOUR_API_KEY_HERE"
   }
 
-  generateMockTour(location, toggleOptions) {
-    const isShort = toggleOptions.includes('short')
-    const isLong = toggleOptions.includes('long')
+  generateMockTour(location, toggleOptions, tourLength) {
     const isBiking = toggleOptions.includes('biking')
+    const isDriving = toggleOptions.includes('driving')
     
-    let stops = 5
-    let duration = 90
-    let distance = 2.0
+    // Calculate based on tour length slider (1-10)
+    let stops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))
+    let duration = Math.round(45 + (tourLength * 15))
+    let distance = Math.round(1 + (tourLength * 0.5) * 10) / 10
     
-    if (isShort) {
-      stops = 3
-      duration = 60
-      distance = 1.5
-    } else if (isLong) {
-      stops = 8
-      duration = 150
-      distance = 4.0
-    }
-    
-    if (isBiking) {
-      distance = distance * 2.5 // Increase distance for biking
-      duration = duration * 0.8 // Slightly less time due to faster travel
+    if (isDriving) {
+      distance = Math.round((5 + (tourLength * 2)) * 10) / 10
+      duration = Math.round(60 + (tourLength * 20))
+    } else if (isBiking) {
+      distance = Math.round((3 + (tourLength * 1.2)) * 10) / 10
+      duration = Math.round(50 + (tourLength * 12))
     }
     
     return `**TOUR TITLE:** Hidden Stories of ${location}
