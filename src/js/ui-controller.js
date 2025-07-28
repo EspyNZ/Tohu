@@ -93,6 +93,26 @@ export class UIController {
       }
     })
 
+    // Enable debug panel with Ctrl+Shift+D as alternative
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        e.preventDefault()
+        this.toggleDebugPanel()
+      }
+    })
+
+    // Show debug panel on triple-click of logo
+    const logo = document.getElementById('tohuLogo')
+    if (logo) {
+      let clickCount = 0
+      logo.addEventListener('click', () => {
+        clickCount++
+        setTimeout(() => { clickCount = 0 }, 500)
+        if (clickCount === 3) {
+          this.toggleDebugPanel()
+        }
+      })
+    }
     // Allow Enter key to generate tour
     this.elements.locationInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
