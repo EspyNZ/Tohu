@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dummy Tour - Tohu Tours</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <img id="tohuLogo" src="https://i.ibb.co/0RqCZ25d/Chat-GPT-Image-Jul-26-2025-03-15-12-PM.png" alt="Tohu Logo">
+        
+        <!-- Debug Navigation -->
+        <div class="debug-links" style="margin-bottom: 2rem; padding: 1rem; border: 2px dashed #ccc; text-align: center; border-radius: 0.5rem;">
+            <h4 style="color: #666; margin-bottom: 1rem;">Debug Navigation</h4>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="index.html" class="btn" style="background: linear-gradient(135deg, #6b7280, #4b5563);">
+                    🔍 Back to Search
+                </a>
+                <button onclick="location.reload()" class="btn" style="background: linear-gradient(135deg, #059669, #047857);">
+                    🔄 Refresh Page
+                </button>
+            </div>
+        </div>
+
+        <!-- Tour Output -->
+        <div id="tourOutput">
+            <h2 id="tourTitle" class="text-center">Hidden Gems of Ponsonby: Stories Beyond the Cafés</h2>
+            
+            <!-- All Navigation Buttons -->
+            <div class="tour-top-navigation">
+                <button id="viewMapBtn" class="btn">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                    </svg>
+                    View Map
+                </button>
+                <a href="#tourIntro" class="btn">
+                    Start Tour
+                </a>
+                <a href="#tourStopsContainer" class="btn">
+                    View Stops
+                </a>
+                <button class="btn new-tour-nav-btn">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                    </svg>
+                    New Tour
+                </button>
+            </div>
+
+            <!-- Tour Summary Section -->
+            <div class="tour-summary-section">
+                <div class="tour-summary-item">
+                    <div class="item-icon">⏱️</div>
+                    <strong>Approx. Duration</strong>
+                    <span id="summaryDuration">90 minutes</span>
+                </div>
+                <div class="tour-summary-item">
+                    <div class="item-icon">🚶</div>
+                    <strong>Total Distance</strong>
+                    <span id="summaryDistance">2.1 km</span>
+                </div>
+                <div class="tour-summary-item tour-summary-starting-point">
+                    <div class="item-icon">📍</div>
+                    <strong>Starting Point</strong>
+                    <span id="summaryStartingPoint">
+                        <span class="starting-point-name">Ponsonby Central</span>
+                        <span class="starting-point-description">The bustling heart of Ponsonby Road, where old meets new</span>
+                    </span>
+                </div>
+                <div class="tour-summary-notable-stops">
+                    <strong>Stops</strong>
+                    <ul id="summaryNotableStops">
+                        <li><a href="#stop-1" class="stop-link">Ponsonby Central</a></li>
+                        <li><a href="#stop-2" class="stop-link">SPQR Café & Bar</a></li>
+                        <li><a href="#stop-3" class="stop-link">Western Park</a></li>
+                        <li><a href="#stop-4" class="stop-link">Ponsonby Baptist Church</a></li>
+                        <li><a href="#stop-5" class="stop-link">Three Lamps Plaza</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tour-section">
+                <h2 class="mt-4" id="tourIntroSection">Introduction</h2>
+                <p id="tourIntro">Welcome to Ponsonby, Auckland's bohemian heart where Victorian villas house trendy boutiques and every corner tells a story of transformation. This isn't your typical tourist trail through the obvious hotspots. We're diving deeper, uncovering the layers of history, culture, and community spirit that make Ponsonby more than just a pretty neighborhood. From forgotten stories of early settlers to the creative revolution that transformed this area, we'll walk in the footsteps of artists, activists, and everyday heroes who shaped this vibrant community. We'll start at Ponsonby Central and follow a carefully planned route covering 2.1 km. The entire experience should take approximately 90 minutes at a comfortable walking pace.</p>
+            </div>
+
+            <div id="tourStopsContainer">
+                <!-- Stop 1 -->
+                <div class="tour-stop" id="stop-1">
+                    <div class="tour-stop-number">1</div>
+                    <h3 class="ml-10">Ponsonby Central</h3>
+                    <div class="tour-stop-content">
+                        <div class="you-are-here">
+                            <div class="section-icon">📍</div>
+                            <div class="section-title">You Are Here</div>
+                            <p>You should be standing in front of the large brick building complex with the distinctive red awnings. If you look to your right, you'll see the busy Ponsonby Road with its mix of cafés and boutiques. Behind you is the entrance to the central courtyard area.</p>
+                        </div>
+                        <img src="https://images.pexels.com/photos/1591447/pexels-photo-1591447.jpeg?w=600&h=400&fit=crop&crop=entropy&auto=format" alt="View of Ponsonby Central" class="tour-image">
+                        <p class="mt-4 text-gray-800">Ponsonby Central stands as a perfect example of Auckland's urban renewal success story. This vibrant complex, housed in converted heritage buildings, buzzes with the energy of locals grabbing their morning coffee, browsing unique boutiques, and meeting friends for weekend brunch. The red brick facades and industrial-style architecture tell the story of the area's working-class roots, while the contemporary fit-outs speak to its modern renaissance as one of Auckland's most desirable neighborhoods.</p>
+                        
+                        <div class="story-section">
+                            <div class="section-icon">📖</div>
+                            <div class="section-title">The Story</div>
+                            <p class="hook-content">What if I told you that this trendy shopping complex was once the site of a massive industrial bakery that fed half of Auckland?</p>
+                            <blockquote class="stories-content">"I remember when my grandmother would come here in the 1950s to buy bread that was still warm from the ovens. The whole street smelled like fresh baking every morning." - Local resident Margaret Thompson, whose family has lived in Ponsonby for four generations.</blockquote>
+                        </div>
+                        
+                        <div class="fascinating-facts">
+                            <div class="section-icon">💡</div>
+                            <div class="section-title">Fascinating Facts</div>
+                            <div class="facts-content">
+                                <ul class="facts-list">
+                                    <li>The original Griffin's Biscuit Factory operated here from 1908 to 1992, producing over 50 million biscuits annually at its peak.</li>
+                                    <li>During World War II, this facility was converted to produce hardtack biscuits for New Zealand troops overseas.</li>
+                                    <li>The distinctive red brick was imported from England in the early 1900s as ballast in ships, then repurposed for construction.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="capture-moment-section">
+                            <div class="section-icon">📸</div>
+                            <div class="section-title">Capture the Moment</div>
+                            <div class="interactive-content"><strong>Experience:</strong> Touch the original brick walls near the entrance - you can still feel the texture of the mortar that was mixed over a century ago. Look for the faded "Griffin's" lettering that's still visible on the eastern wall.</div>
+                            <div class="photo-content"><strong>Photo Opportunity:</strong> Stand in the central courtyard and capture the contrast between the heritage brick and the modern glass shopfronts. The best light is in the late afternoon when the sun hits the western wall.</div>
+                        </div>
+                        
+                        <p class="mt-4 text-gray-600">
+                            <a href="https://www.google.com/maps/search/?api=1&query=-36.8485,174.7516" target="_blank" class="map-link">
+                                <svg class="map-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                                </svg>
+                                View on Map (-36.8485, 174.7516)
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Journey Commentary -->
+                <div class="tour-journey-between-stops">
+                    <strong>Along the Way:</strong> As we head north on Ponsonby Road, notice how the architecture gradually shifts from commercial to residential. The Victorian villas lining the street were once considered working-class housing but are now some of Auckland's most expensive real estate. Keep an eye out for the original cast-iron lacework - each pattern tells a story about the family's social aspirations.
+                </div>
+
+                <!-- Stop 2 -->
+                <div class="tour-stop" id="stop-2">
+                    <div class="tour-stop-number">2</div>
+                    <h3 class="ml-10">SPQR Café & Bar</h3>
+                    <div class="tour-stop-content">
+                        <div class="you-are-here">
+                            <div class="section-icon">📍</div>
+                            <div class="section-title">You Are Here</div>
+                            <p>Standing in front of the distinctive black and white striped awning of SPQR. You should see the large windows with people inside enjoying coffee and meals. The outdoor seating area extends onto the footpath, and you can hear the gentle hum of conversation mixed with the clatter of coffee cups.</p>
+                        </div>
+                        <img src="https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?w=600&h=400&fit=crop&crop=entropy&auto=format" alt="View of SPQR Café & Bar" class="tour-image">
+                        <p class="mt-4 text-gray-800">SPQR isn't just another café - it's a Ponsonby institution that has been serving the community for over two decades. The name, standing for "Senatus Populusque Romanus" (The Senate and People of Rome), hints at the grand ambitions of its founders. The interior buzzes with the energy of creative professionals, local residents, and visitors who've discovered this gem. The aroma of expertly roasted coffee mingles with the sounds of animated conversations about art, politics, and life.</p>
+                        
+                        <div class="story-section">
+                            <div class="section-icon">📖</div>
+                            <div class="section-title">The Story</div>
+                            <p class="hook-content">This unassuming corner café was once the unofficial headquarters of Auckland's creative revolution in the 1990s.</p>
+                            <blockquote class="stories-content">"Every major art deal, every gallery opening, every creative collaboration in Auckland seemed to start with a conversation over coffee at SPQR. It was like our version of the Algonquin Round Table." - Chris Heaphy, renowned New Zealand artist who spent countless hours here in the early days.</blockquote>
+                        </div>
+                        
+                        <div class="fascinating-facts">
+                            <div class="section-icon">💡</div>
+                            <div class="section-title">Fascinating Facts</div>
+                            <div class="facts-content">
+                                <ul class="facts-list">
+                                    <li>SPQR opened in 1996 and was one of the first cafés in Auckland to serve single-origin coffee, revolutionizing the city's coffee culture.</li>
+                                    <li>The building dates back to 1902 and originally housed a pharmacy that served the local community for over 60 years.</li>
+                                    <li>More than 15 successful art exhibitions have been launched from conversations that started at SPQR's communal tables.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="capture-moment-section">
+                            <div class="section-icon">📸</div>
+                            <div class="section-title">Capture the Moment</div>
+                            <div class="interactive-content"><strong>Experience:</strong> Sit at one of the communal tables and listen to the conversations around you - you'll hear at least three different languages and discussions ranging from local politics to international art markets.</div>
+                            <div class="photo-content"><strong>Photo Opportunity:</strong> The large windows create perfect natural lighting for interior shots. Capture the reflection of Ponsonby Road in the windows for a shot that shows both the café culture and street life.</div>
+                        </div>
+                        
+                        <p class="mt-4 text-gray-600">
+                            <a href="https://www.google.com/maps/search/?api=1&query=-36.8475,174.7518" target="_blank" class="map-link">
+                                <svg class="map-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                                </svg>
+                                View on Map (-36.8475, 174.7518)
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Journey Commentary -->
+                <div class="tour-journey-between-stops">
+                    <strong>Along the Way:</strong> Our short walk to Western Park takes us past some of Ponsonby's most photographed Victorian villas. Notice the subtle differences in architectural details - the more ornate the ironwork, the wealthier the original owner. The park entrance we're heading to was once the grand gateway to a private estate that covered most of this area.
+                </div>
+
+                <!-- Stop 3 -->
+                <div class="tour-stop" id="stop-3">
+                    <div class="tour-stop-number">3</div>
+                    <h3 class="ml-10">Western Park</h3>
+                    <div class="tour-stop-content">
+                        <div class="you-are-here">
+                            <div class="section-icon">📍</div>
+                            <div class="section-title">You Are Here</div>
+                            <p>You're standing at the main entrance to Western Park, with the large pohutukawa trees creating a natural canopy above you. To your left, you can see families enjoying picnics on the grass, while to your right, the children's playground buzzes with activity. The harbor views peek through the trees in the distance.</p>
+                        </div>
+                        <img src="https://images.pexels.com/photos/1591447/pexels-photo-1591447.jpeg?w=600&h=400&fit=crop&crop=entropy&auto=format" alt="View of Western Park" class="tour-image">
+                        <p class="mt-4 text-gray-800">Western Park serves as Ponsonby's green lung, a 16-hectare oasis that provides respite from the urban energy of the surrounding streets. The mature pohutukawa trees create a cathedral-like canopy, while the rolling lawns invite picnics, games, and lazy afternoon conversations. This isn't just a park - it's the community's living room, where neighbors become friends and children create memories that will last a lifetime.</p>
+                        
+                        <div class="story-section">
+                            <div class="section-icon">📖</div>
+                            <div class="section-title">The Story</div>
+                            <p class="hook-content">Beneath your feet lies the remains of Auckland's first public cemetery, where over 3,000 people were laid to rest before the park was created.</p>
+                            <blockquote class="stories-content">"My great-great-grandfather helped move the headstones when they converted this from cemetery to park in the 1880s. He always said the pohutukawa trees grew so well here because they were nourished by all the stories buried beneath." - Tom Williams, local historian and descendant of early Ponsonby settlers.</blockquote>
+                        </div>
+                        
+                        <div class="fascinating-facts">
+                            <div class="section-icon">💡</div>
+                            <div class="section-title">Fascinating Facts</div>
+                            <div class="facts-content">
+                                <ul class="facts-list">
+                                    <li>Western Park was Auckland's first public cemetery from 1842 to 1886, with over 3,000 burials before it was converted to parkland.</li>
+                                    <li>The large pohutukawa trees were planted in 1890 and are now over 130 years old, making them some of Auckland's oldest urban trees.</li>
+                                    <li>During World War II, the park was used as a victory garden where locals grew vegetables to support the war effort.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="capture-moment-section">
+                            <div class="section-icon">📸</div>
+                            <div class="section-title">Capture the Moment</div>
+                            <div class="interactive-content"><strong>Experience:</strong> Find the memorial plaque near the large pohutukawa tree - it's one of the few remaining acknowledgments of the park's cemetery past. Touch the bark of the ancient trees and imagine the stories they've witnessed.</div>
+                            <div class="photo-content"><strong>Photo Opportunity:</strong> The harbor views from the park's western edge are spectacular at sunset. Frame your shot to include both the pohutukawa branches and the water for a quintessentially Auckland image.</div>
+                        </div>
+                        
+                        <p class="mt-4 text-gray-600">
+                            <a href="https://www.google.com/maps/search/?api=1&query=-36.8465,174.7505" target="_blank" class="map-link">
+                                <svg class="map-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                                </svg>
+                                View on Map (-36.8465, 174.7505)
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tour-section">
+                <h2 id="tourConclusion">Conclusion</h2>
+                <p id="tourConclusion">Our journey through Ponsonby reveals how a neighborhood becomes more than just a collection of buildings and streets - it becomes a living story written by everyone who calls it home. From the industrial heritage of Ponsonby Central to the creative energy of SPQR, from the hidden history beneath Western Park to the community spirit that binds it all together, we've seen how layers of time and culture create the unique character that makes Ponsonby special. As you continue exploring this vibrant neighborhood, remember that every doorway, every café conversation, every tree in the park has a story to tell.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
