@@ -19,11 +19,6 @@ export class TourParser {
       tour.distance = this.extractField(text, 'DISTANCE') || 'N/A'
       tour.startingPoint = this.extractField(text, 'STARTING POINT') || 'N/A'
       
-      // Parse notable stops
-      const notableStopsText = this.extractField(text, 'NOTABLE STOPS')
-      if (notableStopsText) {
-        tour.notableStops = notableStopsText.split(',').map(stop => stop.trim())
-      }
 
       // Parse introduction and conclusion
       tour.introduction = this.extractSection(text, 'INTRODUCTION', 'STOPS') || 'Welcome to this hidden gems tour!'
@@ -72,7 +67,7 @@ export class TourParser {
         name: stopMatch[2].trim(),
         description: '',
         coordinates: null,
-        pexelsPhotoId: null,
+        googlePlaceId: null,
         hiddenHistory: '',
         localTip: ''
       }
@@ -81,7 +76,7 @@ export class TourParser {
       
       // Parse stop details
       stop.description = this.extractStopDetail(stopContent, 'Description')
-      stop.pexelsPhotoId = this.extractStopDetail(stopContent, 'Pexels Photo ID')
+      stop.googlePlaceId = this.extractStopDetail(stopContent, 'Google Place ID')
       stop.youAreHere = this.extractStopDetail(stopContent, 'You Are Here')
       stop.theHook = this.extractStopDetail(stopContent, 'The Hook')
       stop.fascinatingFacts = this.extractStopDetail(stopContent, 'Fascinating Facts')
@@ -120,7 +115,7 @@ export class TourParser {
   }
 
   extractCoordinates(content) {
-    const coordMatch = content.match(/- \*\*Coordinates:\*\*\s*\[([^,]+),\s*([^\]]+)\]/i)
+    const coordMatch = content.match(/- \*\*Coordinates:\*\*\s*\[\s*([^,\]]+)\s*,\s*([^\]]+)\s*\]/i)
     if (coordMatch) {
       return {
         latitude: parseFloat(coordMatch[1].trim()),

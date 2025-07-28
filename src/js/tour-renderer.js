@@ -1,6 +1,9 @@
+import { PlacesService } from './places-service.js'
+
 export class TourRenderer {
   constructor() {
     this.bindElements()
+    this.placesService = new PlacesService()
   }
 
   bindElements() {
@@ -16,11 +19,11 @@ export class TourRenderer {
     }
   }
 
-  render(tour) {
+  async render(tour) {
     this.renderHeader(tour)
     this.renderSummary(tour)
     this.renderIntroduction(tour)
-    this.renderStops(tour)
+    await this.renderStops(tour)
     this.renderConclusion(tour)
   }
 
@@ -31,23 +34,29 @@ export class TourRenderer {
   renderSummary(tour) {
     this.elements.summaryDuration.textContent = tour.duration
     this.elements.summaryDistance.textContent = tour.distance
-    this.elements.summaryStartingPoint.textContent = tour.startingPoint
+    
+    // Parse starting point to separate name from description
+    const startingPointParts = tour.startingPoint.split(' - ')
+    const startingPointName = startingPointParts[0] || tour.startingPoint
+    const startingPointDescription = startingPointParts[1] || ''
+    
+    // Create the starting point content with name and description
+    this.elements.summaryStartingPoint.innerHTML = `
+      <span class="starting-point-name">${startingPointName}</span>
+      ${startingPointDescription ? `<span class="starting-point-description">${startingPointDescription}</span>` : ''}
+    `
 
     // Clear and populate notable stops
     this.elements.summaryNotableStops.innerHTML = ''
 
-    // Use tour stops names if notable stops are missing or incomplete
-    let stopsToDisplay = []
-    if (tour.notableStops && tour.notableStops.length > 0 && tour.notableStops[0].trim() !== '') {
-      stopsToDisplay = tour.notableStops
-    } else {
-      // Fallback to tour stop names
-      stopsToDisplay = tour.stops.slice(0, 5).map(stop => stop.name || `Stop ${stop.number}`)
-    }
-
-    stopsToDisplay.forEach(stop => {
+    // Always display all generated stops as clickable links
+    tour.stops.forEach(stop => {
       const li = document.createElement('li')
-      li.textContent = stop.trim()
+      const link = document.createElement('a')
+      link.href = `#stop-${stop.number}`
+      link.textContent = (stop.name || `Stop ${stop.number}`).trim()
+      link.className = 'stop-link'
+      li.appendChild(link)
       this.elements.summaryNotableStops.appendChild(li)
     })
   }
@@ -65,28 +74,58 @@ export class TourRenderer {
     this.elements.tourIntro.textContent = shortenedIntro + practicalInfo
   }
 
-  renderStops(tour) {
+  async renderStops(tour) {
     this.elements.tourStopsContainer.innerHTML = ''
 
-    tour.stops.forEach((stop, index) => {
-      this.renderTourStop(stop)
+    for (let i = 0; i < tour.stops.length; i++) {
+      const stop = tour.stops[i]
+      await this.renderTourStop(stop)
       
       // Add journey commentary if it exists
       const journey = tour.journeys.find(j => j.toStop === stop.number + 1)
       if (journey) {
         this.renderJourneyBetweenStops(journey.description)
       }
-    })
+    }
   }
 
-  renderTourStop(stop) {
+  async renderTourStop(stop) {
     const stopDiv = document.createElement('div')
     stopDiv.className = 'tour-stop'
+    stopDiv.id = `stop-${stop.number}`
 
-    // Use specific Pexels photo ID if available, otherwise use a more neutral default
-    const photoId = stop.pexelsPhotoId || '2387873'
-    const imageUrl = `https://images.pexels.com/photos/${photoId}/pexels-photo-${photoId}.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop`
-    const fallbackUrl = 'https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop'
+    // Dynamically find a valid Place ID using coordinates and name
+    let imageUrl = null
+    let fallbackUrl = 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&h=400&fit=crop&crop=entropy&auto=format'
+    
+    console.log('Rendering stop:', stop.name, 'with coordinates:', stop.coordinates)
+    
+    if (stop.coordinates && stop.name) {
+      try {
+        const validPlaceId = await this.placesService.findPlaceIdByCoordinatesAndName(
+          stop.coordinates.latitude, 
+          stop.coordinates.longitude, 
+          stop.name
+        )
+        
+        console.log('Found place ID:', validPlaceId, 'for stop:', stop.name)
+        if (validPlaceId) {
+          const placeDetails = await this.placesService.getPlaceDetails(validPlaceId)
+          console.log('Place details for', stop.name, ':', placeDetails)
+          if (placeDetails && placeDetails.photos && placeDetails.photos.length > 0) {
+            imageUrl = this.placesService.getPhotoUrl(placeDetails.photos[0], 600)
+            console.log('Generated image URL for', stop.name, ':', imageUrl)
+          }
+        }
+      } catch (error) {
+        console.warn('Could not fetch place photo for', stop.name, ':', error)
+      }
+    }
+    
+    // Use fallback if no Google Places image available
+    if (!imageUrl) {
+      imageUrl = fallbackUrl
+    }
 
     stopDiv.innerHTML = `
       <div class="tour-stop-number">${stop.number}</div>
