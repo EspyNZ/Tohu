@@ -1555,7 +1555,7 @@ datalist option {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
     font-weight: 600; /* Consistent medium weight */
     min-height: 2rem;
     text-shadow: 0 2px 4px rgba(124, 174, 122, 0.1);
