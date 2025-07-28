@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Screen - Tohu Tours</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+    <!-- Debug Navigation -->
+    <div class="debug-links" style="position: fixed; top: 1rem; left: 1rem; z-index: 1001; background: rgba(255,255,255,0.9); padding: 1rem; border-radius: 0.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <a href="index.html" class="btn" style="background: linear-gradient(135deg, #6b7280, #4b5563); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                🔍 Search
+            </a>
+            <a href="dummy-tour.html" class="btn" style="background: linear-gradient(135deg, #7c3aed, #5b21b6); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                🎯 Tour
+            </a>
+            <button onclick="toggleLoadingMessages()" class="btn" style="background: linear-gradient(135deg, #059669, #047857); padding: 0.5rem 1rem; font-size: 0.875rem;">
+                🔄 Cycle Messages
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-animation">
+                <div class="walking-person">🚶‍♂️</div>
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <h2 class="loading-title">Crafting Your Adventure...</h2>
+            <p id="loadingMessage" class="loading-message">Putting on our explorer hat...</p>
+        </div>
+    </div>
+
+    <script>
+        // Loading messages array
+        const loadingMessages = [
+            "Putting on our explorer hat...",
+            "Consulting the local pigeons for insider tips...",
+            "Bribing the neighborhood cats for secret routes...",
+            "Asking the coffee shops where they hide the good stuff...",
+            "Convincing the street art to reveal its stories...",
+            "Negotiating with the local ghosts for historical gossip...",
+            "Teaching our AI to walk in comfortable shoes...",
+            "Collecting whispers from the old buildings...",
+            "Decoding the secret language of park benches...",
+            "Interviewing the most interesting lamp posts...",
+            "Finding the spots even Google Maps doesn't know...",
+            "Asking the locals 'but where do YOU actually go?'...",
+            "Discovering places that don't exist on Instagram...",
+            "Uncovering the neighborhood's best-kept secrets...",
+            "Almost ready to blow your mind..."
+        ];
+
+        let currentMessageIndex = 0;
+        let messageInterval = null;
+
+        function cycleLoadingMessages() {
+            const loadingMessageElement = document.getElementById('loadingMessage');
+            loadingMessageElement.textContent = loadingMessages[currentMessageIndex];
+            currentMessageIndex = (currentMessageIndex + 1) % loadingMessages.length;
+        }
+
+        function toggleLoadingMessages() {
+            if (messageInterval) {
+                clearInterval(messageInterval);
+                messageInterval = null;
+            } else {
+                cycleLoadingMessages();
+                messageInterval = setInterval(cycleLoadingMessages, 2000);
+            }
+        }
+
+        // Auto-start cycling messages
+        document.addEventListener('DOMContentLoaded', () => {
+            cycleLoadingMessages();
+            messageInterval = setInterval(cycleLoadingMessages, 2000);
+        });
+    </script>
+</body>
+</html>
