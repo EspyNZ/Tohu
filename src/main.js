@@ -10,6 +10,6 @@ window.initGoogleMaps = function() {
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
   const tourGenerator = new TourGenerator()
-  const uiController = new UIController(tourGenerator)
-  uiController.init()
+  window.uiController = new UIController(tourGenerator)
+  window.uiController.init()
 })
