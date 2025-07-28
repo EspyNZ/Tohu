@@ -85,6 +85,14 @@ export class UIController {
       })
     }
 
+    // Simple debug button
+    const simpleDebugBtn = document.getElementById('simpleDebugBtn')
+    if (simpleDebugBtn) {
+      simpleDebugBtn.addEventListener('click', () => {
+        this.toggleDebugPanel()
+      })
+    }
+
     // Enable debug panel with Ctrl+D
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.key === 'd') {

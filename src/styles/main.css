@@ -1671,34 +1671,35 @@ datalist option {
 
 .debug-toggle-btn {
     position: absolute;
-    left: -50px;
+    left: -60px;
     top: 50%;
     transform: translateY(-50%);
-    width: 50px;
-    height: 80px;
+    width: 60px;
+    height: 100px;
     background: linear-gradient(135deg, var(--tohu-green-600), var(--tohu-green-700));
     border: none;
     border-radius: 8px 0 0 8px;
     color: white;
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
     z-index: 1001;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: 600;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
+    gap: 0.5rem;
 }
 
 .debug-toggle-btn::before {
     content: 'DEBUG';
-    position: absolute;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     letter-spacing: 1px;
     opacity: 0.9;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
 }
 .debug-toggle-btn:hover {
     background: linear-gradient(135deg, var(--tohu-green-700), var(--tohu-green-800));
@@ -1710,7 +1711,6 @@ datalist option {
     width: 16px;
     height: 16px;
     transition: transform 0.3s ease;
-    margin-top: 20px;
 }
 
 .debug-panel.is-open .debug-toggle-btn svg {
