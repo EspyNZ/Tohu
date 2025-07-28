@@ -147,10 +147,113 @@ export class PlacesService {
   }
 
   async findInterestingPlaces(centerLocation, radiusMeters = 2000) {
-    // The new Places API doesn't have a direct equivalent for broad nearby search
-    // Return empty array to prevent errors during tour generation
-    console.warn('findInterestingPlaces is not available with the new Places API')
-    return []
+    try {
+      console.log('Finding interesting places near:', centerLocation, 'within', radiusMeters, 'meters')
+      
+      if (!window.google || !window.google.maps || !window.google.maps.places) {
+        console.warn('Google Maps Places API not loaded')
+        return []
+      }
+
+      // Parse center location coordinates
+      const [lat, lng] = centerLocation.split(',').map(coord => parseFloat(coord.trim()))
+      if (isNaN(lat) || isNaN(lng)) {
+        console.warn('Invalid center location coordinates:', centerLocation)
+        return []
+      }
+
+      const center = { lat, lng }
+      const places = []
+
+      // Define search categories for interesting places
+      const searchQueries = [
+        'tourist attractions',
+        'museums',
+        'parks',
+        'historical sites',
+        'art galleries',
+        'landmarks',
+        'churches',
+        'markets',
+        'viewpoints',
+        'cultural sites'
+      ]
+
+      // Search for each category
+      for (const query of searchQueries) {
+        try {
+          const request = {
+            textQuery: query,
+            fields: ['id', 'displayName', 'location', 'types', 'rating'],
+            locationBias: {
+              center: center,
+              radius: radiusMeters
+            },
+            maxResultCount: 10
+          }
+
+          const { places: searchResults } = await google.maps.places.Place.searchByText(request)
+          
+          if (searchResults && searchResults.length > 0) {
+            for (const place of searchResults) {
+              // Check if place is within our radius and not already added
+              if (place.location && place.id && place.displayName) {
+                const distance = this.calculateDistance(
+                  center.lat, center.lng,
+                  place.location.lat(), place.location.lng()
+                )
+                
+                if (distance <= radiusMeters && !places.find(p => p.place_id === place.id)) {
+                  places.push({
+                    name: place.displayName,
+                    place_id: place.id,
+                    geometry: {
+                      location: {
+                        lat: () => place.location.lat(),
+                        lng: () => place.location.lng()
+                      }
+                    },
+                    types: place.types || [],
+                    rating: place.rating || null,
+                    distance: Math.round(distance)
+                  })
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.warn(`Error searching for ${query}:`, error)
+          // Continue with other queries even if one fails
+        }
+      }
+
+      // Sort by distance and limit results
+      places.sort((a, b) => a.distance - b.distance)
+      const limitedPlaces = places.slice(0, 20) // Limit to top 20 closest places
+      
+      console.log(`Found ${limitedPlaces.length} interesting places near ${centerLocation}`)
+      return limitedPlaces
+      
+    } catch (error) {
+      console.warn('Error finding interesting places:', error)
+      return []
+    }
+  }
+
+  // Helper method to calculate distance between two points
+  calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371000 // Earth's radius in meters
+    const dLat = this.toRadians(lat2 - lat1)
+    const dLng = this.toRadians(lng2 - lng1)
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+              Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
+              Math.sin(dLng / 2) * Math.sin(dLng / 2)
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+    return R * c
+  }
+
+  toRadians(degrees) {
+    return degrees * (Math.PI / 180)
   }
 
   async findPlaceIdByCoordinatesAndName(latitude, longitude, name) {

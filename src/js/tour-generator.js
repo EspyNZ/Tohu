@@ -16,7 +16,7 @@ export class TourGenerator {
     }
 
     const centerLocation = `${locationData.lat},${locationData.lng}`
-    const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation)
+    const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000)
     
     const prompt = this.createPrompt(location, toggleOptions, tourLength, locationData, nearbyPlaces)
     
@@ -105,11 +105,39 @@ export class TourGenerator {
       specialRequirements += '\n- MANDATORY: This is a BIKING tour. Mention bike-friendly routes, where to park bikes safely, and any cycling-specific considerations. Adjust distances and timing for cycling pace.'
     }
     
+    // Build nearby places information for the prompt
+    let nearbyPlacesInfo = ''
+    if (nearbyPlaces && nearbyPlaces.length > 0) {
+      nearbyPlacesInfo = `\n\nVERIFIED NEARBY PLACES (use these for accurate coordinates and Place IDs):\n`
+      nearbyPlaces.forEach((place, index) => {
+        const lat = typeof place.geometry.location.lat === 'function' 
+          ? place.geometry.location.lat() 
+          : place.geometry.location.lat
+        const lng = typeof place.geometry.location.lng === 'function' 
+          ? place.geometry.location.lng() 
+          : place.geometry.location.lng
+        
+        nearbyPlacesInfo += `${index + 1}. ${place.name}\n`
+        nearbyPlacesInfo += `   - Place ID: ${place.place_id}\n`
+        nearbyPlacesInfo += `   - Coordinates: ${lat}, ${lng}\n`
+        nearbyPlacesInfo += `   - Distance: ${place.distance}m from center\n`
+        if (place.types && place.types.length > 0) {
+          nearbyPlacesInfo += `   - Types: ${place.types.join(', ')}\n`
+        }
+        if (place.rating) {
+          nearbyPlacesInfo += `   - Rating: ${place.rating}/5\n`
+        }
+        nearbyPlacesInfo += `\n`
+      })
+      
+      nearbyPlacesInfo += `IMPORTANT: When selecting stops for your tour, prioritize using places from this verified list above. These have accurate coordinates and Google Place IDs that will display correctly on maps. If you must include a location not on this list, ensure you provide completely accurate, real coordinates and a valid Google Place ID.\n`
+    }
+    
     return `You are a local tour guide with loads of amazing reviews on your ability to create fun, immersive local tours.
 
 CRITICAL REQUIREMENT: For every single stop in this tour, you MUST provide accurate coordinates (latitude, longitude) and a valid Google Place ID. These are essential for displaying images and maps. Research real locations in ${location} and use their actual coordinates and Google Place IDs. Do not make up or approximate these values.
 
-Create a detailed ${transportation.toLowerCase()} tour guide for "${location}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.
+Create a detailed ${transportation.toLowerCase()} tour guide for "${location}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.${nearbyPlacesInfo}
 
 TOUR CONSTRAINTS:
 - Maximum total distance: ${maxDistance}
