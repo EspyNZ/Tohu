@@ -1648,71 +1648,160 @@ datalist option {
         font-size: 1.3rem;
     }
     
-    .loading-message {
-        font-size: 1rem;
-        min-height: 2.5rem;
-    }
+/* Debug Panel Styling */
+.debug-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+    backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
-/* Debug Links Styling */
-.debug-links {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+.debug-panel.is-open {
+    right: 0;
+}
+
+.debug-toggle-btn {
+    position: absolute;
+    left: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--tohu-green-600), var(--tohu-green-700));
+    border: none;
+    border-radius: 8px 0 0 8px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: -3px 0 10px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
     z-index: 1001;
-    background: rgba(255, 255, 255, 0.95);
+}
+
+.debug-toggle-btn:hover {
+    background: linear-gradient(135deg, var(--tohu-green-700), var(--tohu-green-800));
+    transform: translateY(-50%) translateX(-2px);
+}
+
+.debug-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.debug-panel.is-open .debug-toggle-btn svg {
+    transform: rotate(180deg);
+}
+
+.debug-panel-content {
+    padding: 2rem 1.5rem;
+    height: 100%;
+    overflow-y: auto;
+    font-family: 'Inter', sans-serif;
+}
+
+.debug-panel-content h4 {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--tohu-green-200);
+}
+
+.debug-section {
+    margin-bottom: 2rem;
+}
+
+.debug-section h5 {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.debug-section pre {
+    background: var(--bg-muted);
     padding: 1rem;
     border-radius: 0.5rem;
-    backdrop-filter: blur(10px);
-    text-align: center;
-    box-shadow: var(--shadow-lg);
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--text-primary);
+    overflow-x: auto;
+    max-height: 200px;
+    overflow-y: auto;
     border: 1px solid var(--border-light);
 }
 
-.debug-links h4 {
-    color: #666;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.debug-links div {
+.debug-links-panel {
     display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.debug-links a {
+.debug-links-panel a {
     color: var(--tohu-green-700);
-    text-decoration: underline;
-    font-size: 0.95rem;
-    transition: color 0.2s ease;
-    cursor: pointer;
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    background: var(--tohu-green-50);
+    border: 1px solid var(--tohu-green-200);
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    display: block;
 }
 
-.debug-links a:hover {
-    color: var(--tohu-green-600);
-    text-decoration: underline;
+.debug-links-panel a:hover {
+    background: var(--tohu-green-100);
+    color: var(--tohu-green-800);
+    transform: translateX(2px);
 }
 
 @media (max-width: 768px) {
-    .debug-links {
-        bottom: 10px;
-        left: 1rem;
-        right: 1rem;
-        transform: none;
-        padding: 0.75rem;
+    .debug-panel {
+        width: 100%;
+        right: -100%;
     }
     
-    .debug-links div {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.75rem;
+    .debug-toggle-btn {
+        left: -35px;
+        width: 35px;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(124, 174, 122, 0.15);
+}
+
+@media (max-width: 768px) {
+    .debug-panel {
+        width: 100vw;
+        right: -100vw;
     }
     
-    .debug-links a {
-        font-size: 1rem;
+    .debug-toggle-btn {
+        left: -45px;
+        width: 45px;
+        height: 70px;
     }
+    
+    .debug-toggle-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .debug-panel-content {
+        padding: 1.5rem;
+    }
+}
 }

@@ -9,7 +9,6 @@ export class UIController {
     this.tourParser = new TourParser()
     this.tourRenderer = new TourRenderer()
     this.mapController = new MapController()
-    this.isDebugMode = false
     this.currentTour = null
   }
 
@@ -44,7 +43,11 @@ export class UIController {
       newTourBtn: document.getElementById('newTourBtn'),
       viewMapBtn: document.getElementById('viewMapBtn'),
       mapContainer: document.getElementById('mapContainer'),
-      backToTourBtn: document.getElementById('backToTourBtn')
+      backToTourBtn: document.getElementById('backToTourBtn'),
+      debugPanel: document.getElementById('debugPanel'),
+      debugToggleBtn: document.getElementById('debugToggleBtn'),
+      debugContent: document.getElementById('debugContent'),
+      promptContent: document.getElementById('promptContent')
     }
     
     // Loading messages
@@ -75,11 +78,18 @@ export class UIController {
       this.generateTour()
     })
 
-    // Enable debug mode with Ctrl+D
+    // Debug panel toggle
+    if (this.elements.debugToggleBtn) {
+      this.elements.debugToggleBtn.addEventListener('click', () => {
+        this.toggleDebugPanel()
+      })
+    }
+
+    // Enable debug panel with Ctrl+D
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.key === 'd') {
         e.preventDefault()
-        this.toggleDebugMode()
+        this.toggleDebugPanel()
       }
     })
 
@@ -135,8 +145,9 @@ export class UIController {
       const tourText = result.tourText
       capturedPrompt = result.prompt
       
-      if (this.isDebugMode) {
-        this.elements.debugContent.textContent = `Raw tour text length: ${tourText.length}\n\n${tourText.substring(0, 500)}...`
+      // Update debug panel content
+      if (this.elements.debugContent && this.elements.promptContent) {
+        this.elements.debugContent.textContent = `Raw tour text length: ${tourText.length} characters\n\n${tourText.substring(0, 1000)}${tourText.length > 1000 ? '...' : ''}`
         this.elements.promptContent.textContent = capturedPrompt
       }
 
@@ -168,8 +179,9 @@ export class UIController {
       this.showError(`Failed to generate tour: ${error.message}. Please try again.`)
       console.error('Error generating tour:', error)
       
-      if (this.isDebugMode) {
-        this.elements.debugInfo.style.display = 'block'
+      // Update debug panel with error info
+      if (this.elements.debugContent && this.elements.promptContent) {
+        this.elements.debugContent.textContent = `Error: ${error.message}`
         this.elements.promptContent.textContent = capturedPrompt
       }
     }
@@ -222,9 +234,10 @@ export class UIController {
     this.elements.infoMessage.classList.add('hidden')
   }
 
-  toggleDebugMode() {
-    this.isDebugMode = !this.isDebugMode
-    this.elements.debugInfo.style.display = this.isDebugMode ? 'block' : 'none'
+  toggleDebugPanel() {
+    if (this.elements.debugPanel) {
+      this.elements.debugPanel.classList.toggle('is-open')
+    }
   }
 
   showTourInterface() {
