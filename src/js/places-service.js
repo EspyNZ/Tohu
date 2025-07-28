@@ -119,10 +119,17 @@ export class PlacesService {
     console.log('getPhotoUrl called with photo:', photo)
     
     try {
-      // For the new Places API, photos have a getUrl method
-      if (photo.getUrl) {
-        const url = photo.getUrl({ maxWidth: maxWidth })
+      // For the new Places API, photos have a getURI method
+      if (typeof photo.getURI === 'function') {
+        const url = photo.getURI({ maxWidth: maxWidth })
         console.log('Generated photo URL:', url)
+        return url
+      }
+      
+      // Alternative method for new Places API
+      if (typeof photo.getUrl === 'function') {
+        const url = photo.getUrl({ maxWidth: maxWidth })
+        console.log('Generated photo URL (getUrl):', url)
         return url
       }
       
@@ -131,6 +138,7 @@ export class PlacesService {
         return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photo.photo_reference}&key=${this.apiKey}`
       }
       
+      console.warn('Photo object does not have expected methods:', Object.getOwnPropertyNames(photo))
       return null
     } catch (error) {
       console.warn('Error getting photo URL:', error)
