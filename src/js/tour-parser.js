@@ -67,7 +67,7 @@ export class TourParser {
         name: stopMatch[2].trim(),
         description: '',
         coordinates: null,
-        pexelsPhotoId: null,
+        googlePlaceId: null,
         hiddenHistory: '',
         localTip: ''
       }
@@ -76,7 +76,7 @@ export class TourParser {
       
       // Parse stop details
       stop.description = this.extractStopDetail(stopContent, 'Description')
-      stop.pexelsPhotoId = this.extractStopDetail(stopContent, 'Pexels Photo ID')
+      stop.googlePlaceId = this.extractStopDetail(stopContent, 'Google Place ID')
       stop.youAreHere = this.extractStopDetail(stopContent, 'You Are Here')
       stop.theHook = this.extractStopDetail(stopContent, 'The Hook')
       stop.fascinatingFacts = this.extractStopDetail(stopContent, 'Fascinating Facts')

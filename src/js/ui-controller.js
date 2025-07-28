@@ -1,3 +1,4 @@
+import { validateApiKeys } from './config.js'
 import { TourParser } from './tour-parser.js'
 import { TourRenderer } from './tour-renderer.js'
 import { MapController } from './map-controller.js'
@@ -13,6 +14,12 @@ export class UIController {
   }
 
   init() {
+    // Validate API keys on startup
+    if (!validateApiKeys()) {
+      this.showError('Missing API keys. Please check your environment configuration.')
+      return
+    }
+    
     this.bindElements()
     this.attachEventListeners()
     this.initializeSliders()
@@ -151,7 +158,7 @@ export class UIController {
       // Hide search interface and show new tour button
       this.showTourInterface()
       
-      this.tourRenderer.render(tour)
+      await this.tourRenderer.render(tour)
       
       this.elements.tourOutput.classList.remove('hidden')
       this.showInfo('Tour generated successfully! Scroll down to explore.')

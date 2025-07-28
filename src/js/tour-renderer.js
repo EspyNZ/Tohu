@@ -1,6 +1,9 @@
+import { PlacesService } from './places-service.js'
+
 export class TourRenderer {
   constructor() {
     this.bindElements()
+    this.placesService = new PlacesService()
   }
 
   bindElements() {
@@ -16,11 +19,11 @@ export class TourRenderer {
     }
   }
 
-  render(tour) {
+  async render(tour) {
     this.renderHeader(tour)
     this.renderSummary(tour)
     this.renderIntroduction(tour)
-    this.renderStops(tour)
+    await this.renderStops(tour)
     this.renderConclusion(tour)
   }
 
@@ -71,29 +74,45 @@ export class TourRenderer {
     this.elements.tourIntro.textContent = shortenedIntro + practicalInfo
   }
 
-  renderStops(tour) {
+  async renderStops(tour) {
     this.elements.tourStopsContainer.innerHTML = ''
 
-    tour.stops.forEach((stop, index) => {
-      this.renderTourStop(stop)
+    for (let i = 0; i < tour.stops.length; i++) {
+      const stop = tour.stops[i]
+      await this.renderTourStop(stop)
       
       // Add journey commentary if it exists
       const journey = tour.journeys.find(j => j.toStop === stop.number + 1)
       if (journey) {
         this.renderJourneyBetweenStops(journey.description)
       }
-    })
+    }
   }
 
-  renderTourStop(stop) {
+  async renderTourStop(stop) {
     const stopDiv = document.createElement('div')
     stopDiv.className = 'tour-stop'
     stopDiv.id = `stop-${stop.number}`
 
-    // Use specific Pexels photo ID if available, otherwise use a more neutral default
-    const photoId = stop.pexelsPhotoId || '2387873'
-    const imageUrl = `https://images.pexels.com/photos/${photoId}/pexels-photo-${photoId}.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop`
-    const fallbackUrl = 'https://images.pexels.com/photos/2387873/pexels-photo-2387873.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop'
+    // Get image from Google Places if available
+    let imageUrl = null
+    let fallbackUrl = 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&h=400&fit=crop&crop=entropy&auto=format'
+    
+    if (stop.googlePlaceId && stop.googlePlaceId !== 'N/A') {
+      try {
+        const placeDetails = await this.placesService.getPlaceDetails(stop.googlePlaceId)
+        if (placeDetails && placeDetails.photos && placeDetails.photos.length > 0) {
+          imageUrl = this.placesService.getPhotoUrl(placeDetails.photos[0].photo_reference, 600)
+        }
+      } catch (error) {
+        console.warn('Could not fetch place photo:', error)
+      }
+    }
+    
+    // Use fallback if no Google Places image available
+    if (!imageUrl) {
+      imageUrl = fallbackUrl
+    }
 
     stopDiv.innerHTML = `
       <div class="tour-stop-number">${stop.number}</div>
