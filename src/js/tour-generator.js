@@ -88,10 +88,10 @@ export class TourGenerator {
     // Build special requirements text
     let specialRequirements = ''
     if (includeCafe) {
-      specialRequirements += '\n- MANDATORY: Include at least one highly-rated local café as a stop, with details about their specialty drinks or food.'
+      specialRequirements += '\n- MANDATORY: Include at least one highly-rated local café as a DEDICATED NUMBERED STOP (not just a nearby business mention). This café must be one of your main stops with full stop details including coordinates, Google Place ID, description, stories, and all other stop sections. Focus on their specialty drinks, food, atmosphere, and local significance.'
     }
     if (includePub) {
-      specialRequirements += '\n- MANDATORY: Include at least one highly-rated local pub or bar as a stop, with details about their atmosphere and local favorites.'
+      specialRequirements += '\n- MANDATORY: Include at least one highly-rated local pub or bar as a DEDICATED NUMBERED STOP (not just a nearby business mention). This pub/bar must be one of your main stops with full stop details including coordinates, Google Place ID, description, stories, and all other stop sections. Focus on their atmosphere, local favorites, history, and community significance.'
     }
     if (includeCelebs) {
       specialRequirements += '\n- MANDATORY: Research and mention any famous people, celebrities, historical figures, or notable personalities connected to each location. Include specific names and their connection to the place.'
