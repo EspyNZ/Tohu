@@ -39,42 +39,40 @@
                     <option value="5" label="Medium"></option>
                     <option value="10" label="Long"></option>
                 </datalist>
-                <input type="range" id="tourLengthSlider" min="1" max="9" value="5" list="tickmarks">
-                <datalist id="tickmarks">
-                    <option value="1" label="Short"></option>
-                    <option value="5" label="Medium"></option>
-                    <option value="9" label="Long"></option>
-                </datalist>
             </div>
 
-            <div class="toggle-buttons-container">
-                <div class="toggle-buttons-grid">
-                    <button type="button" class="toggle-btn" data-toggle="cafe">
-                        <span class="toggle-icon">☕</span>
-                        <span class="toggle-label">Cafe</span>
-                    </button>
-                    <button type="button" class="toggle-btn" data-toggle="biking">
-                        <span class="toggle-icon">🚴</span>
-                        <span class="toggle-label">Biking</span>
-                    </button>
-                    <button type="button" class="toggle-btn" data-toggle="celebs">
-                        <span class="toggle-icon">⭐</span>
-                        <span class="toggle-label">Celebs</span>
-                    </button>
-                    <button type="button" class="toggle-btn" data-toggle="pub">
-                        <span class="toggle-icon">🍺</span>
-                        <span class="toggle-label">Pub</span>
-                    </button>
-                    <button type="button" class="toggle-btn" data-toggle="driving">
-                        <span class="toggle-icon">🚗</span>
-                        <span class="toggle-label">Driving</span>
-                    </button>
-                    <button type="button" class="toggle-btn" data-toggle="history">
-                        <span class="toggle-icon">🏛️</span>
-                        <span class="toggle-label">History</span>
-                    </button>
+            <!-- Advanced Options -->
+            <details class="details-container">
+                <summary class="details-summary">Advanced Tour Preferences</summary>
+                <div class="toggle-buttons-container">
+                    <div class="toggle-buttons-grid">
+                        <button type="button" class="toggle-btn" data-toggle="cafe">
+                            <span class="toggle-icon">☕</span>
+                            <span class="toggle-label">Cafe</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-toggle="biking">
+                            <span class="toggle-icon">🚴</span>
+                            <span class="toggle-label">Biking</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-toggle="celebs">
+                            <span class="toggle-icon">⭐</span>
+                            <span class="toggle-label">Celebs</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-toggle="pub">
+                            <span class="toggle-icon">🍺</span>
+                            <span class="toggle-label">Pub</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-toggle="driving">
+                            <span class="toggle-icon">🚗</span>
+                            <span class="toggle-label">Driving</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-toggle="history">
+                            <span class="toggle-icon">🏛️</span>
+                            <span class="toggle-label">History</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </details>
 
             <button id="generateTourBtn" class="btn w-full flex items-center justify-center">
                 <span id="buttonText">Generate Tour</span>
