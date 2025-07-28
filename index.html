@@ -136,26 +136,37 @@
         </div>
 
         <!-- Debug info (hidden by default) -->
-        <div id="debugInfo" class="debug-info">
-            <h4>Debug Information:</h4>
-            <pre id="debugContent"></pre>
-            <h4>Generated Prompt:</h4>
-            <pre id="promptContent"></pre>
-        </div>
-
     </div>
     
     <!-- Google Maps JavaScript API -->
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJ4MO0ke4jgEFq7f27KWyeg9_ehPR7xME&libraries=places,geometry"></script>
     <script type="module" src="src/main.js"></script>
     
-    <!-- Debug Links -->
-    <div class="debug-links">
-        <h4>Debug Pages</h4>
-        <div>
-            <a href="index.html">🔍 Search</a>
-            <a href="loading-screen.html">⏳ Loading Screen</a>
-            <a href="dummy-tour.html">🎯 Dummy Tour Page</a>
+    <!-- Debug Panel -->
+    <div id="debugPanel" class="debug-panel">
+        <button id="debugToggleBtn" class="debug-toggle-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+        </button>
+        <div class="debug-panel-content">
+            <h4>Debug Information</h4>
+            <div class="debug-section">
+                <h5>Raw Response:</h5>
+                <pre id="debugContent"></pre>
+            </div>
+            <div class="debug-section">
+                <h5>Generated Prompt:</h5>
+                <pre id="promptContent"></pre>
+            </div>
+            <div class="debug-section">
+                <h5>Debug Pages:</h5>
+                <div class="debug-links-panel">
+                    <a href="index.html">🔍 Search</a>
+                    <a href="loading-screen.html">⏳ Loading Screen</a>
+                    <a href="dummy-tour.html">🎯 Dummy Tour Page</a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
