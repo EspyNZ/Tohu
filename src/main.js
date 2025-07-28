@@ -24,3 +24,9 @@ window.initGoogleMaps = function() {
 document.addEventListener('DOMContentLoaded', () => {
   window.uiController.init()
 })
+
+// Also make it available without the window prefix for console convenience
+window.addEventListener('load', () => {
+  window.uiController = window.uiController
+  console.log('uiController is now available globally')
+})
