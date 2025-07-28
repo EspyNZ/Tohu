@@ -190,4 +190,30 @@ export class PlacesService {
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))
       .slice(0, 20) // Return top 20 places
   }
+
+  async findPlaceIdByCoordinatesAndName(latitude, longitude, name) {
+    return new Promise((resolve) => {
+      if (!this.initializeServices()) {
+        console.warn('Google Maps API not loaded')
+        resolve(null)
+        return
+      }
+
+      const request = {
+        location: new google.maps.LatLng(latitude, longitude),
+        radius: 100, // Small radius to find nearby places
+        keyword: name
+      }
+
+      this.service.nearbySearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK && results && results.length > 0) {
+          // Return the first result's place_id
+          resolve(results[0].place_id)
+        } else {
+          console.warn('Place ID lookup failed:', status)
+          resolve(null)
+        }
+      })
+    })
+  }
 }

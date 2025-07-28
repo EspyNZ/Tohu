@@ -94,18 +94,26 @@ export class TourRenderer {
     stopDiv.className = 'tour-stop'
     stopDiv.id = `stop-${stop.number}`
 
-    // Get image from Google Places if available
+    // Dynamically find a valid Place ID using coordinates and name
     let imageUrl = null
     let fallbackUrl = 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&h=400&fit=crop&crop=entropy&auto=format'
     
-    if (stop.googlePlaceId && stop.googlePlaceId !== 'N/A') {
+    if (stop.coordinates && stop.name) {
       try {
-        const placeDetails = await this.placesService.getPlaceDetails(stop.googlePlaceId)
-        if (placeDetails && placeDetails.photos && placeDetails.photos.length > 0) {
-          imageUrl = this.placesService.getPhotoUrl(placeDetails.photos[0].photo_reference, 600)
+        const validPlaceId = await this.placesService.findPlaceIdByCoordinatesAndName(
+          stop.coordinates.latitude, 
+          stop.coordinates.longitude, 
+          stop.name
+        )
+        
+        if (validPlaceId) {
+          const placeDetails = await this.placesService.getPlaceDetails(validPlaceId)
+          if (placeDetails && placeDetails.photos && placeDetails.photos.length > 0) {
+            imageUrl = this.placesService.getPhotoUrl(placeDetails.photos[0].photo_reference, 600)
+          }
         }
       } catch (error) {
-        console.warn('Could not fetch place photo:', error)
+        console.warn('Could not fetch place photo for', stop.name, ':', error)
       }
     }
     
