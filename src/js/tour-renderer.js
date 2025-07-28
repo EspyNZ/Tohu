@@ -109,7 +109,7 @@ export class TourRenderer {
         if (validPlaceId) {
           const placeDetails = await this.placesService.getPlaceDetails(validPlaceId)
           if (placeDetails && placeDetails.photos && placeDetails.photos.length > 0) {
-            imageUrl = this.placesService.getPhotoUrl(placeDetails.photos[0].photo_reference, 600)
+            imageUrl = this.placesService.getPhotoUrl(placeDetails.photos[0], 600)
           }
         }
       } catch (error) {
