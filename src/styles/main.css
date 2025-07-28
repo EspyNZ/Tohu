@@ -1656,10 +1656,18 @@ datalist option {
 
 /* Debug Links Styling */
 .debug-links {
-    margin-top: 3rem;
-    padding: 2rem;
-    border-top: 2px dashed #ccc;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    backdrop-filter: blur(10px);
     text-align: center;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
 }
 
 .debug-links h4 {
@@ -1691,8 +1699,11 @@ datalist option {
 
 @media (max-width: 768px) {
     .debug-links {
-        margin-top: 2rem;
-        padding: 1.5rem 1rem;
+        bottom: 10px;
+        left: 1rem;
+        right: 1rem;
+        transform: none;
+        padding: 0.75rem;
     }
     
     .debug-links div {
