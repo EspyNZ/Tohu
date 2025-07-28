@@ -44,6 +44,21 @@ export class PlacesService {
 
   async getPlaceDetails(placeId) {
     return new Promise((resolve) => {
+      // Validate placeId before making API call
+      if (!placeId || typeof placeId !== 'string' || placeId.trim().length === 0) {
+        console.warn('Invalid placeId: empty or not a string')
+        resolve(null)
+        return
+      }
+
+      // Check for basic placeId format (no spaces, reasonable length)
+      const trimmedPlaceId = placeId.trim()
+      if (trimmedPlaceId.includes(' ') || trimmedPlaceId.length < 10) {
+        console.warn('Invalid placeId format:', trimmedPlaceId)
+        resolve(null)
+        return
+      }
+
       if (!this.initializeServices()) {
         console.warn('Google Maps API not loaded')
         resolve(null)
@@ -51,7 +66,7 @@ export class PlacesService {
       }
 
       const request = {
-        placeId: placeId,
+        placeId: trimmedPlaceId,
         fields: ['name', 'formatted_address', 'geometry', 'photos', 'rating', 'types', 'website', 'opening_hours']
       }
 
