@@ -268,6 +268,12 @@ export class UIController {
     setTimeout(() => {
       this.mapController.initMap('map', this.currentTour.stops)
       this.mapController.showMap()
+      
+      // Pass the map instance to PlacesService instances for proper initialization
+      if (this.mapController.map) {
+        this.tourGenerator.placesService.setMap(this.mapController.map)
+        this.tourRenderer.placesService.setMap(this.mapController.map)
+      }
     }, 100)
   }
 

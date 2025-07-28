@@ -5,11 +5,22 @@ export class PlacesService {
     this.apiKey = API_CONFIG.googleMaps.apiKey
     this.service = null
     this.geocoder = null
+    this._mapInstance = null
+  }
+
+  setMap(map) {
+    this._mapInstance = map
+    // Re-initialize services with the map instance
+    if (window.google && window.google.maps) {
+      this.initializeServices()
+    }
   }
 
   initializeServices() {
     if (window.google && window.google.maps) {
-      this.service = new google.maps.places.PlacesService(document.createElement('div'))
+      // Use the actual map instance if available, otherwise fallback to dummy div
+      const serviceElement = this._mapInstance || document.createElement('div')
+      this.service = new google.maps.places.PlacesService(serviceElement)
       this.geocoder = new google.maps.Geocoder()
       return true
     }
