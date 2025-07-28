@@ -3,71 +3,98 @@ import { API_CONFIG } from './config.js'
 export class PlacesService {
   constructor() {
     this.apiKey = API_CONFIG.googleMaps.apiKey
-    this.baseUrl = API_CONFIG.googleMaps.placesApiUrl
+    this.service = null
+    this.geocoder = null
+  }
+
+  initializeServices() {
+    if (window.google && window.google.maps) {
+      this.service = new google.maps.places.PlacesService(document.createElement('div'))
+      this.geocoder = new google.maps.Geocoder()
+      return true
+    }
+    return false
   }
 
   async searchNearbyPlaces(location, radius = 1000, type = 'point_of_interest') {
-    try {
-      const url = `${this.baseUrl}/nearbysearch/json?location=${location}&radius=${radius}&type=${type}&key=${this.apiKey}`
-      
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Places API error: ${response.status}`)
+    return new Promise((resolve) => {
+      if (!this.initializeServices()) {
+        console.warn('Google Maps API not loaded')
+        resolve([])
+        return
       }
-      
-      const data = await response.json()
-      return data.results || []
-    } catch (error) {
-      console.error('Error fetching nearby places:', error)
-      return []
-    }
+
+      const [lat, lng] = location.split(',').map(coord => parseFloat(coord.trim()))
+      const request = {
+        location: new google.maps.LatLng(lat, lng),
+        radius: radius,
+        type: type
+      }
+
+      this.service.nearbySearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          resolve(results || [])
+        } else {
+          console.warn('Places search failed:', status)
+          resolve([])
+        }
+      })
+    })
   }
 
   async getPlaceDetails(placeId) {
-    try {
-      const fields = 'name,formatted_address,geometry,photos,rating,types,website,opening_hours'
-      const url = `${this.baseUrl}/details/json?place_id=${placeId}&fields=${fields}&key=${this.apiKey}`
-      
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Place Details API error: ${response.status}`)
+    return new Promise((resolve) => {
+      if (!this.initializeServices()) {
+        console.warn('Google Maps API not loaded')
+        resolve(null)
+        return
       }
-      
-      const data = await response.json()
-      return data.result
-    } catch (error) {
-      console.error('Error fetching place details:', error)
-      return null
-    }
+
+      const request = {
+        placeId: placeId,
+        fields: ['name', 'formatted_address', 'geometry', 'photos', 'rating', 'types', 'website', 'opening_hours']
+      }
+
+      this.service.getDetails(request, (place, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          resolve(place)
+        } else {
+          console.warn('Place details failed:', status)
+          resolve(null)
+        }
+      })
+    })
   }
 
   async geocodeLocation(address) {
-    try {
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${this.apiKey}`
-      
-      const response = await fetch(url)
-      if (!response.ok) {
-        throw new Error(`Geocoding API error: ${response.status}`)
+    return new Promise((resolve) => {
+      if (!this.initializeServices()) {
+        console.warn('Google Maps API not loaded')
+        resolve(null)
+        return
       }
-      
-      const data = await response.json()
-      if (data.results && data.results.length > 0) {
-        const location = data.results[0].geometry.location
-        return {
-          lat: location.lat,
-          lng: location.lng,
-          formatted_address: data.results[0].formatted_address
+
+      this.geocoder.geocode({ address: address }, (results, status) => {
+        if (status === 'OK' && results && results.length > 0) {
+          const location = results[0].geometry.location
+          resolve({
+            lat: location.lat(),
+            lng: location.lng(),
+            formatted_address: results[0].formatted_address
+          })
+        } else {
+          console.warn('Geocoding failed:', status)
+          resolve(null)
         }
-      }
-      return null
-    } catch (error) {
-      console.error('Error geocoding location:', error)
-      return null
-    }
+      })
+    })
   }
 
   getPhotoUrl(photoReference, maxWidth = 600) {
     if (!photoReference) return null
+    if (photoReference.getUrl) {
+      return photoReference.getUrl({ maxWidth: maxWidth })
+    }
     return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${this.apiKey}`
   }
 
