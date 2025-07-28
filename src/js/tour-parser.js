@@ -95,6 +95,7 @@ export class TourParser {
       stop.photoOp = this.extractStopDetail(stopContent, 'Photo Op')
       stop.hiddenHistory = this.extractStopDetail(stopContent, 'Hidden History')
       stop.localTip = this.extractStopDetail(stopContent, 'Local Tip')
+      stop.nearbyBusinesses = this.extractStopDetail(stopContent, 'Nearby Businesses')
 
       stops.push(stop)
     }

@@ -27,7 +27,6 @@ export class UIController {
   bindElements() {
     this.elements = {
       locationInput: document.getElementById('locationInput'),
-      stopsSlider: document.getElementById('stopsSlider'),
       generateTourBtn: document.getElementById('generateTourBtn'),
       buttonText: document.getElementById('buttonText'),
       loadingSpinner: document.getElementById('loadingSpinner'),
@@ -49,6 +48,10 @@ export class UIController {
       debugContent: document.getElementById('debugContent'),
       promptContent: document.getElementById('promptContent')
     }
+    
+    // Toggle buttons
+    this.toggleButtons = document.querySelectorAll('.toggle-btn')
+    this.activeToggles = new Set()
     
     // Loading messages
     this.loadingMessages = [
@@ -74,6 +77,13 @@ export class UIController {
   }
 
   attachEventListeners() {
+    // Toggle button event listeners
+    this.toggleButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        this.handleToggleClick(button)
+      })
+    })
+
     this.elements.generateTourBtn.addEventListener('click', () => {
       this.generateTour()
     })
@@ -152,11 +162,37 @@ export class UIController {
   }
 
   initializeSliders() {
+    // No longer needed - sliders removed
+  }
+
+  handleToggleClick(button) {
+    const toggleType = button.dataset.toggle
+    
+    // Handle mutually exclusive toggles
+    if (toggleType === 'short' || toggleType === 'long') {
+      // Remove both short and long if either is clicked
+      this.activeToggles.delete('short')
+      this.activeToggles.delete('long')
+      this.toggleButtons.forEach(btn => {
+        if (btn.dataset.toggle === 'short' || btn.dataset.toggle === 'long') {
+          btn.classList.remove('active')
+        }
+      })
+    }
+    
+    // Toggle the clicked button
+    if (this.activeToggles.has(toggleType)) {
+      this.activeToggles.delete(toggleType)
+      button.classList.remove('active')
+    } else {
+      this.activeToggles.add(toggleType)
+      button.classList.add('active')
+    }
   }
 
   async generateTour() {
     const location = this.elements.locationInput.value.trim()
-    const numberOfStops = parseInt(this.elements.stopsSlider.value)
+    const toggleOptions = Array.from(this.activeToggles)
     let capturedPrompt = ''
 
     if (!location) {
@@ -169,7 +205,7 @@ export class UIController {
     this.showLoadingScreen()
 
     try {
-      const result = await this.tourGenerator.generateTour(location, numberOfStops)
+      const result = await this.tourGenerator.generateTour(location, toggleOptions)
       const tourText = result.tourText
       capturedPrompt = result.prompt
       

@@ -8,7 +8,7 @@ export class TourGenerator {
     this.placesService = new PlacesService()
   }
 
-  async generateTour(location, numberOfStops) {
+  async generateTour(location, toggleOptions = []) {
     // First, get location coordinates and nearby places
     const locationData = await this.placesService.geocodeLocation(location)
     if (!locationData) {
@@ -18,13 +18,13 @@ export class TourGenerator {
     const centerLocation = `${locationData.lat},${locationData.lng}`
     const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation)
     
-    const prompt = this.createPrompt(location, numberOfStops, locationData, nearbyPlaces)
+    const prompt = this.createPrompt(location, toggleOptions, locationData, nearbyPlaces)
     
     try {
       // For development, use mock data first
       if (this.shouldUseMockData()) {
         return {
-          tourText: this.generateMockTour(location, numberOfStops),
+          tourText: this.generateMockTour(location, toggleOptions),
           prompt: prompt
         }
       }
@@ -59,18 +59,75 @@ export class TourGenerator {
     }
   }
 
-  createPrompt(location, numberOfStops, locationData, nearbyPlaces) {
+  createPrompt(location, toggleOptions, locationData, nearbyPlaces) {
+    // Determine tour parameters based on toggles
+    const isShort = toggleOptions.includes('short')
+    const isLong = toggleOptions.includes('long')
+    const isBiking = toggleOptions.includes('biking')
+    const includeCafe = toggleOptions.includes('cafe')
+    const includePub = toggleOptions.includes('pub')
+    const includeCelebs = toggleOptions.includes('celebs')
+    
+    // Calculate number of stops and distance based on toggles
+    let numberOfStops = 5 // default
+    let maxDistance = '3 km' // default
+    let tourDuration = '90 minutes' // default
+    
+    if (isShort) {
+      numberOfStops = 3
+      maxDistance = '1.5 km'
+      tourDuration = '60 minutes'
+    } else if (isLong) {
+      numberOfStops = 8
+      maxDistance = '5 km'
+      tourDuration = '2.5 hours'
+    }
+    
+    if (isBiking) {
+      maxDistance = '10 km'
+      tourDuration = isShort ? '90 minutes' : isLong ? '3 hours' : '2 hours'
+    }
+    
+    // Build special requirements text
+    let specialRequirements = ''
+    if (includeCafe) {
+      specialRequirements += '\n- MANDATORY: Include at least one highly-rated local café as a stop, with details about their specialty drinks or food.'
+    }
+    if (includePub) {
+      specialRequirements += '\n- MANDATORY: Include at least one highly-rated local pub or bar as a stop, with details about their atmosphere and local favorites.'
+    }
+    if (includeCelebs) {
+      specialRequirements += '\n- MANDATORY: Research and mention any famous people, celebrities, historical figures, or notable personalities connected to each location. Include specific names and their connection to the place.'
+    }
+    if (isBiking) {
+      specialRequirements += '\n- MANDATORY: This is a BIKING tour. Mention bike-friendly routes, where to park bikes safely, and any cycling-specific considerations. Adjust distances and timing for cycling pace.'
+    }
+    
     return `You are a local tour guide with loads of amazing reviews on your ability to create fun, immersive local tours.
 
 CRITICAL REQUIREMENT: For every single stop in this tour, you MUST provide accurate coordinates (latitude, longitude) and a valid Google Place ID. These are essential for displaying images and maps. Research real locations in ${location} and use their actual coordinates and Google Place IDs. Do not make up or approximate these values.
 
-Create a detailed walking tour guide for "${location}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.
+Create a detailed ${isBiking ? 'biking' : 'walking'} tour guide for "${location}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.
+
+TOUR CONSTRAINTS:
+- Maximum total distance: ${maxDistance}
+- Target duration: ${tourDuration}
+- Transportation: ${isBiking ? 'Bicycle' : 'Walking'}${specialRequirements}
+
+BUSINESS RECOMMENDATIONS REQUIREMENT:
+For each stop, research and mention 2-3 highly-rated nearby businesses such as:
+- Local cafés and coffee shops with their specialties
+- Art galleries, bookstores, or cultural venues
+- Unique local shops or boutiques
+- Restaurants with local cuisine
+- Markets or food vendors
+Include specific names, what they're known for, and approximate walking distance from the stop.
 
 Structure your response EXACTLY as follows:
 
 **TOUR TITLE:** [Create an evocative title]
-**DURATION:** [e.g., "90 minutes"]
-**DISTANCE:** [e.g., "2.5 km"]
+**DURATION:** [Target: ${tourDuration}]
+**DISTANCE:** [Maximum: ${maxDistance}]
 **STARTING POINT:** [Name of starting location near ${locationData.formatted_address} - Brief description of where it is located and how to find it]
 
 **INTRODUCTION:**
@@ -90,6 +147,7 @@ Structure your response EXACTLY as follows:
 - **Interactive Moment:** [Give people something to do, look for, or notice. E.g., "Look up at the third window on the left - see that crack? That's from..." or "Touch the wall here and feel how..." or "Listen for the echo when you clap here."]
 - **Local Tip:** [Food, drink, shortcut, timing, or experience only locals know - be specific about names, prices, or exact locations.]
 - **Photo Op:** [Suggest the best angle, time of day, or hidden vantage point for photos. Include what to frame and why this shot tells the story.]
+- **Nearby Businesses:** [List 2-3 highly-rated nearby businesses with names, specialties, and walking distance. E.g., "Just 2 minutes away, Artisan Coffee Co. serves the city's best flat whites, while Gallery 42 (across the street) showcases emerging local artists."]
 - **Walking Directions to Stop 2:** [Specific step-by-step directions. Include: crossing streets, which direction to walk, landmarks to pass, estimated time (e.g., "We're taking a quick 5-minute walk"), and exactly where to stop (e.g., "Stop when you reach the row of brick houses with the blue doors").]
 
 **Journey to Stop 2:**
@@ -161,12 +219,35 @@ Structure your response EXACTLY as follows:
     return !this.apiKey || this.apiKey === "YOUR_API_KEY_HERE"
   }
 
-  generateMockTour(location, stops) {
+  generateMockTour(location, toggleOptions) {
+    const isShort = toggleOptions.includes('short')
+    const isLong = toggleOptions.includes('long')
+    const isBiking = toggleOptions.includes('biking')
+    
+    let stops = 5
+    let duration = 90
+    let distance = 2.0
+    
+    if (isShort) {
+      stops = 3
+      duration = 60
+      distance = 1.5
+    } else if (isLong) {
+      stops = 8
+      duration = 150
+      distance = 4.0
+    }
+    
+    if (isBiking) {
+      distance = distance * 2.5 // Increase distance for biking
+      duration = duration * 0.8 // Slightly less time due to faster travel
+    }
+    
     return `**TOUR TITLE:** Hidden Stories of ${location}
 
-**DURATION:** ${60 + (stops * 15)} minutes
+**DURATION:** ${duration} minutes
 
-**DISTANCE:** ${(stops * 0.4).toFixed(1)} km
+**DISTANCE:** ${distance.toFixed(1)} km
 
 **STARTING POINT:** Central ${location} - Gateway to local discoveries
 
@@ -183,6 +264,7 @@ Welcome to ${location}, where every corner holds a story waiting to be discovere
 - **Pexels Photo ID:** 1591447
 - **Hidden History:** This square was originally a marketplace where traveling merchants would set up their stalls. Local legend says that a famous writer once gave impromptu readings here, launching their career from these very stones.
 - **Local Tip:** Visit early morning when the light hits the buildings just right, and you might catch the local baker setting up their outdoor display – their sourdough is legendary among residents.
+- **Nearby Businesses:** Just steps away, Heritage Coffee Roasters serves single-origin beans (2-minute walk), while Vintage Books & Maps offers rare local history collections (across the square). The Artisan Bakery on the corner is famous for their morning pastries.
 
 **Journey to Stop 2:**
 As we leave the square, notice the narrow alleyway to your left. This was once the main thoroughfare before the modern roads were built. The worn grooves in the stone walls show where countless cart wheels once passed.
@@ -193,6 +275,7 @@ As we leave the square, notice the narrow alleyway to your left. This was once t
 - **Pexels Photo ID:** 302899
 - **Hidden History:** This building was once a telegraph office, the communication hub of the community. The original brass fittings are still visible if you know where to look, hidden behind the modern coffee machine.
 - **Local Tip:** Try their signature blend – it's roasted by a local artisan who sources beans directly from small farms. The owner is always happy to share the story behind each cup.
+- **Nearby Businesses:** Next door, Handmade Pottery Studio offers ceramics classes (1-minute walk), while The Local Gallery features rotating exhibitions by neighborhood artists (3-minute walk). Green Thumb Plant Shop specializes in urban gardening supplies.
 
 **CONCLUSION:**
 Our journey through ${location} reveals how a place becomes more than just buildings and streets – it becomes a living story written by everyone who calls it home. From the historic square where generations have gathered to the cozy café where new friendships bloom daily, we've seen how community spirit transforms ordinary spaces into extraordinary places. As you continue exploring ${location}, remember that every doorway, every corner, every friendly face has a story to tell. The real magic isn't in the grand monuments but in the daily rhythms of life that make this place uniquely special. Welcome to the neighborhood – you're now part of its ongoing story.`

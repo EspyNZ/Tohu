@@ -140,6 +140,7 @@ export class TourRenderer {
         ${stop.hiddenHistory ? `<div class="tour-detail-heading">Hidden History</div><p class="tour-detail-content">${stop.hiddenHistory}</p>` : ''}
         ${this.renderCaptureTheMomentSection(stop)}
         ${stop.localTip ? `<div class="tour-detail-heading">Local Tip</div><p class="tour-detail-content">${stop.localTip}</p>` : ''}
+        ${stop.nearbyBusinesses ? `<div class="tour-detail-heading">Nearby Businesses</div><p class="tour-detail-content">${stop.nearbyBusinesses}</p>` : ''}
         ${stop.coordinates ? this.renderMapLink(stop) : ''}
       </div>
     `

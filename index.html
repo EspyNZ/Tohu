@@ -27,17 +27,34 @@
                 <input type="text" id="locationInput" class="input-field" placeholder="📍 e.g., Bloomsbury, London" value="Hobsonville Point, Auckland, NZ">
             </div>
 
-            <div class="slider-group">
-                <div class="slider-header">
-                    <span class="slider-title">Number of stops</span>
+            <!-- Toggle Buttons -->
+            <div class="toggle-buttons-container">
+                <div class="toggle-buttons-grid">
+                    <button type="button" class="toggle-btn" data-toggle="cafe">
+                        <span class="toggle-icon">☕</span>
+                        <span class="toggle-label">Cafe</span>
+                    </button>
+                    <button type="button" class="toggle-btn" data-toggle="biking">
+                        <span class="toggle-icon">🚴</span>
+                        <span class="toggle-label">Biking</span>
+                    </button>
+                    <button type="button" class="toggle-btn" data-toggle="celebs">
+                        <span class="toggle-icon">⭐</span>
+                        <span class="toggle-label">Celebs</span>
+                    </button>
+                    <button type="button" class="toggle-btn" data-toggle="pub">
+                        <span class="toggle-icon">🍺</span>
+                        <span class="toggle-label">Pub</span>
+                    </button>
+                    <button type="button" class="toggle-btn" data-toggle="short">
+                        <span class="toggle-icon">⚡</span>
+                        <span class="toggle-label">Short</span>
+                    </button>
+                    <button type="button" class="toggle-btn" data-toggle="long">
+                        <span class="toggle-icon">🗺️</span>
+                        <span class="toggle-label">Long</span>
+                    </button>
                 </div>
-                <input type="range" id="stopsSlider" min="0" max="15" value="5" step="5" list="stopsTicks">
-                <datalist id="stopsTicks">
-                    <option value="0" label="0"></option>
-                    <option value="5" label="5"></option>
-                    <option value="10" label="10"></option>
-                    <option value="15" label="15"></option>
-                </datalist>
             </div>
 
             <button id="generateTourBtn" class="btn w-full flex items-center justify-center">
