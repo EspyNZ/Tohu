@@ -10,7 +10,42 @@
     <div class="container">
         <img id="tohuLogo" src="https://i.ibb.co/0RqCZ25d/Chat-GPT-Image-Jul-26-2025-03-15-12-PM.png" alt="Tohu Logo">
         
-        <!-- Tour Output -->
+        <!-- New Tour Button (hidden by default) -->
+        <div id="newTourBtn" class="new-tour-btn-container hidden">
+        </div>
+
+        <div id="inputSectionContainer" class="input-section-container hidden">
+            <label for="locationInput" class="input-label">
+                Where would you like your hidden gems tour to be?
+            </label>
+            <div class="input-with-icon">
+                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/>
+                </svg>
+                <input type="text" id="locationInput" class="input-field" placeholder="📍 e.g., Bloomsbury, London" value="Hobsonville Point, Auckland, NZ">
+            </div>
+
+            <div class="slider-group">
+                <div class="slider-header">
+                    <span class="slider-title">Number of stops</span>
+                </div>
+                <input type="range" id="stopsSlider" min="0" max="15" value="5" step="5" list="stopsTicks">
+                <datalist id="stopsTicks">
+                    <option value="0" label="0"></option>
+                    <option value="5" label="5"></option>
+                    <option value="10" label="10"></option>
+                    <option value="15" label="15"></option>
+                </datalist>
+            </div>
+
+            <button id="generateTourBtn" class="btn w-full flex items-center justify-center">
+                <span id="buttonText">Generate Tour</span>
+                <span id="loadingSpinner" class="loading-spinner hidden"></span>
+            </button>
+            <div id="errorMessage" class="error-message hidden mt-4"></div>
+            <div id="infoMessage" class="info-message hidden mt-4"></div>
+        </div>
+
         <div id="tourOutput">
             <h2 id="tourTitle" class="text-center">Hidden Gems of Ponsonby: Stories Beyond the Cafés</h2>
             
@@ -239,6 +274,38 @@
                 <h2 id="tourConclusion">Conclusion</h2>
                 <p id="tourConclusion">Our journey through Ponsonby reveals how a neighborhood becomes more than just a collection of buildings and streets - it becomes a living story written by everyone who calls it home. From the industrial heritage of Ponsonby Central to the creative energy of SPQR, from the hidden history beneath Western Park to the community spirit that binds it all together, we've seen how layers of time and culture create the unique character that makes Ponsonby special. As you continue exploring this vibrant neighborhood, remember that every doorway, every café conversation, every tree in the park has a story to tell.</p>
             </div>
+        </div>
+
+        <!-- Map Container -->
+        <div id="mapContainer" class="hidden">
+            <div class="text-center mb-4">
+                <button id="backToTourBtn" class="btn">
+                    <svg class="btn-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                    </svg>
+                    Back to Tour
+                </button>
+            </div>
+            <div id="map"></div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="loading-screen hidden">
+            <div class="loading-content">
+                <div class="loading-animation">
+                    <div class="discovery-orb"></div>
+                </div>
+                <h2 class="loading-title">Crafting Your Adventure...</h2>
+                <p id="loadingMessage" class="loading-message">Putting on our explorer hat...</p>
+            </div>
+        </div>
+
+        <!-- Debug info (hidden by default) -->
+        <div id="debugInfo" class="debug-info">
+            <h4>Debug Information:</h4>
+            <pre id="debugContent"></pre>
+            <h4>Generated Prompt:</h4>
+            <pre id="promptContent"></pre>
         </div>
     </div>
     
