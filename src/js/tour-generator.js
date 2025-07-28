@@ -72,6 +72,10 @@ export class TourGenerator {
     const numberOfStops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))
     let maxDistance = `${Math.round(1 + (tourLength * 0.5))} km`
     let tourDuration = `${Math.round(45 + (tourLength * 15))} minutes`
+    // Calculate number of stops and distance based on tour length slider (1-9)
+    const numberOfStops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.9))))
+    let maxDistance = `${Math.round(1 + (tourLength * 0.6))} km`
+    let tourDuration = `${Math.round(45 + (tourLength * 17))} minutes`
     
     // Determine transportation mode
     let transportation = 'Walking'
@@ -79,10 +83,14 @@ export class TourGenerator {
       transportation = 'Driving'
       maxDistance = `${Math.round(5 + (tourLength * 2))} km`
       tourDuration = `${Math.round(60 + (tourLength * 20))} minutes`
+      maxDistance = `${Math.round(5 + (tourLength * 2.5))} km`
+      tourDuration = `${Math.round(60 + (tourLength * 22))} minutes`
     } else if (isBiking) {
       transportation = 'Bicycle'
       maxDistance = `${Math.round(3 + (tourLength * 1.2))} km`
       tourDuration = `${Math.round(50 + (tourLength * 12))} minutes`
+      maxDistance = `${Math.round(3 + (tourLength * 1.5))} km`
+      tourDuration = `${Math.round(50 + (tourLength * 14))} minutes`
     }
     
     // Build special requirements text
@@ -229,13 +237,21 @@ Structure your response EXACTLY as follows:
     let stops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))
     let duration = Math.round(45 + (tourLength * 15))
     let distance = Math.round(1 + (tourLength * 0.5) * 10) / 10
+    // Calculate based on tour length slider (1-9)
+    let stops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.9))))
+    let duration = Math.round(45 + (tourLength * 17))
+    let distance = Math.round(1 + (tourLength * 0.6) * 10) / 10
     
     if (isDriving) {
       distance = Math.round((5 + (tourLength * 2)) * 10) / 10
       duration = Math.round(60 + (tourLength * 20))
+      distance = Math.round((5 + (tourLength * 2.5)) * 10) / 10
+      duration = Math.round(60 + (tourLength * 22))
     } else if (isBiking) {
       distance = Math.round((3 + (tourLength * 1.2)) * 10) / 10
       duration = Math.round(50 + (tourLength * 12))
+      distance = Math.round((3 + (tourLength * 1.5)) * 10) / 10
+      duration = Math.round(50 + (tourLength * 14))
     }
     
     return `**TOUR TITLE:** Hidden Stories of ${location}
