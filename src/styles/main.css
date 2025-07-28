@@ -1399,6 +1399,7 @@ input[type="range"]::-webkit-slider-thumb {
     border: none;
     margin-top: -7px;
     position: relative;
+  margin-left: -10px;
 }
 
 input[type="range"]::-moz-range-thumb {
@@ -1410,6 +1411,7 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 4px 8px rgba(4, 120, 87, 0.3);
     border: none;
     position: relative;
+  margin-left: -10px;
 }
 
 /* Create a centered diamond/arrow shape for the slider thumb */
