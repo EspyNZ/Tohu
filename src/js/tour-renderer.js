@@ -98,6 +98,8 @@ export class TourRenderer {
     let imageUrl = null
     let fallbackUrl = 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&h=400&fit=crop&crop=entropy&auto=format'
     
+    console.log('Rendering stop:', stop.name, 'with coordinates:', stop.coordinates)
+    
     if (stop.coordinates && stop.name) {
       try {
         const validPlaceId = await this.placesService.findPlaceIdByCoordinatesAndName(
@@ -106,10 +108,13 @@ export class TourRenderer {
           stop.name
         )
         
+        console.log('Found place ID:', validPlaceId, 'for stop:', stop.name)
         if (validPlaceId) {
           const placeDetails = await this.placesService.getPlaceDetails(validPlaceId)
+          console.log('Place details for', stop.name, ':', placeDetails)
           if (placeDetails && placeDetails.photos && placeDetails.photos.length > 0) {
             imageUrl = this.placesService.getPhotoUrl(placeDetails.photos[0], 600)
+            console.log('Generated image URL for', stop.name, ':', imageUrl)
           }
         }
       } catch (error) {

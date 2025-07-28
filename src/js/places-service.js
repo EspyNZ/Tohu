@@ -32,6 +32,8 @@ export class PlacesService {
 
   async getPlaceDetails(placeId) {
     try {
+      console.log('getPlaceDetails called with placeId:', placeId)
+      
       // Validate placeId before making API call
       if (!placeId || typeof placeId !== 'string' || placeId.trim().length === 0) {
         console.warn('Invalid placeId: empty or not a string')
@@ -57,8 +59,15 @@ export class PlacesService {
       })
 
       // Fetch place details
+      console.log('Fetching place details for:', trimmedPlaceId)
       const { place: placeResult } = await place.fetchFields({
         fields: ['displayName', 'formattedAddress', 'location', 'photos', 'rating', 'types', 'websiteURI', 'regularOpeningHours']
+      })
+
+      console.log('Place details fetched:', {
+        name: placeResult.displayName,
+        hasPhotos: !!(placeResult.photos && placeResult.photos.length > 0),
+        photoCount: placeResult.photos ? placeResult.photos.length : 0
       })
 
       // Convert to format compatible with existing code
@@ -107,10 +116,14 @@ export class PlacesService {
   getPhotoUrl(photo, maxWidth = 600) {
     if (!photo) return null
     
+    console.log('getPhotoUrl called with photo:', photo)
+    
     try {
       // For the new Places API, photos have a getUrl method
       if (photo.getUrl) {
-        return photo.getUrl({ maxWidth: maxWidth })
+        const url = photo.getUrl({ maxWidth: maxWidth })
+        console.log('Generated photo URL:', url)
+        return url
       }
       
       // Fallback for old format
@@ -134,6 +147,8 @@ export class PlacesService {
 
   async findPlaceIdByCoordinatesAndName(latitude, longitude, name) {
     try {
+      console.log('findPlaceIdByCoordinatesAndName called:', { latitude, longitude, name })
+      
       if (!window.google || !window.google.maps || !window.google.maps.places) {
         console.warn('Google Maps Places API not loaded')
         return null
@@ -152,9 +167,11 @@ export class PlacesService {
       const { places } = await google.maps.places.Place.searchByText(request)
       
       if (!places || places.length === 0) {
-        console.warn('No places found for query:', name)
+        console.warn('No places found for query:', name, 'at coordinates:', latitude, longitude)
         return null
       }
+
+      console.log('Found', places.length, 'places for query:', name)
 
       // If multiple places found, find the closest one to our coordinates
       let closestPlace = places[0]
