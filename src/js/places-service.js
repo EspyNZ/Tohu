@@ -201,7 +201,7 @@ export class PlacesService {
 
       const request = {
         location: new google.maps.LatLng(latitude, longitude),
-        radius: 100, // Small radius to find nearby places
+        radius: 500, // Increased radius to find nearby places
         keyword: name
       }
 

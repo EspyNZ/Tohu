@@ -115,7 +115,7 @@ export class TourParser {
   }
 
   extractCoordinates(content) {
-    const coordMatch = content.match(/- \*\*Coordinates:\*\*\s*\[([^,]+),\s*([^\]]+)\]/i)
+    const coordMatch = content.match(/- \*\*Coordinates:\*\*\s*\[\s*([^,\]]+)\s*,\s*([^\]]+)\s*\]/i)
     if (coordMatch) {
       return {
         latitude: parseFloat(coordMatch[1].trim()),
