@@ -1504,7 +1504,7 @@ datalist option {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
     height: 100px;
     position: relative;
 }
