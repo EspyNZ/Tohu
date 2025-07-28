@@ -41,7 +41,22 @@ export class TourParser {
   extractField(text, fieldName) {
     const regex = new RegExp(`\\*\\*${fieldName}:\\*\\*\\s*(.+)`, 'i')
     const match = text.match(regex)
-    return match ? match[1].trim() : null
+    if (!match) return null
+    
+    const content = match[1].trim()
+    
+    // Special handling for STARTING POINT to split title and description
+    if (fieldName === 'STARTING POINT') {
+      // Look for pattern: "Name - Description" or "Name. Description" 
+      const splitMatch = content.match(/^([^-\.]+)(?:\s*[-\.]\s*(.+))?/)
+      if (splitMatch) {
+        const title = splitMatch[1].trim()
+        const description = splitMatch[2] ? splitMatch[2].trim() : ''
+        return description ? `${title} - ${description}` : title
+      }
+    }
+    
+    return content
   }
 
   extractSection(text, startSection, endSection = null) {
