@@ -8,20 +8,20 @@ export class TourGenerator {
     this.placesService = new PlacesService()
   }
 
-  async generateTour(location, toggleOptions = [], tourLength = 5) {
+  async generateTour(dreamTourDescription, specificLocation, toggleOptions = [], tourLength = 5) {
     // Extract or determine location from dream tour description and specific location
     let locationData = null
-    let location = specificLocation
+    let effectiveLocation = specificLocation
     
     // If no specific location provided, try to extract from dream tour description
-    if (!location) {
-      location = this.extractLocationFromDreamTour(dreamTour)
+    if (!effectiveLocation) {
+      effectiveLocation = this.extractLocationFromDreamTour(dreamTourDescription)
     }
     
-    if (location) {
-      locationData = await this.placesService.geocodeLocation(location)
+    if (effectiveLocation) {
+      locationData = await this.placesService.geocodeLocation(effectiveLocation)
       if (!locationData) {
-        throw new Error(`Could not find the location "${location}". Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
+        throw new Error(`Could not find the location "${effectiveLocation}". Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
       }
     } else {
       throw new Error('Please specify a location either in your dream tour description or in the advanced settings.')
@@ -30,13 +30,13 @@ export class TourGenerator {
     const centerLocation = `${locationData.lat},${locationData.lng}`
     const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000)
     
-    const prompt = this.createPrompt(dreamTour, location, toggleOptions, tourLength, locationData, nearbyPlaces)
+    const prompt = this.createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces)
     
     try {
       // For development, use mock data first
       if (this.shouldUseMockData()) {
         return {
-          tourText: this.generateMockTour(dreamTour, location, toggleOptions, tourLength),
+          tourText: this.generateMockTour(dreamTourDescription, effectiveLocation, toggleOptions, tourLength),
           prompt: prompt
         }
       }
@@ -96,7 +96,7 @@ export class TourGenerator {
     return null
   }
 
-  createPrompt(dreamTour, location, toggleOptions, tourLength, locationData, nearbyPlaces) {
+  createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces) {
     // Determine tour parameters based on toggles
     const isBiking = toggleOptions.includes('biking')
     const isDriving = toggleOptions.includes('driving')
@@ -172,9 +172,9 @@ export class TourGenerator {
     
     return `You are a local tour guide with loads of amazing reviews on your ability to create fun, immersive local tours.
 
-CRITICAL REQUIREMENT: For every single stop in this tour, you MUST provide accurate coordinates (latitude, longitude) and a valid Google Place ID. These are essential for displaying images and maps. Research real locations in ${location} and use their actual coordinates and Google Place IDs. Do not make up or approximate these values.
+CRITICAL REQUIREMENT: For every single stop in this tour, you MUST provide accurate coordinates (latitude, longitude) and a valid Google Place ID. These are essential for displaying images and maps. Research real locations in ${effectiveLocation} and use their actual coordinates and Google Place IDs. Do not make up or approximate these values.
 
-Create a detailed ${transportation.toLowerCase()} tour guide for "${location}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.${nearbyPlacesInfo}
+Create a detailed ${transportation.toLowerCase()} tour guide for "${effectiveLocation}" (coordinates: ${locationData.lat}, ${locationData.lng}) with exactly ${numberOfStops} stops.${nearbyPlacesInfo}
 
 TOUR CONSTRAINTS:
 - Maximum total distance: ${maxDistance}
@@ -281,7 +281,7 @@ Structure your response EXACTLY as follows:
     return !this.apiKey || this.apiKey === "YOUR_API_KEY_HERE"
   }
 
-  generateMockTour(dreamTour, location, toggleOptions, tourLength) {
+  generateMockTour(dreamTourDescription, effectiveLocation, toggleOptions, tourLength) {
     const isBiking = toggleOptions.includes('biking')
     const isDriving = toggleOptions.includes('driving')
     
@@ -298,18 +298,18 @@ Structure your response EXACTLY as follows:
       duration = Math.round(50 + (tourLength * 12))
     }
     
-    return `**TOUR TITLE:** Your Dream Tour of ${location}
+    return `**TOUR TITLE:** Your Dream Tour of ${effectiveLocation}
 
 **DURATION:** ${duration} minutes
 
 **DISTANCE:** ${distance.toFixed(1)} km
 
-**STARTING POINT:** Central ${location} - Gateway to local discoveries
+**STARTING POINT:** Central ${effectiveLocation} - Gateway to local discoveries
 
 **NOTABLE STOPS:** Historic Square, Local Café, Hidden Garden, Community Hub, Scenic Viewpoint
 
 **INTRODUCTION:**
-You asked for "${dreamTour}", and that's exactly what we're going to discover together in ${location}! We're embarking on a journey that will reveal the hidden character of this remarkable place while fulfilling your specific vision. As we walk these streets together, we'll uncover the experiences you're seeking - from authentic local encounters to the unique atmosphere that makes this community special. This tour is crafted specifically around your interests and will show you ${location} through the lens of your dreams. Get ready to experience exactly what you hoped for, plus some delightful surprises that even longtime residents might have missed.
+You asked for "${dreamTourDescription}", and that's exactly what we're going to discover together in ${effectiveLocation}! We're embarking on a journey that will reveal the hidden character of this remarkable place while fulfilling your specific vision. As we walk these streets together, we'll uncover the experiences you're seeking - from authentic local encounters to the unique atmosphere that makes this community special. This tour is crafted specifically around your interests and will show you ${effectiveLocation} through the lens of your dreams. Get ready to experience exactly what you hoped for, plus some delightful surprises that even longtime residents might have missed.
 
 **STOPS:**
 
@@ -333,6 +333,6 @@ As we leave the square, notice the narrow alleyway to your left. This was once t
 - **Nearby Businesses:** Next door, Handmade Pottery Studio offers ceramics classes (1-minute walk), while The Local Gallery features rotating exhibitions by neighborhood artists (3-minute walk). Green Thumb Plant Shop specializes in urban gardening supplies.
 
 **CONCLUSION:**
-Our journey through ${location} has brought your dream tour to life, revealing exactly the kind of experiences you were hoping for. From the historic square where generations have gathered to the cozy café where authentic local connections happen daily, we've discovered the heart of what makes this place special. Your vision of "${dreamTour}" has guided us to these meaningful encounters and hidden gems. As you continue exploring ${location}, remember that the experiences you sought are all around you – every doorway, every corner, every friendly face has a story to tell. The real magic you were looking for isn't in the grand monuments but in these authentic moments that make this place uniquely special. Your dream tour has become reality – you're now part of its ongoing story.`
+Our journey through ${effectiveLocation} has brought your dream tour to life, revealing exactly the kind of experiences you were hoping for. From the historic square where generations have gathered to the cozy café where authentic local connections happen daily, we've discovered the heart of what makes this place special. Your vision of "${dreamTourDescription}" has guided us to these meaningful encounters and hidden gems. As you continue exploring ${effectiveLocation}, remember that the experiences you sought are all around you – every doorway, every corner, every friendly face has a story to tell. The real magic you were looking for isn't in the grand monuments but in these authentic moments that make this place uniquely special. Your dream tour has become reality – you're now part of its ongoing story.`
   }
 }
