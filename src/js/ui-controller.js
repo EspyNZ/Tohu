@@ -26,6 +26,7 @@ export class UIController {
 
   bindElements() {
     this.elements = {
+      dreamTourInput: document.getElementById('dreamTourInput'),
       locationInput: document.getElementById('locationInput'),
       tourLengthSlider: document.getElementById('tourLengthSlider'),
       generateTourBtn: document.getElementById('generateTourBtn'),
@@ -133,7 +134,7 @@ export class UIController {
       })
     }
     // Allow Enter key to generate tour
-    this.elements.locationInput.addEventListener('keypress', (e) => {
+    this.elements.dreamTourInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         this.generateTour()
       }
@@ -192,13 +193,14 @@ export class UIController {
   }
 
   async generateTour() {
-    const location = this.elements.locationInput.value.trim()
+    const dreamTour = this.elements.dreamTourInput.value.trim()
+    const specificLocation = this.elements.locationInput.value.trim()
     const tourLength = parseInt(this.elements.tourLengthSlider.value)
     const toggleOptions = Array.from(this.activeToggles)
     let capturedPrompt = ''
 
-    if (!location) {
-      this.showError('Please enter a location for the tour.')
+    if (!dreamTour) {
+      this.showError('Please describe your dream tour.')
       return
     }
 
@@ -207,7 +209,7 @@ export class UIController {
     this.showLoadingScreen()
 
     try {
-      const result = await this.tourGenerator.generateTour(location, toggleOptions, tourLength)
+      const result = await this.tourGenerator.generateTour(dreamTour, specificLocation, toggleOptions, tourLength)
       const tourText = result.tourText
       capturedPrompt = result.prompt
       

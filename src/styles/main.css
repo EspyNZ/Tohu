@@ -280,6 +280,27 @@ h3 {
     text-align: center;
 }
 
+.advanced-input-group {
+    margin-bottom: 1.5rem;
+}
+
+.advanced-input-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    text-transform: none;
+}
+
+.dream-tour-field {
+    min-height: 120px;
+    resize: vertical;
+    padding: 1rem 1.25rem 1rem 3rem;
+    line-height: 1.6;
+    font-family: inherit;
+}
+
 .input-with-icon {
     position: relative;
     margin-bottom: 1.75rem; /* Slightly more compact spacing */
@@ -295,6 +316,11 @@ h3 {
     color: var(--tohu-green-600);
     opacity: 0.7;
     z-index: 2;
+}
+
+.dream-tour-field + .input-icon {
+    top: 1.5rem;
+    transform: none;
 }
 
 .btn {
@@ -371,7 +397,7 @@ h3 {
     box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3), var(--shadow-md);
 }
 
-.input-field {
+.input-field, textarea.input-field {
     padding: 1rem 1.25rem 1rem 3rem; /* Left padding for icon */
     border: 2px solid var(--border-accent);
     border-radius: 0.5rem; /* Squared corners */
@@ -385,7 +411,12 @@ h3 {
     text-align: center;
 }
 
-.input-field:focus {
+textarea.input-field {
+    text-align: left;
+    font-family: inherit;
+}
+
+.input-field:focus, textarea.input-field:focus {
     outline: none;
     border-color: var(--tohu-green-600);
     box-shadow: 0 0 0 3px rgba(124, 174, 122, 0.15);

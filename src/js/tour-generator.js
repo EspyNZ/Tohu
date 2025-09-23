@@ -9,22 +9,34 @@ export class TourGenerator {
   }
 
   async generateTour(location, toggleOptions = [], tourLength = 5) {
-    // First, get location coordinates and nearby places
-    const locationData = await this.placesService.geocodeLocation(location)
-    if (!locationData) {
-      throw new Error('Could not find the specified location. Please check the address and try again.')
+    // Extract or determine location from dream tour description and specific location
+    let locationData = null
+    let location = specificLocation
+    
+    // If no specific location provided, try to extract from dream tour description
+    if (!location) {
+      location = this.extractLocationFromDreamTour(dreamTour)
+    }
+    
+    if (location) {
+      locationData = await this.placesService.geocodeLocation(location)
+      if (!locationData) {
+        throw new Error(`Could not find the location "${location}". Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
+      }
+    } else {
+      throw new Error('Please specify a location either in your dream tour description or in the advanced settings.')
     }
 
     const centerLocation = `${locationData.lat},${locationData.lng}`
     const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000)
     
-    const prompt = this.createPrompt(location, toggleOptions, tourLength, locationData, nearbyPlaces)
+    const prompt = this.createPrompt(dreamTour, location, toggleOptions, tourLength, locationData, nearbyPlaces)
     
     try {
       // For development, use mock data first
       if (this.shouldUseMockData()) {
         return {
-          tourText: this.generateMockTour(location, toggleOptions, tourLength),
+          tourText: this.generateMockTour(dreamTour, location, toggleOptions, tourLength),
           prompt: prompt
         }
       }
@@ -59,7 +71,32 @@ export class TourGenerator {
     }
   }
 
-  createPrompt(location, toggleOptions, tourLength, locationData, nearbyPlaces) {
+  extractLocationFromDreamTour(dreamTour) {
+    // Simple location extraction - look for common patterns
+    const locationPatterns = [
+      /\bin\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g,
+      /\bat\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g,
+      /\baround\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g,
+      /\bnear\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g
+    ]
+    
+    for (const pattern of locationPatterns) {
+      const matches = dreamTour.match(pattern)
+      if (matches) {
+        // Return the first reasonable match (filter out very short matches)
+        for (const match of matches) {
+          const location = match.replace(/^(in|at|around|near)\s+/i, '').trim()
+          if (location.length > 3 && !location.match(/^(the|a|an|my|your|our|their)\s/i)) {
+            return location
+          }
+        }
+      }
+    }
+    
+    return null
+  }
+
+  createPrompt(dreamTour, location, toggleOptions, tourLength, locationData, nearbyPlaces) {
     // Determine tour parameters based on toggles
     const isBiking = toggleOptions.includes('biking')
     const isDriving = toggleOptions.includes('driving')
@@ -215,11 +252,6 @@ Structure your response EXACTLY as follows:
 **Walking Direction Guidelines:**
 - Provide step-by-step directions using landmarks and visual cues, not just street names
 - Include timing estimates for each segment (e.g., "a quick 3-minute walk" or "about 8 minutes")
-- Specify exactly where to stop using clear visual markers
-- Mention any street crossings, traffic lights, or safety considerations
-- Use relative directions based on how the person is positioned at each stop
-
-**Tone Guidelines:**
 - Write like a passionate storyteller who genuinely loves this place and wants to share its secrets
 - Use "we" and "our" language consistently ("we'll discover," "our next stop")
 - Create anticipation and curiosity with questions like "But guess what happened next?" or "You'd never know that..."
@@ -249,7 +281,7 @@ Structure your response EXACTLY as follows:
     return !this.apiKey || this.apiKey === "YOUR_API_KEY_HERE"
   }
 
-  generateMockTour(location, toggleOptions, tourLength) {
+  generateMockTour(dreamTour, location, toggleOptions, tourLength) {
     const isBiking = toggleOptions.includes('biking')
     const isDriving = toggleOptions.includes('driving')
     
@@ -266,7 +298,7 @@ Structure your response EXACTLY as follows:
       duration = Math.round(50 + (tourLength * 12))
     }
     
-    return `**TOUR TITLE:** Hidden Stories of ${location}
+    return `**TOUR TITLE:** Your Dream Tour of ${location}
 
 **DURATION:** ${duration} minutes
 
@@ -277,7 +309,7 @@ Structure your response EXACTLY as follows:
 **NOTABLE STOPS:** Historic Square, Local Café, Hidden Garden, Community Hub, Scenic Viewpoint
 
 **INTRODUCTION:**
-Welcome to ${location}, where every corner holds a story waiting to be discovered! We're embarking on a journey that will reveal the hidden character of this remarkable place. As we walk these streets together, we'll uncover tales of local heroes, secret histories, and the everyday magic that makes this community special. From bustling markets to quiet corners where time seems to stand still, this tour will show you ${location} through the eyes of those who call it home. Get ready to see familiar places in entirely new ways and discover gems that even longtime residents might have missed.
+You asked for "${dreamTour}", and that's exactly what we're going to discover together in ${location}! We're embarking on a journey that will reveal the hidden character of this remarkable place while fulfilling your specific vision. As we walk these streets together, we'll uncover the experiences you're seeking - from authentic local encounters to the unique atmosphere that makes this community special. This tour is crafted specifically around your interests and will show you ${location} through the lens of your dreams. Get ready to experience exactly what you hoped for, plus some delightful surprises that even longtime residents might have missed.
 
 **STOPS:**
 
@@ -301,6 +333,6 @@ As we leave the square, notice the narrow alleyway to your left. This was once t
 - **Nearby Businesses:** Next door, Handmade Pottery Studio offers ceramics classes (1-minute walk), while The Local Gallery features rotating exhibitions by neighborhood artists (3-minute walk). Green Thumb Plant Shop specializes in urban gardening supplies.
 
 **CONCLUSION:**
-Our journey through ${location} reveals how a place becomes more than just buildings and streets – it becomes a living story written by everyone who calls it home. From the historic square where generations have gathered to the cozy café where new friendships bloom daily, we've seen how community spirit transforms ordinary spaces into extraordinary places. As you continue exploring ${location}, remember that every doorway, every corner, every friendly face has a story to tell. The real magic isn't in the grand monuments but in the daily rhythms of life that make this place uniquely special. Welcome to the neighborhood – you're now part of its ongoing story.`
+Our journey through ${location} has brought your dream tour to life, revealing exactly the kind of experiences you were hoping for. From the historic square where generations have gathered to the cozy café where authentic local connections happen daily, we've discovered the heart of what makes this place special. Your vision of "${dreamTour}" has guided us to these meaningful encounters and hidden gems. As you continue exploring ${location}, remember that the experiences you sought are all around you – every doorway, every corner, every friendly face has a story to tell. The real magic you were looking for isn't in the grand monuments but in these authentic moments that make this place uniquely special. Your dream tour has become reality – you're now part of its ongoing story.`
   }
 }
