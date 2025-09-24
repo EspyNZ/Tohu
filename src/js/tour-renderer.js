@@ -52,6 +52,18 @@ export class TourRenderer {
     // Clear and populate notable stops
     this.elements.summaryNotableStops.innerHTML = ''
 
+    // Create the section header with icon
+    const sectionHeader = document.createElement('div')
+    sectionHeader.className = 'section-header'
+    sectionHeader.innerHTML = `
+      <div class="item-icon">🗺️</div>
+      <strong class="section-title">Stops</strong>
+    `
+    this.elements.summaryNotableStops.appendChild(sectionHeader)
+
+    // Create the stops list
+    const stopsList = document.createElement('ul')
+
     // Always display all generated stops as clickable links
     tour.stops.forEach(stop => {
       const li = document.createElement('li')
@@ -60,8 +72,10 @@ export class TourRenderer {
       link.textContent = (stop.name || `Stop ${stop.number}`).trim()
       link.className = 'stop-link'
       li.appendChild(link)
-      this.elements.summaryNotableStops.appendChild(li)
+      stopsList.appendChild(li)
     })
+
+    this.elements.summaryNotableStops.appendChild(stopsList)
   }
 
   renderIntroduction(tour) {
