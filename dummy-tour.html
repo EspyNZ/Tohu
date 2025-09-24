@@ -371,6 +371,15 @@
 
         <!-- Debug info (hidden by default) -->
     </div>
+    
+    <script type="module">
+        // Load Google Maps dynamically for dummy tour page
+        import { loadGoogleMapsScript } from './src/js/config.js'
+        
+        loadGoogleMapsScript().catch(error => {
+            console.warn('Google Maps not available on dummy tour page:', error.message)
+        })
+    </script>
 </body>
 </html>
 
