@@ -265,13 +265,23 @@ export class TourGenerator {
 USER'S DREAM TOUR: "${dreamTourDescription}"
 LOCATION: ${effectiveLocation} (coordinates: ${locationData.lat}, ${locationData.lng})${countryContext}
 
+PRIMARY DIRECTIVE - CONTENT-FIRST APPROACH:
+Your #1 priority is fulfilling the user's specific dream tour request: "${dreamTourDescription}"
+- If they want "cake tour" - focus ENTIRELY on bakeries, patisseries, and cake shops, NOT castles or landmarks
+- If they want "street art" - focus on murals, graffiti, artist studios, NOT museums or galleries
+- If they want "music venues" - focus on live music bars, concert halls, record shops, NOT general entertainment
+- If they want "hidden cafés" - focus on unique coffee experiences, NOT tourist café chains
+- The user's specific interests ALWAYS take precedence over famous landmarks or obvious attractions
+- Only include landmarks if they directly serve the user's stated interest (e.g., a castle with a famous bakery)
+
 TOUR PARAMETERS:
 ${tourLengthGuidance}
 ${transportationGuidance}${contentFocusSection}
 
 AUTHENTICITY & HIDDEN GEMS REQUIREMENTS:
-- PRIORITIZE LOCAL SECRETS: Focus on places locals love but tourists rarely discover
-- AVOID OBVIOUS ATTRACTIONS: Skip the main tourist sites unless they have genuinely hidden aspects
+- SERVE THE USER'S VISION FIRST: The user's dream tour description is your primary guide - everything else is secondary
+- PRIORITIZE THEMATIC RELEVANCE: Every stop must directly relate to the user's stated interests
+- AVOID GENERIC LANDMARKS: Skip famous sites unless they specifically serve the user's dream tour theme
 - SEEK AUTHENTIC EXPERIENCES: Choose locations where real local life happens, not staged tourist experiences
 - FIND THE UNTOLD STORIES: Every stop should reveal something most visitors never learn
 - EMPHASIZE COMMUNITY CONNECTIONS: Include places that are meaningful to local residents
@@ -291,13 +301,20 @@ CRITICAL TECHNICAL REQUIREMENTS:
 - Use actual Google Place IDs that will work for photo retrieval${nearbyPlacesInfo}
 
 TOUR CREATION APPROACH:
-1. INTERPRET THE DREAM: Analyze "${dreamTourDescription}" to understand the user's true desires and interests
-2. MATCH THE LOCATION: Adapt the concept to what ${effectiveLocation} uniquely offers
+1. PRIORITIZE THE USER'S VISION: "${dreamTourDescription}" is your primary directive - build everything around this
+2. FIND THEME-SPECIFIC LOCATIONS: Seek places that directly serve the user's stated interests, not general attractions
 3. CREATE AUTHENTIC EXPERIENCES: Focus on genuine local culture, not tourist traps
-4. TELL COMPELLING STORIES: Every stop should have a narrative that connects to the user's interests
+4. TELL THEMATIC STORIES: Every stop should advance the user's specific dream tour theme
 5. PROVIDE PRACTICAL VALUE: Include actionable tips, hidden gems, and local insights
 6. PLAN EFFICIENT ROUTING: Sequence stops geographically to create a smooth, logical journey
-7. MAXIMIZE LOCAL INSIGHT: Each stop should teach something most visitors never discover
+7. DELIVER ON THE PROMISE: Ensure the tour fulfills exactly what the user requested in "${dreamTourDescription}"
+
+CONTENT SELECTION PRIORITY ORDER:
+1. Places that directly serve the user's dream tour theme (e.g., bakeries for "cake tour")
+2. Local favorites and hidden gems within that theme
+3. Authentic community spaces related to the theme
+4. Supporting locations that enhance the thematic experience
+5. NEVER: Generic tourist attractions unless they specifically serve the theme
 
 Structure your response EXACTLY as follows:
 
