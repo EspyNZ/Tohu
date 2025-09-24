@@ -29,6 +29,7 @@ export class UIController {
       dreamTourInput: document.getElementById('dreamTourInput'),
       locationInput: document.getElementById('locationInput'),
       tourLengthSlider: document.getElementById('tourLengthSlider'),
+      flexibleLengthToggle: document.getElementById('flexibleLengthToggle'),
       generateTourBtn: document.getElementById('generateTourBtn'),
       buttonText: document.getElementById('buttonText'),
       loadingSpinner: document.getElementById('loadingSpinner'),
@@ -93,6 +94,11 @@ export class UIController {
     // Tour length slider value display
     this.elements.tourLengthSlider.addEventListener('input', () => {
       this.updateTourLengthDisplay()
+    })
+
+    // Flexible length toggle
+    this.elements.flexibleLengthToggle.addEventListener('change', () => {
+      this.handleFlexibleLengthToggle()
     })
 
     // Debug panel toggle
@@ -174,14 +180,28 @@ export class UIController {
   }
 
   updateTourLengthDisplay() {
-    const tourLength = parseInt(this.elements.tourLengthSlider.value)
-    const numberOfStops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))
-    const duration = Math.round(45 + (tourLength * 15))
-    
     const tourLengthValue = document.getElementById('tourLengthValue')
-    if (tourLengthValue) {
+    
+    if (this.elements.flexibleLengthToggle.checked) {
+      tourLengthValue.textContent = 'Flexible (AI decides)'
+    } else {
+      const tourLength = parseInt(this.elements.tourLengthSlider.value)
+      const numberOfStops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))
+      const duration = Math.round(45 + (tourLength * 15))
       tourLengthValue.textContent = `${numberOfStops} stops (${duration} minutes)`
     }
+  }
+
+  handleFlexibleLengthToggle() {
+    const sliderContainer = document.querySelector('.slider-container')
+    
+    if (this.elements.flexibleLengthToggle.checked) {
+      sliderContainer.classList.add('disabled')
+    } else {
+      sliderContainer.classList.remove('disabled')
+    }
+    
+    this.updateTourLengthDisplay()
   }
 
   handleToggleClick(button) {

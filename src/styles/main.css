@@ -386,4 +386,5 @@ export class UIController {
     // Clear any messages
     this.clearMessages()
   }
+  border: 2px solid var(--border-accent);
 }
