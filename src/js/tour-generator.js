@@ -74,27 +74,47 @@ export class TourGenerator {
     return this._extractLocationFromDreamTour(dreamTourDescription)
   }
   _extractLocationFromDreamTour(dreamTour) {
-    // Simple location extraction - look for common patterns
+    // Enhanced location extraction for freeform input
     const locationPatterns = [
+      // Direct location patterns (most common in freeform input)
+      /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:local|history|tour|walk|guide|experience|adventure)/i,
+      /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:hidden|secret|gems|spots|places)/i,
+      /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:food|cafe|coffee|restaurant|pub|bar)/i,
+      /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:art|street|culture|music|nightlife)/i,
+      
+      // Preposition-based patterns
       /\bin\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g,
       /\bat\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g,
       /\baround\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g,
-      /\bnear\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g
+      /\bnear\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g,
+      
+      // Location at the end patterns
+      /(?:tour|walk|guide|experience|adventure)\s+(?:of|in|around)\s+([A-Z][a-zA-Z\s,'-]+?)(?:\s|,|\.|\?|!|$)/i,
+      
+      // Simple capitalized word patterns (fallback)
+      /^([A-Z][a-zA-Z\s,'-]{2,}?)(?:\s+(?:local|history|tour|walk|guide|experience|adventure|hidden|secret|gems|spots|places|food|cafe|coffee|restaurant|pub|bar|art|street|culture|music|nightlife))/i
     ]
     
     for (const pattern of locationPatterns) {
-      const matches = dreamTour.match(pattern)
-      if (matches) {
-        // Return the first reasonable match (filter out very short matches)
-        for (const match of matches) {
-          const location = match.replace(/^(in|at|around|near)\s+/i, '').trim()
-          if (location.length > 3 && !location.match(/^(the|a|an|my|your|our|their)\s/i)) {
+      const match = dreamTour.match(pattern)
+      if (match) {
+        let location = match[1]
+        if (location) {
+          // Clean up the location
+          location = location.replace(/^(in|at|around|near|of)\s+/i, '').trim()
+          location = location.replace(/[,\.!?]+$/, '').trim() // Remove trailing punctuation
+          
+          // Filter out very short matches and common words
+          if (location.length > 2 && 
+              !location.match(/^(the|a|an|my|your|our|their|this|that|some|many|few|local|history|tour|walk|guide|experience|adventure|hidden|secret|gems|spots|places|food|cafe|coffee|restaurant|pub|bar|art|street|culture|music|nightlife)$/i)) {
+            console.log('Extracted location from dream tour:', location)
             return location
           }
         }
       }
     }
     
+    console.log('No location found in dream tour:', dreamTour)
     return null
   }
 
