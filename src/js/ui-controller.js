@@ -276,6 +276,7 @@ export class UIController {
   }
 
   async generateTour() {
+    console.log('UIController: Starting tour generation...')
     const dreamTour = this.elements.dreamTourInput.value.trim()
     const specificLocation = this.elements.locationInput.value.trim()
     const tourLength = this.getTourLength()
@@ -287,19 +288,23 @@ export class UIController {
       return
     }
 
+    console.log('UIController: Checking effective location...')
     // Check if location can be determined before proceeding
     const effectiveLocation = this.tourGenerator.getEffectiveLocation(dreamTour, specificLocation)
     if (!effectiveLocation) {
       this.showError('Please specify a location either in your dream tour description or in the advanced settings.')
       return
     }
+    console.log('UIController: Effective location:', effectiveLocation)
 
     this.clearMessages()
     this.elements.tourOutput.classList.add('hidden')
     this.showLoadingScreen()
+    console.log('UIController: Loading screen shown, calling tour generator...')
 
     try {
       const result = await this.tourGenerator.generateTour(dreamTour, specificLocation, toggleOptions, tourLength, this.userCurrentLocation, this.userCountry)
+      console.log('UIController: Tour generation completed successfully')
       const tourText = result.tourText
       capturedPrompt = result.prompt
       

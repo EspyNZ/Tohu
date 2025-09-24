@@ -23,8 +23,9 @@ window.initGoogleMaps = function() {
   import('./js/places-service.js').then(({ PlacesService }) => {
     PlacesService.notifyMapsLoaded()
     console.log('PlacesService notified that Google Maps is loaded')
+  }).catch(error => {
+    console.error('Error importing PlacesService in callback:', error)
   })
-}
 
 // Initialize the UI components that rely on the DOM being fully loaded.
 document.addEventListener('DOMContentLoaded', () => {

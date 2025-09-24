@@ -14,10 +14,24 @@ export class PlacesService {
   static notifyMapsLoaded() {
     if (PlacesService._mapsLoadedResolve) {
       PlacesService._mapsLoadedResolve()
+      console.log('PlacesService: Google Maps loading promise resolved')
     }
   }
 
   static async waitForMapsToLoad() {
+    console.log('PlacesService: Waiting for Google Maps to load...')
+    
+    // Add a timeout fallback in case the callback never fires
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => {
+        console.warn('PlacesService: Google Maps loading timeout, proceeding anyway')
+        resolve()
+      }, 10000) // 10 second timeout
+    })
+    
+    // Race between the maps loading and the timeout
+    await Promise.race([PlacesService._mapsLoadedPromise, timeoutPromise])
+    console.log('PlacesService: Google Maps wait completed')
     return PlacesService._mapsLoadedPromise
   }
 
