@@ -9,69 +9,71 @@ export class TourGenerator {
   }
 
   async generateTour(dreamTourDescription, specificLocation, toggleOptions = [], tourLength = 5) {
-    // Extract or determine location from dream tour description and specific location
-    let locationData = null
-    let effectiveLocation = specificLocation
-    
-    // If no specific location provided, try to extract from dream tour description
-    if (!effectiveLocation) {
-      effectiveLocation = this.extractLocationFromDreamTour(dreamTourDescription)
-    }
+    const effectiveLocation = this.getEffectiveLocation(dreamTourDescription, specificLocation)
     
     if (effectiveLocation) {
-      locationData = await this.placesService.geocodeLocation(effectiveLocation)
+      const locationData = await this.placesService.geocodeLocation(effectiveLocation)
       if (!locationData) {
         throw new Error(`Could not find the location "${effectiveLocation}". Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
+      }
+      
+      const centerLocation = `${locationData.lat},${locationData.lng}`
+      const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000)
+      
+      const prompt = this.createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces)
+      
+      try {
+        // For development, use mock data first
+        if (this.shouldUseMockData()) {
+          return {
+            tourText: this.generateMockTour(dreamTourDescription, effectiveLocation, toggleOptions, tourLength),
+            prompt: prompt
+          }
+        }
+
+        const chatHistory = [{ role: "user", parts: [{ text: prompt }] }]
+        const payload = { contents: chatHistory }
+        
+        const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(`API error ${response.status} - ${errorData.error?.message || response.statusText}`)
+        }
+
+        const result = await response.json()
+
+        if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+          return {
+            tourText: result.candidates[0].content.parts[0].text,
+            prompt: prompt
+          }
+        } else {
+          throw new Error('Unexpected API response structure')
+        }
+      } catch (error) {
+        console.error('Error generating tour:', error)
+        throw error
       }
     } else {
       throw new Error('Please specify a location either in your dream tour description or in the advanced settings.')
     }
-
-    const centerLocation = `${locationData.lat},${locationData.lng}`
-    const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000)
-    
-    const prompt = this.createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces)
-    
-    try {
-      // For development, use mock data first
-      if (this.shouldUseMockData()) {
-        return {
-          tourText: this.generateMockTour(dreamTourDescription, effectiveLocation, toggleOptions, tourLength),
-          prompt: prompt
-        }
-      }
-
-      const chatHistory = [{ role: "user", parts: [{ text: prompt }] }]
-      const payload = { contents: chatHistory }
-      
-      const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(`API error ${response.status} - ${errorData.error?.message || response.statusText}`)
-      }
-
-      const result = await response.json()
-
-      if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
-        return {
-          tourText: result.candidates[0].content.parts[0].text,
-          prompt: prompt
-        }
-      } else {
-        throw new Error('Unexpected API response structure')
-      }
-    } catch (error) {
-      console.error('Error generating tour:', error)
-      throw error
-    }
   }
 
-  extractLocationFromDreamTour(dreamTour) {
+  getEffectiveLocation(dreamTourDescription, specificLocation) {
+    // First check if specific location is provided
+    if (specificLocation && specificLocation.trim()) {
+      return specificLocation.trim()
+    }
+    
+    // Fall back to extracting from dream tour description
+    return this._extractLocationFromDreamTour(dreamTourDescription)
+  }
+  _extractLocationFromDreamTour(dreamTour) {
     // Simple location extraction - look for common patterns
     const locationPatterns = [
       /\bin\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g,

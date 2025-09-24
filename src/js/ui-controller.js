@@ -274,6 +274,13 @@ export class UIController {
       return
     }
 
+    // Check if location can be determined before proceeding
+    const effectiveLocation = this.tourGenerator.getEffectiveLocation(dreamTour, specificLocation)
+    if (!effectiveLocation) {
+      this.showError('Please specify a location either in your dream tour description or in the advanced settings.')
+      return
+    }
+
     this.clearMessages()
     this.elements.tourOutput.classList.add('hidden')
     this.showLoadingScreen()
