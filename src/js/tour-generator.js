@@ -8,11 +8,11 @@ export class TourGenerator {
     this.placesService = new PlacesService()
   }
 
-  async generateTour(dreamTourDescription, specificLocation, toggleOptions = [], tourLength = 5) {
+  async generateTour(dreamTourDescription, specificLocation, toggleOptions = [], tourLength = 5, userCurrentLocation = null) {
     const effectiveLocation = this.getEffectiveLocation(dreamTourDescription, specificLocation)
     
     if (effectiveLocation) {
-      const locationData = await this.placesService.geocodeLocation(effectiveLocation)
+      const locationData = await this.placesService.geocodeLocation(effectiveLocation, userCurrentLocation)
       if (!locationData) {
         throw new Error(`Could not find the location "${effectiveLocation}". Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
       }

@@ -89,7 +89,7 @@ export class PlacesService {
     }
   }
 
-  async geocodeLocation(address) {
+  async geocodeLocation(address, biasLocation = null) {
     return new Promise((resolve) => {
       if (!this.initializeServices()) {
         console.warn('Google Maps API not loaded')
@@ -97,9 +97,21 @@ export class PlacesService {
         return
       }
 
-      this.geocoder.geocode({ address: address }, (results, status) => {
+      const geocodeRequest = { address: address }
+      
+      // Add location bias if user's current location is available
+      if (biasLocation) {
+        geocodeRequest.locationBias = {
+          center: { lat: biasLocation.lat, lng: biasLocation.lng },
+          radius: 50000 // 50km radius bias
+        }
+        console.log('Geocoding with location bias:', biasLocation)
+      }
+
+      this.geocoder.geocode(geocodeRequest, (results, status) => {
         if (status === 'OK' && results && results.length > 0) {
           const location = results[0].geometry.location
+          console.log('Geocoded location:', results[0].formatted_address)
           resolve({
             lat: location.lat(),
             lng: location.lng(),

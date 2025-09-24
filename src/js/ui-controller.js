@@ -10,6 +10,7 @@ export class UIController {
     this.tourRenderer = new TourRenderer()
     this.mapController = new MapController()
     this.currentTour = null
+    this.userCurrentLocation = null
   }
 
   init() {
@@ -48,7 +49,8 @@ export class UIController {
       debugPanel: document.getElementById('debugPanel'),
       debugToggleBtn: document.getElementById('debugToggleBtn'),
       debugContent: document.getElementById('debugContent'),
-      promptContent: document.getElementById('promptContent')
+      promptContent: document.getElementById('promptContent'),
+      useCurrentLocationBtn: document.getElementById('useCurrentLocationBtn')
     }
     
     // Store these as direct properties for more reliable access
@@ -190,6 +192,13 @@ export class UIController {
         this.showSearchInterface()
       })
     }
+
+    // Current location button event listener
+    if (this.elements.useCurrentLocationBtn) {
+      this.elements.useCurrentLocationBtn.addEventListener('click', () => {
+        this.handleUseCurrentLocation()
+      })
+    }
   }
 
   initializeSliders() {
@@ -286,7 +295,7 @@ export class UIController {
     this.showLoadingScreen()
 
     try {
-      const result = await this.tourGenerator.generateTour(dreamTour, specificLocation, toggleOptions, tourLength)
+      const result = await this.tourGenerator.generateTour(dreamTour, specificLocation, toggleOptions, tourLength, this.userCurrentLocation)
       const tourText = result.tourText
       capturedPrompt = result.prompt
       
@@ -445,5 +454,58 @@ export class UIController {
     
     // Clear any messages
     this.clearMessages()
+  }
+
+  async handleUseCurrentLocation() {
+    if (!navigator.geolocation) {
+      this.showError('Geolocation is not supported by this browser.')
+      return
+    }
+
+    const button = this.elements.useCurrentLocationBtn
+    button.classList.add('loading')
+    button.disabled = true
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
+        })
+      })
+
+      this.userCurrentLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      }
+
+      // Update the location input placeholder to indicate current location is being used
+      this.elements.locationInput.placeholder = '📍 Using your current location for better results'
+      this.elements.locationInput.style.fontStyle = 'italic'
+      this.elements.locationInput.style.color = 'var(--primary-color)'
+
+      this.showInfo('Current location detected! This will help provide more accurate local results.')
+
+    } catch (error) {
+      console.error('Error getting current location:', error)
+      
+      let errorMessage = 'Unable to get your current location. '
+      if (error.code === error.PERMISSION_DENIED) {
+        errorMessage += 'Please allow location access and try again.'
+      } else if (error.code === error.POSITION_UNAVAILABLE) {
+        errorMessage += 'Location information is unavailable.'
+      } else if (error.code === error.TIMEOUT) {
+        errorMessage += 'Location request timed out.'
+      } else {
+        errorMessage += 'Please try again or enter a location manually.'
+      }
+      
+      this.showError(errorMessage)
+      this.userCurrentLocation = null
+    } finally {
+      button.classList.remove('loading')
+      button.disabled = false
+    }
   }
 }
