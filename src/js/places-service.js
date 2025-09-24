@@ -3,7 +3,6 @@ import { API_CONFIG } from './config.js'
 export class PlacesService {
   constructor() {
     this.apiKey = API_CONFIG.googleMaps.apiKey
-    this.geocoder = null
     this._mapInstance = null
   }
 
@@ -17,7 +16,6 @@ export class PlacesService {
 
   initializeServices() {
     if (window.google && window.google.maps) {
-      this.geocoder = new google.maps.Geocoder()
       return true
     }
     return false
@@ -90,39 +88,44 @@ export class PlacesService {
   }
 
   async geocodeLocation(address, biasLocation = null) {
-    return new Promise((resolve) => {
-      if (!this.initializeServices()) {
-        console.warn('Google Maps API not loaded')
-        resolve(null)
-        return
+    try {
+      if (!window.google || !window.google.maps || !window.google.maps.places) {
+        console.warn('Google Maps Places API not loaded')
+        return null
       }
 
-      const geocodeRequest = { address: address }
+      const request = {
+        textQuery: address,
+        fields: ['id', 'displayName', 'location', 'formattedAddress']
+      }
       
       // Add location bias if user's current location is available
       if (biasLocation) {
-        geocodeRequest.locationBias = {
+        request.locationBias = {
           center: { lat: biasLocation.lat, lng: biasLocation.lng },
           radius: 50000 // 50km radius bias
         }
         console.log('Geocoding with location bias:', biasLocation)
       }
 
-      this.geocoder.geocode(geocodeRequest, (results, status) => {
-        if (status === 'OK' && results && results.length > 0) {
-          const location = results[0].geometry.location
-          console.log('Geocoded location:', results[0].formatted_address)
-          resolve({
-            lat: location.lat(),
-            lng: location.lng(),
-            formatted_address: results[0].formatted_address
-          })
-        } else {
-          console.warn('Geocoding failed:', status)
-          resolve(null)
+      const { places } = await google.maps.places.Place.searchByText(request)
+      
+      if (places && places.length > 0) {
+        const place = places[0]
+        console.log('Geocoded location:', place.formattedAddress)
+        return {
+          lat: place.location.lat(),
+          lng: place.location.lng(),
+          formatted_address: place.formattedAddress
         }
-      })
-    })
+      } else {
+        console.warn('Geocoding failed: No results found')
+        return null
+      }
+    } catch (error) {
+      console.warn('Geocoding failed:', error)
+      return null
+    }
   }
 
   getPhotoUrl(photo, maxWidth = 600) {
