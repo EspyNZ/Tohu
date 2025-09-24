@@ -996,6 +996,11 @@ h3 { font-size: var(--font-size-xl); }
   color: var(--text-primary);
 }
 
+.tour-journey-between-stops strong span::before {
+  content: '👣 ';
+  margin-right: var(--spacing-xs);
+  color: var(--primary-color);
+}
 /* Map Links */
 .map-link {
   display: inline-flex;
