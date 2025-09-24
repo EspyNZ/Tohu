@@ -22,10 +22,8 @@ window.initGoogleMaps = function() {
   // Notify PlacesService that Google Maps is loaded
   import('./js/places-service.js').then(({ PlacesService }) => {
     PlacesService.notifyMapsLoaded()
+    console.log('PlacesService notified that Google Maps is loaded')
   })
-  
-  // The UIController's init method will handle service initialization.
-  // No need to re-initialize placesService here directly.
 }
 
 // Initialize the UI components that rely on the DOM being fully loaded.
