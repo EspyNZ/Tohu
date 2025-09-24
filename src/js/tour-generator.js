@@ -33,7 +33,7 @@ export class TourGenerator {
       
       console.log('TourGenerator: About to find nearby places')
       const centerLocation = `${locationData.lat},${locationData.lng}`
-      const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000)
+      const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000, dreamTourDescription, toggleOptions)
       console.log('TourGenerator: Found nearby places:', nearbyPlaces.length)
       
       console.log('TourGenerator: Creating prompt')

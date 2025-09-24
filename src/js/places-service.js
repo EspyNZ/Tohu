@@ -395,11 +395,11 @@ export class PlacesService {
     }
   }
 
-  async findInterestingPlaces(centerLocation, radiusMeters = 2000) {
+  async findInterestingPlaces(centerLocation, radiusMeters = 2000, dreamTourDescription = '', toggleOptions = []) {
     await PlacesService.waitForMapsToLoad()
     
     try {
-      console.log('Finding interesting places near:', centerLocation, 'within', radiusMeters, 'meters')
+      console.log('Finding interesting places near:', centerLocation, 'within', radiusMeters, 'meters', 'for dream tour:', dreamTourDescription, 'with options:', toggleOptions)
       
       // Validate input parameters
       if (!centerLocation || typeof centerLocation !== 'string') {
@@ -422,25 +422,74 @@ export class PlacesService {
       const center = { lat, lng }
       const places = []
 
-      // Define search categories for interesting places
-      const searchQueries = [
-        'tourist attractions',
-        'museums',
-        'parks',
-        'historical sites',
-        'art galleries',
-        'landmarks',
-        'churches',
-        'markets',
-        'viewpoints',
-        'cultural sites'
-      ]
+      // Generate dynamic search parameters based on user interests
+      const searchParams = this._generateSearchParameters(dreamTourDescription, toggleOptions)
+      console.log('Generated search parameters:', searchParams)
 
-      // Search for each category
-      for (const query of searchQueries) {
+      // Search using includedTypes (more precise)
+      for (const placeType of searchParams.includedTypes) {
+        try {
+          if (!placeType || placeType.trim().length === 0) {
+            console.warn('PlacesService: Skipping empty place type')
+            continue
+          }
+          
+          const request = {
+            includedTypes: [placeType],
+            fields: ['id', 'displayName', 'location', 'types', 'rating'],
+            locationBias: {
+              center: center,
+              radius: radiusMeters
+            },
+            maxResultCount: 10
+          }
+
+          console.log('PlacesService: Making searchByText request for type:', placeType, request)
+          const { places: searchResults } = await google.maps.places.Place.searchByText(request)
+          
+          if (searchResults && searchResults.length > 0) {
+            for (const place of searchResults) {
+              // Check if place is within our radius and not already added
+              if (place.location && place.id && place.displayName) {
+                const distance = this.calculateDistance(
+                  center.lat, center.lng,
+                  place.location.lat(), place.location.lng()
+                )
+                
+                if (distance <= radiusMeters && !places.find(p => p.place_id === place.id)) {
+                  places.push({
+                    name: place.displayName,
+                    place_id: place.id,
+                    geometry: {
+                      location: {
+                        lat: () => place.location.lat(),
+                        lng: () => place.location.lng()
+                      }
+                    },
+                    types: place.types || [],
+                    rating: place.rating || null,
+                    distance: Math.round(distance)
+                  })
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.warn(`PlacesService: Error searching for type ${placeType}:`, {
+            message: error.message,
+            status: error.status,
+            code: error.code,
+            details: error.details || 'No additional details'
+          })
+          // Continue with other queries even if one fails
+        }
+      }
+
+      // Search using text queries (broader search)
+      for (const query of searchParams.textQueries) {
         try {
           if (!query || query.trim().length === 0) {
-            console.warn('PlacesService: Skipping empty search query')
+            console.warn('PlacesService: Skipping empty text query')
             continue
           }
           
@@ -451,7 +500,7 @@ export class PlacesService {
               center: center,
               radius: radiusMeters
             },
-            maxResultCount: 10
+            maxResultCount: 8
           }
 
           console.log('PlacesService: Making searchByText request for query:', query, request)
@@ -485,7 +534,7 @@ export class PlacesService {
             }
           }
         } catch (error) {
-          console.warn(`PlacesService: Error searching for ${query}:`, {
+          console.warn(`PlacesService: Error searching for query ${query}:`, {
             message: error.message,
             status: error.status,
             code: error.code,
@@ -499,7 +548,7 @@ export class PlacesService {
       places.sort((a, b) => a.distance - b.distance)
       const limitedPlaces = places.slice(0, 20) // Limit to top 20 closest places
       
-      console.log(`Found ${limitedPlaces.length} interesting places near ${centerLocation}`)
+      console.log(`Found ${limitedPlaces.length} interesting places near ${centerLocation} based on user interests`)
       return limitedPlaces
       
     } catch (error) {
@@ -511,6 +560,128 @@ export class PlacesService {
         stack: error.stack
       })
       return []
+    }
+  }
+
+  // Helper method to generate search parameters based on user interests
+  _generateSearchParameters(dreamTourDescription = '', toggleOptions = []) {
+    const includedTypes = new Set()
+    const textQueries = new Set()
+    
+    // Convert to lowercase for easier matching
+    const description = dreamTourDescription.toLowerCase()
+    
+    // Map toggle options to Google Places API types and queries
+    if (toggleOptions.includes('cafe')) {
+      includedTypes.add('cafe')
+      includedTypes.add('coffee_shop')
+      textQueries.add('specialty coffee')
+      textQueries.add('local cafes')
+    }
+    
+    if (toggleOptions.includes('pub')) {
+      includedTypes.add('bar')
+      includedTypes.add('night_club')
+      textQueries.add('local pubs')
+      textQueries.add('craft beer')
+    }
+    
+    if (toggleOptions.includes('history')) {
+      includedTypes.add('museum')
+      includedTypes.add('historical_landmark')
+      textQueries.add('historical sites')
+      textQueries.add('heritage buildings')
+      textQueries.add('monuments')
+    }
+    
+    if (toggleOptions.includes('celebs')) {
+      textQueries.add('celebrity homes')
+      textQueries.add('famous filming locations')
+      textQueries.add('celebrity restaurants')
+    }
+    
+    // Analyze dream tour description for specific interests
+    const interestMappings = {
+      // Music-related
+      'music': { types: ['night_club'], queries: ['music venues', 'live music', 'concert halls'] },
+      'concert': { types: ['night_club'], queries: ['concert venues', 'music halls'] },
+      'band': { types: ['night_club'], queries: ['live music venues', 'band venues'] },
+      'jazz': { types: ['night_club'], queries: ['jazz clubs', 'jazz venues'] },
+      'rock': { types: ['night_club'], queries: ['rock venues', 'music clubs'] },
+      'classical': { types: [], queries: ['concert halls', 'opera houses', 'classical music venues'] },
+      
+      // Art-related
+      'art': { types: ['art_gallery', 'museum'], queries: ['art galleries', 'street art', 'public art'] },
+      'gallery': { types: ['art_gallery'], queries: ['art galleries', 'contemporary art'] },
+      'street art': { types: [], queries: ['street art', 'murals', 'graffiti art'] },
+      'sculpture': { types: ['art_gallery'], queries: ['sculpture parks', 'public sculptures'] },
+      'painting': { types: ['art_gallery'], queries: ['art galleries', 'painting exhibitions'] },
+      
+      // Food-related
+      'food': { types: ['restaurant', 'meal_takeaway'], queries: ['local restaurants', 'food markets', 'street food'] },
+      'restaurant': { types: ['restaurant'], queries: ['local restaurants', 'fine dining'] },
+      'market': { types: [], queries: ['food markets', 'farmers markets', 'local markets'] },
+      'street food': { types: ['meal_takeaway'], queries: ['street food', 'food trucks'] },
+      'cuisine': { types: ['restaurant'], queries: ['ethnic restaurants', 'local cuisine'] },
+      
+      // History-related
+      'history': { types: ['museum', 'historical_landmark'], queries: ['historical sites', 'heritage buildings'] },
+      'historical': { types: ['museum', 'historical_landmark'], queries: ['historical landmarks', 'heritage sites'] },
+      'heritage': { types: ['historical_landmark'], queries: ['heritage buildings', 'historical sites'] },
+      'monument': { types: ['historical_landmark'], queries: ['monuments', 'memorials'] },
+      'ancient': { types: ['historical_landmark'], queries: ['ancient sites', 'archaeological sites'] },
+      
+      // Nature-related
+      'park': { types: ['park'], queries: ['parks', 'gardens', 'green spaces'] },
+      'garden': { types: ['park'], queries: ['botanical gardens', 'public gardens'] },
+      'nature': { types: ['park'], queries: ['nature reserves', 'parks', 'outdoor spaces'] },
+      'beach': { types: [], queries: ['beaches', 'waterfront', 'coastal areas'] },
+      'hiking': { types: ['park'], queries: ['hiking trails', 'nature walks'] },
+      
+      // Architecture-related
+      'architecture': { types: ['church', 'synagogue', 'hindu_temple'], queries: ['architectural landmarks', 'historic buildings'] },
+      'building': { types: ['church', 'synagogue'], queries: ['historic buildings', 'architectural sites'] },
+      'church': { types: ['church'], queries: ['historic churches', 'religious architecture'] },
+      'cathedral': { types: ['church'], queries: ['cathedrals', 'religious buildings'] },
+      
+      // Shopping-related
+      'shopping': { types: ['shopping_mall', 'clothing_store'], queries: ['shopping districts', 'local markets'] },
+      'boutique': { types: ['clothing_store'], queries: ['boutique shops', 'local boutiques'] },
+      'vintage': { types: ['clothing_store'], queries: ['vintage shops', 'antique stores'] },
+      
+      // Entertainment-related
+      'theater': { types: [], queries: ['theaters', 'performing arts venues'] },
+      'cinema': { types: ['movie_theater'], queries: ['historic cinemas', 'movie theaters'] },
+      'entertainment': { types: ['amusement_park'], queries: ['entertainment venues', 'attractions'] },
+      
+      // Cultural-related
+      'culture': { types: ['museum', 'art_gallery'], queries: ['cultural sites', 'cultural centers'] },
+      'cultural': { types: ['museum', 'art_gallery'], queries: ['cultural landmarks', 'cultural attractions'] },
+      'local': { types: [], queries: ['local attractions', 'neighborhood gems'] },
+      'hidden': { types: [], queries: ['hidden gems', 'secret spots', 'local favorites'] },
+      'secret': { types: [], queries: ['secret locations', 'hidden places'] }
+    }
+    
+    // Apply interest mappings based on description content
+    for (const [keyword, mapping] of Object.entries(interestMappings)) {
+      if (description.includes(keyword)) {
+        mapping.types.forEach(type => includedTypes.add(type))
+        mapping.queries.forEach(query => textQueries.add(query))
+      }
+    }
+    
+    // Add fallback searches if no specific interests were identified
+    if (includedTypes.size === 0 && textQueries.size === 0) {
+      console.log('No specific interests identified, using fallback searches')
+      includedTypes.add('tourist_attraction')
+      includedTypes.add('point_of_interest')
+      textQueries.add('local attractions')
+      textQueries.add('points of interest')
+    }
+    
+    return {
+      includedTypes: Array.from(includedTypes),
+      textQueries: Array.from(textQueries)
     }
   }
 
