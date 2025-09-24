@@ -525,16 +525,18 @@ export class UIController {
           enableHighAccuracy: false, // Use less accurate but faster location
           timeout: 5000, // Shorter timeout for background request
           maximumAge: 600000 // Accept location up to 10 minutes old
+        })
+      })
+
       this.userCurrentLocation = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       }
-        })
-      // Subtly indicate location is being used without being intrusive
-      this.elements.locationInput.placeholder = '📍 e.g., Bloomsbury, London (location detected for better results)'
       
-      console.log('Background location detected:', this.userCurrentLocation)
-      })
+      this.userCurrentLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      }
     } catch (error) {
       // Silently fail - don't show error messages for background location requests
       console.log('Background location request failed (this is normal):', error.message)
