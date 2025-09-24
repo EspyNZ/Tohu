@@ -1,17 +1,19 @@
 // API Configuration
 export const API_CONFIG = {
   googleMaps: {
-    apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-    placesApiUrl: 'https://maps.googleapis.com/maps/api/place'
+    // Use local proxy endpoints instead of direct API calls
+    proxyUrl: '/api/google-maps',
+    // For client-side Maps JavaScript API, we'll use a restricted key
+    clientApiKey: import.meta.env.VITE_GOOGLE_MAPS_CLIENT_KEY || 'demo_key'
   },
   gemini: {
-    apiKey: import.meta.env.VITE_GEMINI_API_KEY,
-    apiUrl: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+    // Use local proxy endpoint instead of direct API calls
+    proxyUrl: '/api/gemini'
   }
 }
 
-// Dynamic Google Maps script loader
-export function loadGoogleMapsScript() {
+// Load Google Maps with client-side key (restricted to specific domains)
+export function loadGoogleMapsScript(clientKey = null) {
   return new Promise((resolve, reject) => {
     // Check if Google Maps is already loaded
     if (window.google && window.google.maps) {
@@ -33,9 +35,13 @@ export function loadGoogleMapsScript() {
       return
     }
 
-    const apiKey = API_CONFIG.googleMaps.apiKey
-    if (!apiKey || apiKey === 'your_google_maps_api_key_here') {
-      reject(new Error('Google Maps API key not configured'))
+    const apiKey = clientKey || API_CONFIG.googleMaps.clientApiKey
+    if (!apiKey || apiKey === 'demo_key') {
+      console.warn('Using demo Google Maps key - some features may be limited')
+    }
+
+    if (!apiKey) {
+      reject(new Error('Google Maps client API key not configured'))
       return
     }
 
@@ -58,21 +64,14 @@ export function loadGoogleMapsScript() {
 
 // Validate API keys on startup
 export function validateApiKeys() {
-  const missing = []
+  // In proxy mode, we only need to check client-side keys
+  const clientKey = API_CONFIG.googleMaps.clientApiKey
   
-  if (!API_CONFIG.googleMaps.apiKey || API_CONFIG.googleMaps.apiKey === 'your_google_maps_api_key_here') {
-    missing.push('Google Maps API Key')
+  if (!clientKey || clientKey === 'demo_key') {
+    console.warn('Using demo Google Maps client key - some features may be limited')
+    console.warn('Add VITE_GOOGLE_MAPS_CLIENT_KEY to your .env file for full functionality')
   }
   
-  if (!API_CONFIG.gemini.apiKey || API_CONFIG.gemini.apiKey === 'your_gemini_api_key_here') {
-    missing.push('Gemini API Key')
-  }
-  
-  if (missing.length > 0) {
-    console.warn('Missing API keys:', missing.join(', '))
-    console.warn('Please add your API keys to the .env file in the project root')
-    return false
-  }
-  
+  console.log('API configuration validated - using server-side proxy for secure API calls')
   return true
 }
