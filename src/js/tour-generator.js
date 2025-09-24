@@ -3,8 +3,7 @@ import { PlacesService } from './places-service.js'
 
 export class TourGenerator {
   constructor() {
-    this.apiKey = API_CONFIG.gemini.apiKey
-    this.apiUrl = API_CONFIG.gemini.apiUrl
+    this.proxyUrl = API_CONFIG.gemini.proxyUrl
     this.placesService = new PlacesService()
   }
 
@@ -51,10 +50,12 @@ export class TourGenerator {
         }
 
         console.log('TourGenerator: Making API call to Gemini')
-        const chatHistory = [{ role: "user", parts: [{ text: prompt }] }]
-        const payload = { contents: chatHistory }
+        // Use server proxy instead of direct API call
+        const payload = { 
+          contents: [{ role: "user", parts: [{ text: prompt }] }] 
+        }
         
-        const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
+        const response = await fetch(this.proxyUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -319,7 +320,9 @@ WRITING STYLE:
   }
 
   shouldUseMockData() {
-    return !this.apiKey || this.apiKey === "YOUR_API_KEY_HERE"
+    // In proxy mode, we assume the server handles API keys
+    // Only use mock data if explicitly configured or in development
+    return import.meta.env.MODE === 'development' && import.meta.env.VITE_USE_MOCK_DATA === 'true'
   }
 
   generateMockTour(dreamTourDescription, effectiveLocation, toggleOptions, tourLength) {
