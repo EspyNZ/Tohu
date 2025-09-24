@@ -229,6 +229,13 @@ export class UIController {
     }
   }
 
+  getTourLength() {
+    if (this.elements.flexibleLengthToggle && this.elements.flexibleLengthToggle.checked) {
+      return 'flexible'
+    }
+    return parseInt(this.elements.tourLengthSlider.value)
+  }
+
   async generateTour() {
     const dreamTour = this.elements.dreamTourInput.value.trim()
     const specificLocation = this.elements.locationInput.value.trim()
