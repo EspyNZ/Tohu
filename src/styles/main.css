@@ -296,9 +296,20 @@ h3 {
 .dream-tour-field {
     min-height: 120px;
     resize: vertical;
-    padding: 1rem 1.25rem 1rem 3rem;
+    padding: 1rem 1.25rem;
     line-height: 1.6;
     font-family: inherit;
+}
+
+/* Enhanced primary input styling */
+.primary-input {
+    box-shadow: 0 2px 8px rgba(124, 174, 122, 0.1);
+    transition: all 0.3s ease;
+}
+
+.primary-input:focus {
+    box-shadow: 0 4px 16px rgba(124, 174, 122, 0.2);
+    border-width: 3px;
 }
 
 .input-with-icon {
@@ -399,7 +410,7 @@ h3 {
 
 .input-field, textarea.input-field {
     padding: 1rem 1.25rem 1rem 3rem; /* Left padding for icon */
-    border: 2px solid var(--border-accent);
+    border: 2px solid var(--border-light);
     border-radius: 0.5rem; /* Squared corners */
     width: 100%;
     box-sizing: border-box;
@@ -542,10 +553,28 @@ textarea.input-field {
 }
 
 .toggle-btn.active {
-    border-color: var(--tohu-green-600);
-    background: linear-gradient(135deg, var(--tohu-green-100) 0%, var(--tohu-green-50) 100%);
-    color: var(--tohu-green-800);
-    box-shadow: 0 4px 12px rgba(124, 174, 122, 0.25);
+    border-color: var(--tohu-green-700);
+    background: linear-gradient(135deg, var(--tohu-green-600) 0%, var(--tohu-green-700) 100%);
+    color: white;
+    box-shadow: 0 6px 16px rgba(124, 174, 122, 0.4);
+    transform: translateY(-2px);
+}
+
+.toggle-btn.active::after {
+    content: '✓';
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .toggle-btn.active::before {
@@ -1457,7 +1486,7 @@ p {
 
 .slider-header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
 }
@@ -1466,17 +1495,34 @@ p {
     font-size: 1rem;
     font-weight: 400;
     color: var(--text-secondary);
-    margin-bottom: 0.75rem;
+}
+
+.slider-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--tohu-green-700);
+    background: var(--tohu-green-50);
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    border: 1px solid var(--tohu-green-200);
+}
+
+.slider-container {
+    position: relative;
+    margin-bottom: 0.5rem;
 }
 
 input[type="range"] {
     width: 100%;
     -webkit-appearance: none;
-    height: 12px; /* Slightly thicker track */
+    height: 8px;
     border-radius: 0.25rem; /* Squared corners */
     outline: none;
     opacity: 0.8;
     transition: opacity .2s;
+    background: transparent;
+    position: relative;
+    z-index: 2;
 }
 
 input[type="range"]:hover {
@@ -1485,14 +1531,14 @@ input[type="range"]:hover {
 
 input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
-  height: 12px;
+  height: 8px;
   background: var(--border-accent);
   border-radius: 0.25rem;
 }
 
 input[type="range"]::-moz-range-track {
   width: 100%;
-  height: 12px;
+  height: 8px;
   background: var(--border-accent);
   border-radius: 0.25rem;
   border: none;
@@ -1501,41 +1547,79 @@ input[type="range"]::-moz-range-track {
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px;
-    height: 26px;
-    border-radius: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     background: var(--tohu-green-700);
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(4, 120, 87, 0.3);
+    box-shadow: 0 4px 12px rgba(4, 120, 87, 0.4), 0 0 0 2px white;
     border: none;
-    margin-top: -7px;
+    margin-top: -8px;
     position: relative;
-  margin-left: -10px;
+    transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.5), 0 0 0 3px white;
 }
 
 input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 26px;
-    border-radius: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     background: var(--tohu-green-700);
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(4, 120, 87, 0.3);
+    box-shadow: 0 4px 12px rgba(4, 120, 87, 0.4), 0 0 0 2px white;
     border: none;
     position: relative;
-  margin-left: -10px;
+    transition: all 0.2s ease;
 }
 
-/* Create a centered diamond/arrow shape for the slider thumb */
-input[type="range"]::-webkit-slider-thumb::before {
-    content: '';
+input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(4, 120, 87, 0.5), 0 0 0 3px white;
+}
+
+/* Slider tick marks */
+.slider-ticks {
     position: absolute;
     top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(45deg);
-    width: 12px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.tick {
+    position: absolute;
+    width: 2px;
     height: 12px;
-    background: white;
-    border-radius: 2px;
+    background: var(--border-medium);
+    transform: translateY(-50%);
+    border-radius: 1px;
+}
+
+.tick[data-value="1"] { left: 0%; }
+.tick[data-value="2"] { left: 11.11%; }
+.tick[data-value="3"] { left: 22.22%; }
+.tick[data-value="4"] { left: 33.33%; }
+.tick[data-value="5"] { left: 44.44%; }
+.tick[data-value="6"] { left: 55.56%; }
+.tick[data-value="7"] { left: 66.67%; }
+.tick[data-value="8"] { left: 77.78%; }
+.tick[data-value="9"] { left: 88.89%; }
+.tick[data-value="10"] { left: 100%; }
+
+/* Major ticks for labeled values */
+.tick[data-value="1"],
+.tick[data-value="5"],
+.tick[data-value="10"] {
+    background: var(--tohu-green-600);
+    height: 16px;
+    width: 3px;
 }
 
 /* Style the datalist ticks */

@@ -19,10 +19,7 @@
                 Describe your dream tour
             </label>
             <div class="input-with-icon">
-                <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-                <textarea id="dreamTourInput" class="input-field dream-tour-field" placeholder="✨ e.g., I want to explore hidden cafés and street art in Paris, focusing on local neighborhoods where artists gather. I love discovering places with stories and meeting locals who can share their favorite spots..." rows="4"></textarea>
+                <textarea id="dreamTourInput" class="input-field dream-tour-field primary-input" placeholder="✨ e.g., I want to explore hidden cafés and street art in Paris, focusing on local neighborhoods where artists gather. I love discovering places with stories and meeting locals who can share their favorite spots..." rows="4"></textarea>
             </div>
 
             <!-- Advanced Options -->
@@ -46,8 +43,23 @@
                 <div class="slider-group">
                     <div class="slider-header">
                         <div class="slider-title">Tour Length</div>
+                        <div class="slider-value" id="tourLengthValue">5 stops (75 minutes)</div>
                     </div>
-                    <input type="range" id="tourLengthSlider" min="1" max="10" value="5" list="tickmarks">
+                    <div class="slider-container">
+                        <input type="range" id="tourLengthSlider" min="1" max="10" value="5" list="tickmarks">
+                        <div class="slider-ticks">
+                            <div class="tick" data-value="1"></div>
+                            <div class="tick" data-value="2"></div>
+                            <div class="tick" data-value="3"></div>
+                            <div class="tick" data-value="4"></div>
+                            <div class="tick" data-value="5"></div>
+                            <div class="tick" data-value="6"></div>
+                            <div class="tick" data-value="7"></div>
+                            <div class="tick" data-value="8"></div>
+                            <div class="tick" data-value="9"></div>
+                            <div class="tick" data-value="10"></div>
+                        </div>
+                    </div>
                     <datalist id="tickmarks">
                         <option value="1" label="Short"></option>
                         <option value="5" label="Medium"></option>
@@ -57,27 +69,27 @@
 
                 <div class="toggle-buttons-container">
                     <div class="toggle-buttons-grid">
-                        <button type="button" class="toggle-btn" data-toggle="cafe">
+                        <button type="button" class="toggle-btn" data-toggle="cafe" title="Include local cafés and coffee culture in your tour">
                             <span class="toggle-icon">☕</span>
                             <span class="toggle-label">Cafe</span>
                         </button>
-                        <button type="button" class="toggle-btn" data-toggle="biking">
+                        <button type="button" class="toggle-btn" data-toggle="biking" title="Design the tour for cycling with bike-friendly routes">
                             <span class="toggle-icon">🚴</span>
                             <span class="toggle-label">Biking</span>
                         </button>
-                        <button type="button" class="toggle-btn" data-toggle="celebs">
+                        <button type="button" class="toggle-btn" data-toggle="celebs" title="Highlight famous people and celebrities connected to locations">
                             <span class="toggle-icon">⭐</span>
                             <span class="toggle-label">Celebs</span>
                         </button>
-                        <button type="button" class="toggle-btn" data-toggle="pub">
+                        <button type="button" class="toggle-btn" data-toggle="pub" title="Include local pubs and bars as dedicated stops">
                             <span class="toggle-icon">🍺</span>
                             <span class="toggle-label">Pub</span>
                         </button>
-                        <button type="button" class="toggle-btn" data-toggle="driving">
+                        <button type="button" class="toggle-btn" data-toggle="driving" title="Design the tour for driving with parking considerations">
                             <span class="toggle-icon">🚗</span>
                             <span class="toggle-label">Driving</span>
                         </button>
-                        <button type="button" class="toggle-btn" data-toggle="history">
+                        <button type="button" class="toggle-btn" data-toggle="history" title="Emphasize historical facts and stories at each location">
                             <span class="toggle-icon">🏛️</span>
                             <span class="toggle-label">History</span>
                         </button>

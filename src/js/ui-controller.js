@@ -90,6 +90,11 @@ export class UIController {
       this.generateTour()
     })
 
+    // Tour length slider value display
+    this.elements.tourLengthSlider.addEventListener('input', () => {
+      this.updateTourLengthDisplay()
+    })
+
     // Debug panel toggle
     if (this.elements.debugToggleBtn) {
       this.elements.debugToggleBtn.addEventListener('click', () => {
@@ -164,7 +169,19 @@ export class UIController {
   }
 
   initializeSliders() {
-    // Tour length slider is handled automatically by the browser
+    // Initialize tour length display
+    this.updateTourLengthDisplay()
+  }
+
+  updateTourLengthDisplay() {
+    const tourLength = parseInt(this.elements.tourLengthSlider.value)
+    const numberOfStops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))
+    const duration = Math.round(45 + (tourLength * 15))
+    
+    const tourLengthValue = document.getElementById('tourLengthValue')
+    if (tourLengthValue) {
+      tourLengthValue.textContent = `${numberOfStops} stops (${duration} minutes)`
+    }
   }
 
   handleToggleClick(button) {
