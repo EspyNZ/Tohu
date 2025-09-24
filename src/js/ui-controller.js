@@ -232,24 +232,26 @@ export class UIController {
     const toggleType = button.dataset.toggle
     
     // Handle mutually exclusive toggles for transportation
-    if (toggleType === 'driving' || toggleType === 'biking') {
+    if (toggleType === 'driving' || toggleType === 'biking' || toggleType === 'walking') {
       // Remove both driving and biking if either is clicked
-      this.activeToggles.delete('driving')
+      this.activeToggles.delete('walking')
+      this.activeToggles.delete('driving') 
       this.activeToggles.delete('biking')
       this.toggleButtons.forEach(btn => {
-        if (btn.dataset.toggle === 'driving' || btn.dataset.toggle === 'biking') {
+        if (btn.dataset.toggle === 'walking' || btn.dataset.toggle === 'driving' || btn.dataset.toggle === 'biking') {
           btn.classList.remove('active')
         }
       })
     }
     
     // Toggle the clicked button
-    if (this.activeToggles.has(toggleType)) {
-      this.activeToggles.delete(toggleType)
-      button.classList.remove('active')
-    } else {
+    if (!this.activeToggles.has(toggleType)) {
       this.activeToggles.add(toggleType)
       button.classList.add('active')
+    } else {
+      // Allow deselecting transportation mode (none selected is valid)
+      this.activeToggles.delete(toggleType)
+      button.classList.remove('active')
     }
   }
 
