@@ -403,3 +403,24 @@
 </div>
 </body>
 </html>
+
+<!-- Load Google Maps script dynamically for dummy tour -->
+<script>
+// Simple Google Maps loader for the dummy tour page
+function loadGoogleMapsForDummy() {
+  // Use a placeholder key for the dummy tour - in production, this would come from environment variables
+  const script = document.createElement('script')
+  script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDJ4MO0ke4jgEFq7f27KWyeg9_ehPR7xME&libraries=places,geometry&callback=initGoogleMaps'
+  script.async = true
+  script.defer = true
+  document.head.appendChild(script)
+}
+
+// Define the callback for dummy tour
+window.initGoogleMaps = function() {
+  console.log('Google Maps loaded for dummy tour')
+}
+
+// Load the script
+loadGoogleMapsForDummy()
+</script>
