@@ -26,6 +26,7 @@ window.initGoogleMaps = function() {
   }).catch(error => {
     console.error('Error importing PlacesService in callback:', error)
   })
+}
 
 // Initialize the UI components that rely on the DOM being fully loaded.
 document.addEventListener('DOMContentLoaded', () => {
