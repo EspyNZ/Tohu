@@ -282,8 +282,10 @@ Structure your response EXACTLY as follows:
   }
 
   generateMockTour(dreamTourDescription, effectiveLocation, toggleOptions, tourLength) {
-    const isBiking = toggleOptions.includes('biking')
-    const isDriving = toggleOptions.includes('driving')
+  }
+  generateMockTour(dreamTourDescription, effectiveLocation, transportationMode, interestOptions, tourLength) {
+    const isBiking = transportationMode === 'biking'
+    const isDriving = transportationMode === 'driving'
     
     // Calculate based on tour length slider (1-10)
     let stops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))

@@ -246,7 +246,8 @@ export class UIController {
     const dreamTour = this.elements.dreamTourInput.value.trim()
     const specificLocation = this.elements.locationInput.value.trim()
     const tourLength = this.getTourLength()
-    const toggleOptions = Array.from(this.activeToggles)
+    const transportationMode = this.activeTransportation
+    const interestOptions = Array.from(this.activeInterests)
     let capturedPrompt = ''
 
     if (!dreamTour) {
@@ -259,7 +260,7 @@ export class UIController {
     this.showLoadingScreen()
 
     try {
-      const result = await this.tourGenerator.generateTour(dreamTour, specificLocation, toggleOptions, tourLength)
+      const result = await this.tourGenerator.generateTour(dreamTour, specificLocation, transportationMode, interestOptions, tourLength)
       const tourText = result.tourText
       capturedPrompt = result.prompt
       
