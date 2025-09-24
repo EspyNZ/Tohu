@@ -307,12 +307,13 @@ h3 { font-size: var(--font-size-xl); }
 }
 
 .advanced-input-group:first-child {
-  padding-top: var(--spacing-2xl);
+  padding-top: 3rem;
 }
 
 /* Slider Group */
 .slider-group {
-  padding: 0 var(--spacing-lg) var(--spacing-xl) var(--spacing-lg);
+  padding: 0 var(--spacing-lg) var(--spacing-2xl) var(--spacing-lg);
+  margin-top: var(--spacing-xl);
 }
 
 .slider-header {

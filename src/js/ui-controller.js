@@ -182,7 +182,7 @@ export class UIController {
   updateTourLengthDisplay() {
     const tourLengthValue = document.getElementById('tourLengthValue')
     
-    if (this.elements.flexibleLengthToggle.checked) {
+    if (this.elements.flexibleLengthToggle && this.elements.flexibleLengthToggle.checked) {
       tourLengthValue.textContent = 'Flexible'
     } else {
       const tourLength = parseInt(this.elements.tourLengthSlider.value)
@@ -195,7 +195,7 @@ export class UIController {
   handleFlexibleLengthToggle() {
     const sliderContainer = document.querySelector('.slider-container')
     
-    if (this.elements.flexibleLengthToggle.checked) {
+    if (this.elements.flexibleLengthToggle && this.elements.flexibleLengthToggle.checked) {
       sliderContainer.classList.add('disabled')
     } else {
       sliderContainer.classList.remove('disabled')
