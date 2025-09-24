@@ -110,7 +110,7 @@ export class PlacesService {
         return null
       }
 
-      // Use the new Place class (this still works client-side with restricted key)
+      // Use the new Place class
       const place = new google.maps.places.Place({
         id: trimmedPlaceId,
         requestedLanguage: 'en'
@@ -229,14 +229,38 @@ export class PlacesService {
         this.initializeServices()
       }
 
-      // Attempt 1: Use server proxy for Places API searchByText
+      // Attempt 1: Use Places API searchByText with location bias
       console.log('Attempt 1: Places API searchByText with location bias')
       try {
-        // Use server proxy for geocoding to keep API key secure
-        const geocodeResult = await this.proxyGeocode(enhancedAddress, biasLocation)
-        if (geocodeResult) {
-          console.log('Geocoded location (Attempt 1 - Proxy):', geocodeResult.formatted_address, 'from query:', enhancedAddress)
-          return geocodeResult
+        if (!enhancedAddress || enhancedAddress.trim().length === 0) {
+          throw new Error('Empty textQuery parameter')
+        }
+        
+        const request = {
+          textQuery: enhancedAddress,
+          fields: ['id', 'displayName', 'location', 'formattedAddress']
+        }
+        
+        // Add location bias if user's current location is available
+        if (biasLocation) {
+          request.locationBias = {
+            center: { lat: biasLocation.lat, lng: biasLocation.lng },
+            radius: 200000 // 200km radius bias
+          }
+          console.log('Geocoding with location bias:', biasLocation)
+        }
+
+        console.log('PlacesService: Making searchByText request:', request)
+        const { places } = await google.maps.places.Place.searchByText(request)
+        
+        if (places && places.length > 0) {
+          const place = places[0]
+          console.log('Geocoded location (Attempt 1):', place.formattedAddress, 'from query:', enhancedAddress)
+          return {
+            lat: place.location.lat(),
+            lng: place.location.lng(),
+            formatted_address: place.formattedAddress
+          }
         }
       } catch (error) {
         console.warn('Attempt 1 failed:', {
@@ -247,8 +271,43 @@ export class PlacesService {
         })
       }
 
-      // Attempt 2: Fallback to traditional Geocoder API (client-side)
-      console.log('Attempt 2: Traditional Geocoder API fallback')
+      // Attempt 2: Use Places API searchByText without location bias (if bias was used)
+      if (biasLocation) {
+        console.log('Attempt 2: Places API searchByText without location bias')
+        try {
+          if (!enhancedAddress || enhancedAddress.trim().length === 0) {
+            throw new Error('Empty textQuery parameter')
+          }
+          
+          const request = {
+            textQuery: enhancedAddress,
+            fields: ['id', 'displayName', 'location', 'formattedAddress']
+          }
+
+          console.log('PlacesService: Making searchByText request (no bias):', request)
+          const { places } = await google.maps.places.Place.searchByText(request)
+          
+          if (places && places.length > 0) {
+            const place = places[0]
+            console.log('Geocoded location (Attempt 2):', place.formattedAddress, 'from query:', enhancedAddress)
+            return {
+              lat: place.location.lat(),
+              lng: place.location.lng(),
+              formatted_address: place.formattedAddress
+            }
+          }
+        } catch (error) {
+          console.warn('Attempt 2 failed:', {
+            message: error.message,
+            status: error.status,
+            code: error.code,
+            details: error.details || 'No additional details'
+          })
+        }
+      }
+
+      // Attempt 3: Fallback to traditional Geocoder API
+      console.log('Attempt 3: Traditional Geocoder API fallback')
       if (this.geocoder) {
         try {
           const geocodeRequest = { address: enhancedAddress }
@@ -274,7 +333,7 @@ export class PlacesService {
 
           if (result && result.length > 0) {
             const location = result[0]
-            console.log('Geocoded location (Attempt 2):', location.formatted_address, 'from query:', enhancedAddress)
+            console.log('Geocoded location (Attempt 3):', location.formatted_address, 'from query:', enhancedAddress)
             return {
               lat: location.geometry.location.lat(),
               lng: location.geometry.location.lng(),
@@ -282,7 +341,7 @@ export class PlacesService {
             }
           }
         } catch (error) {
-          console.warn('Attempt 2 failed:', {
+          console.warn('Attempt 3 failed:', {
             message: error.message,
             status: error.status || 'Unknown',
             details: error.details || 'No additional details'
@@ -299,37 +358,6 @@ export class PlacesService {
         code: error.code,
         stack: error.stack
       })
-      return null
-    }
-  }
-
-  // New method to use server proxy for geocoding
-  async proxyGeocode(address, biasLocation = null) {
-    try {
-      const params = new URLSearchParams({
-        endpoint: 'geocode/json',
-        address: address
-      })
-
-      if (biasLocation) {
-        params.append('bounds', `${biasLocation.lat-0.1},${biasLocation.lng-0.1}|${biasLocation.lat+0.1},${biasLocation.lng+0.1}`)
-      }
-
-      const response = await fetch(`${API_CONFIG.googleMaps.proxyUrl}?${params}`)
-      const data = await response.json()
-
-      if (data.status === 'OK' && data.results && data.results.length > 0) {
-        const result = data.results[0]
-        return {
-          lat: result.geometry.location.lat,
-          lng: result.geometry.location.lng,
-          formatted_address: result.formatted_address
-        }
-      }
-
-      return null
-    } catch (error) {
-      console.warn('Proxy geocoding failed:', error)
       return null
     }
   }
