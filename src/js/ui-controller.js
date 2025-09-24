@@ -302,8 +302,16 @@ export class UIController {
     this.showLoadingScreen()
     console.log('UIController: Loading screen shown, calling tour generator...')
 
+    // Add a timeout to prevent infinite hanging
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error('Tour generation timed out after 30 seconds'))
+      }, 30000)
+    })
     try {
-      const result = await this.tourGenerator.generateTour(dreamTour, specificLocation, toggleOptions, tourLength, this.userCurrentLocation, this.userCountry)
+      console.log('UIController: About to call tourGenerator.generateTour')
+      const tourPromise = this.tourGenerator.generateTour(dreamTour, specificLocation, toggleOptions, tourLength, this.userCurrentLocation, this.userCountry)
+      const result = await Promise.race([tourPromise, timeoutPromise])
       console.log('UIController: Tour generation completed successfully')
       const tourText = result.tourText
       capturedPrompt = result.prompt
@@ -314,7 +322,9 @@ export class UIController {
         this.elements.promptContent.textContent = capturedPrompt
       }
 
+      console.log('UIController: About to parse tour')
       const tour = this.tourParser.parse(tourText)
+      console.log('UIController: Tour parsed successfully')
       
       // Debug log to check parsed tour data
       console.log('Parsed tour data:', {
@@ -332,12 +342,15 @@ export class UIController {
       // Hide search interface and show new tour button
       this.showTourInterface()
       
+      console.log('UIController: About to render tour')
       await this.tourRenderer.render(tour)
+      console.log('UIController: Tour rendered successfully')
       
       this.elements.tourOutput.classList.remove('hidden')
       this.showInfo('Tour generated successfully! Scroll down to explore.')
       
     } catch (error) {
+      console.error('UIController: Error in generateTour:', error)
       this.hideLoadingScreen()
       this.showError(`Failed to generate tour: ${error.message}. Please try again.`)
       console.error('Error generating tour:', error)

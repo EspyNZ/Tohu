@@ -9,29 +9,48 @@ export class TourGenerator {
   }
 
   async generateTour(dreamTourDescription, specificLocation, toggleOptions = [], tourLength = 5, userCurrentLocation = null, userCountry = null) {
+    console.log('TourGenerator: Starting generateTour with params:', {
+      dreamTourDescription,
+      specificLocation,
+      toggleOptions,
+      tourLength,
+      userCurrentLocation,
+      userCountry
+    })
+    
     const effectiveLocation = this.getEffectiveLocation(dreamTourDescription, specificLocation)
+    console.log('TourGenerator: Effective location determined:', effectiveLocation)
     
     if (effectiveLocation) {
+      console.log('TourGenerator: About to geocode location')
       const locationData = await this.placesService.geocodeLocation(effectiveLocation, userCurrentLocation, userCountry)
+      console.log('TourGenerator: Geocoding result:', locationData)
+      
       if (!locationData) {
         const locationHint = userCountry ? ` in ${userCountry}` : ''
         throw new Error(`Could not find the location "${effectiveLocation}"${locationHint}. Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
       }
       
+      console.log('TourGenerator: About to find nearby places')
       const centerLocation = `${locationData.lat},${locationData.lng}`
       const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000)
+      console.log('TourGenerator: Found nearby places:', nearbyPlaces.length)
       
+      console.log('TourGenerator: Creating prompt')
       const prompt = this.createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces, userCountry)
+      console.log('TourGenerator: Prompt created, length:', prompt.length)
       
       try {
         // For development, use mock data first
         if (this.shouldUseMockData()) {
+          console.log('TourGenerator: Using mock data')
           return {
             tourText: this.generateMockTour(dreamTourDescription, effectiveLocation, toggleOptions, tourLength),
             prompt: prompt
           }
         }
 
+        console.log('TourGenerator: Making API call to Gemini')
         const chatHistory = [{ role: "user", parts: [{ text: prompt }] }]
         const payload = { contents: chatHistory }
         
@@ -41,14 +60,18 @@ export class TourGenerator {
           body: JSON.stringify(payload)
         })
 
+        console.log('TourGenerator: API response status:', response.status)
+
         if (!response.ok) {
           const errorData = await response.json()
           throw new Error(`API error ${response.status} - ${errorData.error?.message || response.statusText}`)
         }
 
         const result = await response.json()
+        console.log('TourGenerator: API response received, processing...')
 
         if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+          console.log('TourGenerator: Successfully extracted tour text from API response')
           return {
             tourText: result.candidates[0].content.parts[0].text,
             prompt: prompt
