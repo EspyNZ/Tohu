@@ -29,7 +29,6 @@ export class UIController {
       dreamTourInput: document.getElementById('dreamTourInput'),
       locationInput: document.getElementById('locationInput'),
       tourLengthSlider: document.getElementById('tourLengthSlider'),
-      flexibleLengthToggle: document.getElementById('flexibleLengthToggle'),
       generateTourBtn: document.getElementById('generateTourBtn'),
       buttonText: document.getElementById('buttonText'),
       loadingSpinner: document.getElementById('loadingSpinner'),
@@ -51,6 +50,10 @@ export class UIController {
       debugContent: document.getElementById('debugContent'),
       promptContent: document.getElementById('promptContent')
     }
+    
+    // Store these as direct properties for more reliable access
+    this._flexibleLengthToggle = document.getElementById('flexibleLengthToggle')
+    this._tourLengthValue = document.getElementById('tourLengthValue')
     
     // Toggle buttons
     this.toggleButtons = document.querySelectorAll('.toggle-btn')
@@ -97,9 +100,11 @@ export class UIController {
     })
 
     // Flexible length toggle
-    this.elements.flexibleLengthToggle.addEventListener('change', () => {
-      this.handleFlexibleLengthToggle()
-    })
+    if (this._flexibleLengthToggle) {
+      this._flexibleLengthToggle.addEventListener('change', () => {
+        this.handleFlexibleLengthToggle()
+      })
+    }
 
     // Debug panel toggle
     if (this.elements.debugToggleBtn) {
@@ -180,22 +185,23 @@ export class UIController {
   }
 
   updateTourLengthDisplay() {
-    const tourLengthValue = document.getElementById('tourLengthValue')
+    if (!this._tourLengthValue) return
     
-    if (this.elements.flexibleLengthToggle && this.elements.flexibleLengthToggle.checked) {
-      tourLengthValue.textContent = 'Flexible'
+    if (this._flexibleLengthToggle && this._flexibleLengthToggle.checked) {
+      this._tourLengthValue.textContent = 'Flexible'
     } else {
       const tourLength = parseInt(this.elements.tourLengthSlider.value)
       const numberOfStops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))
       const duration = Math.round(45 + (tourLength * 15))
-      tourLengthValue.textContent = `${numberOfStops} stops (${duration} minutes)`
+      this._tourLengthValue.textContent = `${numberOfStops} stops (${duration} minutes)`
     }
   }
 
   handleFlexibleLengthToggle() {
     const sliderContainer = document.querySelector('.slider-container')
+    if (!sliderContainer) return
     
-    if (this.elements.flexibleLengthToggle && this.elements.flexibleLengthToggle.checked) {
+    if (this._flexibleLengthToggle && this._flexibleLengthToggle.checked) {
       sliderContainer.classList.add('disabled')
     } else {
       sliderContainer.classList.remove('disabled')
@@ -230,7 +236,7 @@ export class UIController {
   }
 
   getTourLength() {
-    if (this.elements.flexibleLengthToggle && this.elements.flexibleLengthToggle.checked) {
+    if (this._flexibleLengthToggle && this._flexibleLengthToggle.checked) {
       return 'flexible'
     }
     return parseInt(this.elements.tourLengthSlider.value)

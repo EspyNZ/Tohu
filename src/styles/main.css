@@ -270,6 +270,7 @@ h3 { font-size: var(--font-size-xl); }
 
 .details-summary {
   padding: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
   cursor: pointer;
   font-weight: 600;
   color: var(--text-primary);
@@ -300,20 +301,22 @@ h3 { font-size: var(--font-size-xl); }
   transform: rotate(180deg);
 }
 
+.details-container {
+  padding-bottom: var(--spacing-2xl);
+}
 /* Advanced Input Groups */
 .advanced-input-group {
-  padding: 0 var(--spacing-lg);
-  margin-bottom: var(--spacing-2xl);
+  padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
 }
 
-.advanced-input-group:first-child {
-  padding-top: 3rem;
-}
 
 /* Slider Group */
 .slider-group {
-  padding: 0 var(--spacing-lg) var(--spacing-2xl) var(--spacing-lg);
-  margin-top: var(--spacing-xl);
+  padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
 }
 
 .slider-header {
@@ -419,7 +422,9 @@ h3 { font-size: var(--font-size-xl); }
 
 /* Toggle Buttons Container */
 .toggle-buttons-container {
-  padding: 0 var(--spacing-lg) var(--spacing-lg) var(--spacing-lg);
+  padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
 }
 
 .toggle-buttons-grid {
