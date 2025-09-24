@@ -53,6 +53,11 @@
                     </div>
                     <div class="slider-container">
                         <input type="range" id="tourLengthSlider" min="1" max="10" value="5" list="tickmarks">
+                        <div class="slider-labels">
+                            <span class="slider-label">Short</span>
+                            <span class="slider-label">Medium</span>
+                            <span class="slider-label">Long</span>
+                        </div>
                     </div>
                     <datalist id="tickmarks">
                         <option value="1" label="Short"></option>
@@ -62,31 +67,46 @@
                 </div>
 
                 <div class="toggle-buttons-container">
-                    <div class="toggle-buttons-grid">
-                        <button type="button" class="toggle-btn" data-toggle="cafe" title="Include local cafés and coffee culture in your tour">
-                            <span class="toggle-icon">☕</span>
-                            <span class="toggle-label">Cafe</span>
-                        </button>
-                        <button type="button" class="toggle-btn" data-toggle="biking" title="Design the tour for cycling with bike-friendly routes">
-                            <span class="toggle-icon">🚴</span>
-                            <span class="toggle-label">Biking</span>
-                        </button>
-                        <button type="button" class="toggle-btn" data-toggle="celebs" title="Highlight famous people and celebrities connected to locations">
-                            <span class="toggle-icon">⭐</span>
-                            <span class="toggle-label">Celebs</span>
-                        </button>
-                        <button type="button" class="toggle-btn" data-toggle="pub" title="Include local pubs and bars as dedicated stops">
-                            <span class="toggle-icon">🍺</span>
-                            <span class="toggle-label">Pub</span>
-                        </button>
-                        <button type="button" class="toggle-btn" data-toggle="driving" title="Design the tour for driving with parking considerations">
-                            <span class="toggle-icon">🚗</span>
-                            <span class="toggle-label">Driving</span>
-                        </button>
-                        <button type="button" class="toggle-btn" data-toggle="history" title="Emphasize historical facts and stories at each location">
-                            <span class="toggle-icon">🏛️</span>
-                            <span class="toggle-label">History</span>
-                        </button>
+                    <!-- Transportation Mode Group -->
+                    <div class="button-group">
+                        <h4 class="button-group-title">Transportation Mode</h4>
+                        <div class="toggle-buttons-grid">
+                            <button type="button" class="toggle-btn transportation-btn active" data-toggle="walking" title="Walking tour with comfortable pace">
+                                <span class="toggle-icon">🚶</span>
+                                <span class="toggle-label">Walking</span>
+                            </button>
+                            <button type="button" class="toggle-btn transportation-btn" data-toggle="biking" title="Design the tour for cycling with bike-friendly routes">
+                                <span class="toggle-icon">🚴</span>
+                                <span class="toggle-label">Biking</span>
+                            </button>
+                            <button type="button" class="toggle-btn transportation-btn" data-toggle="driving" title="Design the tour for driving with parking considerations">
+                                <span class="toggle-icon">🚗</span>
+                                <span class="toggle-label">Driving</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tour Interests Group -->
+                    <div class="button-group">
+                        <h4 class="button-group-title">Tour Interests</h4>
+                        <div class="toggle-buttons-grid">
+                            <button type="button" class="toggle-btn interest-btn" data-toggle="cafe" title="Include local cafés and coffee culture in your tour">
+                                <span class="toggle-icon">☕</span>
+                                <span class="toggle-label">Cafe</span>
+                            </button>
+                            <button type="button" class="toggle-btn interest-btn" data-toggle="pub" title="Include local pubs and bars as dedicated stops">
+                                <span class="toggle-icon">🍺</span>
+                                <span class="toggle-label">Pub</span>
+                            </button>
+                            <button type="button" class="toggle-btn interest-btn" data-toggle="celebs" title="Highlight famous people and celebrities connected to locations">
+                                <span class="toggle-icon">⭐</span>
+                                <span class="toggle-label">Celebs</span>
+                            </button>
+                            <button type="button" class="toggle-btn interest-btn" data-toggle="history" title="Emphasize historical facts and stories at each location">
+                                <span class="toggle-icon">🏛️</span>
+                                <span class="toggle-label">History</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </details>
