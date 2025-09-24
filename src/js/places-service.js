@@ -4,6 +4,7 @@ export class PlacesService {
   constructor() {
     this.apiKey = API_CONFIG.googleMaps.apiKey
     this._mapInstance = null
+    this.geocoder = null
   }
 
   setMap(map) {
@@ -16,6 +17,7 @@ export class PlacesService {
 
   initializeServices() {
     if (window.google && window.google.maps) {
+      this.geocoder = new google.maps.Geocoder()
       return true
     }
     return false
@@ -87,15 +89,62 @@ export class PlacesService {
     }
   }
 
-  async geocodeLocation(address, biasLocation = null) {
+  async getCountryFromCoordinates(latitude, longitude) {
+    try {
+      if (!this.geocoder) {
+        this.initializeServices()
+      }
+      
+      if (!this.geocoder) {
+        console.warn('Geocoder not available')
+        return null
+      }
+
+      const latlng = { lat: latitude, lng: longitude }
+      
+      const result = await new Promise((resolve, reject) => {
+        this.geocoder.geocode({ location: latlng }, (results, status) => {
+          if (status === 'OK' && results && results.length > 0) {
+            resolve(results)
+          } else {
+            reject(new Error(`Reverse geocoding failed: ${status}`))
+          }
+        })
+      })
+
+      // Extract country from address components
+      for (const result of result) {
+        for (const component of result.address_components) {
+          if (component.types.includes('country')) {
+            console.log('Detected country:', component.long_name)
+            return component.long_name
+          }
+        }
+      }
+      
+      return null
+    } catch (error) {
+      console.warn('Error getting country from coordinates:', error)
+      return null
+    }
+  }
+
+  async geocodeLocation(address, biasLocation = null, countryHint = null) {
     try {
       if (!window.google || !window.google.maps || !window.google.maps.places) {
         console.warn('Google Maps Places API not loaded')
         return null
       }
 
+      // Enhance address with country hint if provided and address doesn't already contain country info
+      let enhancedAddress = address
+      if (countryHint && !this.containsCountryInfo(address)) {
+        enhancedAddress = `${address}, ${countryHint}`
+        console.log('Enhanced address with country hint:', enhancedAddress)
+      }
+
       const request = {
-        textQuery: address,
+        textQuery: enhancedAddress,
         fields: ['id', 'displayName', 'location', 'formattedAddress']
       }
       
@@ -103,7 +152,7 @@ export class PlacesService {
       if (biasLocation) {
         request.locationBias = {
           center: { lat: biasLocation.lat, lng: biasLocation.lng },
-          radius: 50000 // 50km radius bias
+          radius: 200000 // 200km radius bias (increased for stronger bias)
         }
         console.log('Geocoding with location bias:', biasLocation)
       }
@@ -112,18 +161,18 @@ export class PlacesService {
       
       if (places && places.length > 0) {
         const place = places[0]
-        console.log('Geocoded location:', place.formattedAddress)
+        console.log('Geocoded location:', place.formattedAddress, 'from query:', enhancedAddress)
         return {
           lat: place.location.lat(),
           lng: place.location.lng(),
           formatted_address: place.formattedAddress
         }
       } else {
-        console.warn('Geocoding failed: No results found')
+        console.warn('Geocoding failed: No results found for:', enhancedAddress)
         return null
       }
     } catch (error) {
-      console.warn('Geocoding failed:', error)
+      console.warn('Geocoding failed for:', enhancedAddress, error)
       return null
     }
   }
@@ -269,6 +318,23 @@ export class PlacesService {
 
   toRadians(degrees) {
     return degrees * (Math.PI / 180)
+  }
+
+  containsCountryInfo(address) {
+    // Check if address already contains country or region information
+    const countryIndicators = [
+      ',', // Comma usually indicates city, country format
+      'new zealand', 'nz', 'australia', 'au', 'united kingdom', 'uk', 'usa', 'us',
+      'canada', 'ca', 'france', 'germany', 'italy', 'spain', 'japan', 'china',
+      'india', 'brazil', 'mexico', 'south africa', 'egypt', 'russia', 'norway',
+      'sweden', 'denmark', 'finland', 'netherlands', 'belgium', 'switzerland',
+      'austria', 'portugal', 'greece', 'turkey', 'thailand', 'singapore',
+      'malaysia', 'indonesia', 'philippines', 'vietnam', 'south korea',
+      'taiwan', 'hong kong', 'argentina', 'chile', 'peru', 'colombia'
+    ]
+    
+    const lowerAddress = address.toLowerCase()
+    return countryIndicators.some(indicator => lowerAddress.includes(indicator))
   }
 
   async findPlaceIdByCoordinatesAndName(latitude, longitude, name) {

@@ -11,6 +11,7 @@ export class UIController {
     this.mapController = new MapController()
     this.currentTour = null
     this.userCurrentLocation = null
+    this.userCountry = null
   }
 
   init() {
@@ -298,7 +299,7 @@ export class UIController {
     this.showLoadingScreen()
 
     try {
-      const result = await this.tourGenerator.generateTour(dreamTour, specificLocation, toggleOptions, tourLength, this.userCurrentLocation)
+      const result = await this.tourGenerator.generateTour(dreamTour, specificLocation, toggleOptions, tourLength, this.userCurrentLocation, this.userCountry)
       const tourText = result.tourText
       capturedPrompt = result.prompt
       
@@ -488,6 +489,20 @@ export class UIController {
       this.elements.locationInput.style.fontStyle = 'italic'
       this.elements.locationInput.style.color = 'var(--primary-color)'
 
+      // Get country information for better geocoding
+      if (this.tourGenerator && this.tourGenerator.placesService) {
+        try {
+          this.userCountry = await this.tourGenerator.placesService.getCountryFromCoordinates(
+            this.userCurrentLocation.lat,
+            this.userCurrentLocation.lng
+          )
+          console.log('Detected user country:', this.userCountry)
+        } catch (error) {
+          console.warn('Could not determine user country:', error)
+          this.userCountry = null
+        }
+      }
+
       this.showInfo('Current location detected! This will help provide more accurate local results.')
 
     } catch (error) {
@@ -506,6 +521,7 @@ export class UIController {
       
       this.showError(errorMessage)
       this.userCurrentLocation = null
+      this.userCountry = null
     } finally {
       button.classList.remove('loading')
       button.disabled = false
@@ -537,10 +553,25 @@ export class UIController {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       }
+      
+      // Get country information for better geocoding
+      if (this.tourGenerator && this.tourGenerator.placesService) {
+        try {
+          this.userCountry = await this.tourGenerator.placesService.getCountryFromCoordinates(
+            this.userCurrentLocation.lat,
+            this.userCurrentLocation.lng
+          )
+          console.log('Detected user country:', this.userCountry)
+        } catch (error) {
+          console.warn('Could not determine user country:', error)
+          this.userCountry = null
+        }
+      }
     } catch (error) {
       // Silently fail - don't show error messages for background location requests
       console.log('Background location request failed (this is normal):', error.message)
       this.userCurrentLocation = null
+      this.userCountry = null
     }
   }
 }

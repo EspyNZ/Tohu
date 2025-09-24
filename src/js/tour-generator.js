@@ -8,19 +8,20 @@ export class TourGenerator {
     this.placesService = new PlacesService()
   }
 
-  async generateTour(dreamTourDescription, specificLocation, toggleOptions = [], tourLength = 5, userCurrentLocation = null) {
+  async generateTour(dreamTourDescription, specificLocation, toggleOptions = [], tourLength = 5, userCurrentLocation = null, userCountry = null) {
     const effectiveLocation = this.getEffectiveLocation(dreamTourDescription, specificLocation)
     
     if (effectiveLocation) {
-      const locationData = await this.placesService.geocodeLocation(effectiveLocation, userCurrentLocation)
+      const locationData = await this.placesService.geocodeLocation(effectiveLocation, userCurrentLocation, userCountry)
       if (!locationData) {
-        throw new Error(`Could not find the location "${effectiveLocation}". Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
+        const locationHint = userCountry ? ` in ${userCountry}` : ''
+        throw new Error(`Could not find the location "${effectiveLocation}"${locationHint}. Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
       }
       
       const centerLocation = `${locationData.lat},${locationData.lng}`
       const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000)
       
-      const prompt = this.createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces)
+      const prompt = this.createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces, userCountry)
       
       try {
         // For development, use mock data first
@@ -118,7 +119,7 @@ export class TourGenerator {
     return null
   }
 
-  createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces) {
+  createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces, userCountry = null) {
     // Determine tour parameters based on toggles
     const isBiking = toggleOptions.includes('biking')
     const isDriving = toggleOptions.includes('driving')
@@ -218,10 +219,13 @@ export class TourGenerator {
       nearbyPlacesInfo += `IMPORTANT: When selecting stops for your tour, prioritize using places from this verified list above. These have accurate coordinates and Google Place IDs that will display correctly on maps. If you must include a location not on this list, ensure you provide completely accurate, real coordinates and a valid Google Place ID.\n`
     }
     
+    // Add country context if available
+    const countryContext = userCountry ? ` Note: The user is currently in ${userCountry}, so focus on the ${effectiveLocation} in ${userCountry} specifically.` : ''
+    
     return `You are an expert local tour guide renowned for creating immersive, authentic experiences that go beyond typical tourist attractions.
 
 USER'S DREAM TOUR: "${dreamTourDescription}"
-LOCATION: ${effectiveLocation} (coordinates: ${locationData.lat}, ${locationData.lng})
+LOCATION: ${effectiveLocation} (coordinates: ${locationData.lat}, ${locationData.lng})${countryContext}
 
 TOUR PARAMETERS:
 ${tourLengthGuidance}
