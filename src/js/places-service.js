@@ -21,6 +21,12 @@ export class PlacesService {
   static async waitForMapsToLoad() {
     console.log('PlacesService: Waiting for Google Maps to load...')
     
+    // Check if Google Maps and Places are already loaded
+    if (window.google && window.google.maps && window.google.maps.places) {
+      console.log('PlacesService: Google Maps and Places already loaded')
+      return Promise.resolve()
+    }
+    
     // Add a timeout fallback in case the callback never fires
     const timeoutPromise = new Promise((resolve) => {
       setTimeout(() => {
@@ -29,10 +35,26 @@ export class PlacesService {
       }, 10000) // 10 second timeout
     })
     
+    // Wait for both the promise and the Places library to be available
+    const mapsAndPlacesReady = PlacesService._mapsLoadedPromise.then(() => {
+      return new Promise((resolve) => {
+        const checkPlaces = () => {
+          if (window.google && window.google.maps && window.google.maps.places) {
+            console.log('PlacesService: Places library confirmed loaded')
+            resolve()
+          } else {
+            console.log('PlacesService: Waiting for Places library...')
+            setTimeout(checkPlaces, 100)
+          }
+        }
+        checkPlaces()
+      })
+    })
+    
     // Race between the maps loading and the timeout
-    await Promise.race([PlacesService._mapsLoadedPromise, timeoutPromise])
+    await Promise.race([mapsAndPlacesReady, timeoutPromise])
     console.log('PlacesService: Google Maps wait completed')
-    return PlacesService._mapsLoadedPromise
+    return Promise.resolve()
   }
 
   constructor() {
@@ -72,19 +94,19 @@ export class PlacesService {
       
       // Validate placeId before making API call
       if (!placeId || typeof placeId !== 'string' || placeId.trim().length === 0) {
-        console.warn('Invalid placeId: empty or not a string')
+        console.warn('PlacesService: Invalid placeId - empty or not a string:', placeId)
         return null
       }
 
       // Check for basic placeId format (no spaces, reasonable length)
       const trimmedPlaceId = placeId.trim()
       if (trimmedPlaceId.includes(' ') || trimmedPlaceId.length < 10) {
-        console.warn('Invalid placeId format:', trimmedPlaceId)
+        console.warn('PlacesService: Invalid placeId format:', trimmedPlaceId)
         return null
       }
 
       if (!window.google || !window.google.maps || !window.google.maps.places) {
-        console.warn('Google Maps Places API not loaded')
+        console.error('PlacesService: Google Maps Places API not available after waiting')
         return null
       }
 
@@ -96,6 +118,11 @@ export class PlacesService {
 
       // Fetch place details
       console.log('Fetching place details for:', trimmedPlaceId)
+      const fieldsRequest = {
+        fields: ['displayName', 'formattedAddress', 'location', 'photos', 'rating', 'types', 'websiteURI', 'regularOpeningHours']
+      }
+      console.log('PlacesService: Making fetchFields request:', fieldsRequest)
+      
       const { place: placeResult } = await place.fetchFields({
         fields: ['displayName', 'formattedAddress', 'location', 'photos', 'rating', 'types', 'websiteURI', 'regularOpeningHours']
       })
@@ -120,7 +147,13 @@ export class PlacesService {
         opening_hours: placeResult.regularOpeningHours
       }
     } catch (error) {
-      console.warn('Place details failed:', error)
+      console.warn('PlacesService: Place details failed:', {
+        placeId: placeId,
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        details: error.details || 'No additional details'
+      })
       return null
     }
   }
@@ -170,12 +203,18 @@ export class PlacesService {
   async geocodeLocation(address, biasLocation = null, countryHint = null) {
     await PlacesService.waitForMapsToLoad()
     
+    // Validate input parameters
+    if (!address || typeof address !== 'string' || address.trim().length === 0) {
+      console.warn('PlacesService: Invalid address parameter:', address)
+      return null
+    }
+    
     // Initialize enhancedAddress outside try block to ensure it's always defined
     let enhancedAddress = address
     
     try {
       if (!window.google || !window.google.maps || !window.google.maps.places) {
-        console.warn('Google Maps Places API not loaded')
+        console.error('PlacesService: Google Maps Places API not available after waiting')
         return null
       }
 
@@ -193,6 +232,10 @@ export class PlacesService {
       // Attempt 1: Use Places API searchByText with location bias
       console.log('Attempt 1: Places API searchByText with location bias')
       try {
+        if (!enhancedAddress || enhancedAddress.trim().length === 0) {
+          throw new Error('Empty textQuery parameter')
+        }
+        
         const request = {
           textQuery: enhancedAddress,
           fields: ['id', 'displayName', 'location', 'formattedAddress']
@@ -207,6 +250,7 @@ export class PlacesService {
           console.log('Geocoding with location bias:', biasLocation)
         }
 
+        console.log('PlacesService: Making searchByText request:', request)
         const { places } = await google.maps.places.Place.searchByText(request)
         
         if (places && places.length > 0) {
@@ -219,18 +263,28 @@ export class PlacesService {
           }
         }
       } catch (error) {
-        console.warn('Attempt 1 failed:', error)
+        console.warn('Attempt 1 failed:', {
+          message: error.message,
+          status: error.status,
+          code: error.code,
+          details: error.details || 'No additional details'
+        })
       }
 
       // Attempt 2: Use Places API searchByText without location bias (if bias was used)
       if (biasLocation) {
         console.log('Attempt 2: Places API searchByText without location bias')
         try {
+          if (!enhancedAddress || enhancedAddress.trim().length === 0) {
+            throw new Error('Empty textQuery parameter')
+          }
+          
           const request = {
             textQuery: enhancedAddress,
             fields: ['id', 'displayName', 'location', 'formattedAddress']
           }
 
+          console.log('PlacesService: Making searchByText request (no bias):', request)
           const { places } = await google.maps.places.Place.searchByText(request)
           
           if (places && places.length > 0) {
@@ -243,7 +297,12 @@ export class PlacesService {
             }
           }
         } catch (error) {
-          console.warn('Attempt 2 failed:', error)
+          console.warn('Attempt 2 failed:', {
+            message: error.message,
+            status: error.status,
+            code: error.code,
+            details: error.details || 'No additional details'
+          })
         }
       }
 
@@ -261,12 +320,13 @@ export class PlacesService {
             )
           }
 
+          console.log('PlacesService: Making Geocoder request:', geocodeRequest)
           const result = await new Promise((resolve, reject) => {
             this.geocoder.geocode(geocodeRequest, (results, status) => {
               if (status === 'OK' && results && results.length > 0) {
                 resolve(results)
               } else {
-                reject(new Error(`Geocoding failed: ${status}`))
+                reject(new Error(`Geocoding failed with status: ${status}`))
               }
             })
           })
@@ -281,14 +341,23 @@ export class PlacesService {
             }
           }
         } catch (error) {
-          console.warn('Attempt 3 failed:', error)
+          console.warn('Attempt 3 failed:', {
+            message: error.message,
+            status: error.status || 'Unknown',
+            details: error.details || 'No additional details'
+          })
         }
       }
 
       console.warn('All geocoding attempts failed for:', enhancedAddress)
       return null
     } catch (error) {
-      console.warn('Geocoding failed for:', enhancedAddress, error)
+      console.error('PlacesService: Geocoding failed for:', enhancedAddress, {
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        stack: error.stack
+      })
       return null
     }
   }
@@ -332,15 +401,21 @@ export class PlacesService {
     try {
       console.log('Finding interesting places near:', centerLocation, 'within', radiusMeters, 'meters')
       
+      // Validate input parameters
+      if (!centerLocation || typeof centerLocation !== 'string') {
+        console.warn('PlacesService: Invalid centerLocation parameter:', centerLocation)
+        return []
+      }
+      
       if (!window.google || !window.google.maps || !window.google.maps.places) {
-        console.warn('Google Maps Places API not loaded')
+        console.error('PlacesService: Google Maps Places API not available after waiting')
         return []
       }
 
       // Parse center location coordinates
       const [lat, lng] = centerLocation.split(',').map(coord => parseFloat(coord.trim()))
       if (isNaN(lat) || isNaN(lng)) {
-        console.warn('Invalid center location coordinates:', centerLocation)
+        console.warn('PlacesService: Invalid center location coordinates:', centerLocation)
         return []
       }
 
@@ -364,6 +439,11 @@ export class PlacesService {
       // Search for each category
       for (const query of searchQueries) {
         try {
+          if (!query || query.trim().length === 0) {
+            console.warn('PlacesService: Skipping empty search query')
+            continue
+          }
+          
           const request = {
             textQuery: query,
             fields: ['id', 'displayName', 'location', 'types', 'rating'],
@@ -374,6 +454,7 @@ export class PlacesService {
             maxResultCount: 10
           }
 
+          console.log('PlacesService: Making searchByText request for query:', query, request)
           const { places: searchResults } = await google.maps.places.Place.searchByText(request)
           
           if (searchResults && searchResults.length > 0) {
@@ -404,7 +485,12 @@ export class PlacesService {
             }
           }
         } catch (error) {
-          console.warn(`Error searching for ${query}:`, error)
+          console.warn(`PlacesService: Error searching for ${query}:`, {
+            message: error.message,
+            status: error.status,
+            code: error.code,
+            details: error.details || 'No additional details'
+          })
           // Continue with other queries even if one fails
         }
       }
@@ -417,7 +503,13 @@ export class PlacesService {
       return limitedPlaces
       
     } catch (error) {
-      console.warn('Error finding interesting places:', error)
+      console.error('PlacesService: Error finding interesting places:', {
+        centerLocation: centerLocation,
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        stack: error.stack
+      })
       return []
     }
   }
@@ -461,8 +553,19 @@ export class PlacesService {
     try {
       console.log('findPlaceIdByCoordinatesAndName called:', { latitude, longitude, name })
       
+      // Validate input parameters
+      if (typeof latitude !== 'number' || typeof longitude !== 'number' || isNaN(latitude) || isNaN(longitude)) {
+        console.warn('PlacesService: Invalid coordinates:', { latitude, longitude })
+        return null
+      }
+      
+      if (!name || typeof name !== 'string' || name.trim().length === 0) {
+        console.warn('PlacesService: Invalid name parameter:', name)
+        return null
+      }
+      
       if (!window.google || !window.google.maps || !window.google.maps.places) {
-        console.warn('Google Maps Places API not loaded')
+        console.error('PlacesService: Google Maps Places API not available after waiting')
         return null
       }
 
@@ -476,6 +579,7 @@ export class PlacesService {
         }
       }
 
+      console.log('PlacesService: Making searchByText request for place ID lookup:', request)
       const { places } = await google.maps.places.Place.searchByText(request)
       
       if (!places || places.length === 0) {
@@ -513,7 +617,15 @@ export class PlacesService {
 
       return closestPlace.id
     } catch (error) {
-      console.warn('Place ID lookup failed:', error)
+      console.warn('PlacesService: Place ID lookup failed:', {
+        latitude: latitude,
+        longitude: longitude,
+        name: name,
+        message: error.message,
+        status: error.status,
+        code: error.code,
+        details: error.details || 'No additional details'
+      })
       return null
     }
   }
