@@ -228,6 +228,20 @@
     </div>
     
     <!-- Google Maps JavaScript API -->
+    <script>
+        // Define the callback function before loading the Google Maps API
+        window.initGoogleMaps = function() {
+            console.log('Google Maps API loaded successfully (initGoogleMaps callback).')
+            
+            // Notify PlacesService that Google Maps is loaded
+            import('./src/js/places-service.js').then(({ PlacesService }) => {
+                PlacesService.notifyMapsLoaded()
+                console.log('PlacesService notified that Google Maps is loaded')
+            }).catch(error => {
+                console.error('Error importing PlacesService in callback:', error)
+            })
+        }
+    </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJ4MO0ke4jgEFq7f27KWyeg9_ehPR7xME&libraries=places,geometry&callback=initGoogleMaps"></script>
     <script type="module" src="src/main.js"></script>
 </body>
