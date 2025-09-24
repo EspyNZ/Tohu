@@ -1,3 +1,5 @@
+import { PlacesService } from './places-service.js'
+
 export class MapController {
   constructor() {
     this.map = null
@@ -6,6 +8,7 @@ export class MapController {
   }
 
   initMap(mapElementId, stops) {
+    // This method is called from tour-renderer which already waits for maps to load
     console.log("MapController: initMap called with stops:", stops)
     
     if (!window.google || !window.google.maps) {

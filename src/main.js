@@ -18,6 +18,12 @@ try {
 // once it has loaded.
 window.initGoogleMaps = function() {
   console.log('Google Maps API loaded successfully (initGoogleMaps callback).')
+  
+  // Notify PlacesService that Google Maps is loaded
+  import('./js/places-service.js').then(({ PlacesService }) => {
+    PlacesService.notifyMapsLoaded()
+  })
+  
   // The UIController's init method will handle service initialization.
   // No need to re-initialize placesService here directly.
 }

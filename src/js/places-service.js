@@ -1,6 +1,26 @@
 import { API_CONFIG } from './config.js'
 
 export class PlacesService {
+  static _mapsLoadedPromise = null
+  static _mapsLoadedResolve = null
+
+  static {
+    // Initialize the promise that will be resolved when Google Maps is loaded
+    PlacesService._mapsLoadedPromise = new Promise((resolve) => {
+      PlacesService._mapsLoadedResolve = resolve
+    })
+  }
+
+  static notifyMapsLoaded() {
+    if (PlacesService._mapsLoadedResolve) {
+      PlacesService._mapsLoadedResolve()
+    }
+  }
+
+  static async waitForMapsToLoad() {
+    return PlacesService._mapsLoadedPromise
+  }
+
   constructor() {
     this.apiKey = API_CONFIG.googleMaps.apiKey
     this._mapInstance = null
@@ -31,6 +51,8 @@ export class PlacesService {
   }
 
   async getPlaceDetails(placeId) {
+    await PlacesService.waitForMapsToLoad()
+    
     try {
       console.log('getPlaceDetails called with placeId:', placeId)
       
@@ -90,6 +112,8 @@ export class PlacesService {
   }
 
   async getCountryFromCoordinates(latitude, longitude) {
+    await PlacesService.waitForMapsToLoad()
+    
     try {
       if (!this.geocoder) {
         this.initializeServices()
@@ -130,6 +154,8 @@ export class PlacesService {
   }
 
   async geocodeLocation(address, biasLocation = null, countryHint = null) {
+    await PlacesService.waitForMapsToLoad()
+    
     // Initialize enhancedAddress outside try block to ensure it's always defined
     let enhancedAddress = address
     
@@ -213,6 +239,8 @@ export class PlacesService {
   }
 
   async findInterestingPlaces(centerLocation, radiusMeters = 2000) {
+    await PlacesService.waitForMapsToLoad()
+    
     try {
       console.log('Finding interesting places near:', centerLocation, 'within', radiusMeters, 'meters')
       
@@ -340,6 +368,8 @@ export class PlacesService {
   }
 
   async findPlaceIdByCoordinatesAndName(latitude, longitude, name) {
+    await PlacesService.waitForMapsToLoad()
+    
     try {
       console.log('findPlaceIdByCoordinatesAndName called:', { latitude, longitude, name })
       

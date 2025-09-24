@@ -244,6 +244,9 @@ export class TourRenderer {
 
   async renderOverviewMap(tour) {
     // Wait for Google Maps to be available
+    await PlacesService.waitForMapsToLoad()
+    
+    // Wait for Google Maps to be available
     if (!window.google || !window.google.maps) {
       console.warn('Google Maps API not loaded for overview map')
       return
