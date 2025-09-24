@@ -99,6 +99,19 @@ export class UIController {
       this.updateTourLengthDisplay()
     })
 
+    // Make slider labels clickable
+    const sliderLabels = document.querySelectorAll('.slider-label')
+    sliderLabels.forEach((label, index) => {
+      label.addEventListener('click', () => {
+        if (!this._flexibleLengthToggle?.checked && this.elements.tourLengthSlider) {
+          // Map labels to slider values: Short=2, Medium=5, Long=8
+          const values = [2, 5, 8]
+          this.elements.tourLengthSlider.value = values[index]
+          this.updateTourLengthDisplay()
+        }
+      })
+    })
+
     // Flexible length toggle
     if (this._flexibleLengthToggle) {
       this._flexibleLengthToggle.addEventListener('change', () => {
@@ -199,12 +212,17 @@ export class UIController {
 
   handleFlexibleLengthToggle() {
     const sliderContainer = document.querySelector('.slider-container')
+    const sliderLabels = document.querySelectorAll('.slider-label')
     if (!sliderContainer) return
     
     if (this._flexibleLengthToggle && this._flexibleLengthToggle.checked) {
       sliderContainer.classList.add('disabled')
+      this.elements.tourLengthSlider.disabled = true
+      sliderLabels.forEach(label => label.style.pointerEvents = 'none')
     } else {
       sliderContainer.classList.remove('disabled')
+      this.elements.tourLengthSlider.disabled = false
+      sliderLabels.forEach(label => label.style.pointerEvents = 'auto')
     }
     
     this.updateTourLengthDisplay()
