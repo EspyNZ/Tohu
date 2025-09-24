@@ -18,26 +18,28 @@ export class TourGenerator {
       userCountry
     })
     
-    const effectiveLocation = this.getEffectiveLocation(dreamTourDescription, specificLocation)
-    console.log('TourGenerator: Effective location determined:', effectiveLocation)
+    // Use AI to extract location and understand context
+    console.log('TourGenerator: Using AI to extract location and context')
+    const contextAnalysis = await this.analyzeUserContext(dreamTourDescription, specificLocation, toggleOptions, userCurrentLocation, userCountry)
+    console.log('TourGenerator: AI context analysis result:', contextAnalysis)
     
-    if (effectiveLocation) {
+    if (contextAnalysis.location) {
       console.log('TourGenerator: About to geocode location')
-      const locationData = await this.placesService.geocodeLocation(effectiveLocation, userCurrentLocation, userCountry)
+      const locationData = await this.placesService.geocodeLocation(contextAnalysis.location, userCurrentLocation, userCountry)
       console.log('TourGenerator: Geocoding result:', locationData)
       
       if (!locationData) {
-        const locationHint = userCountry ? ` in ${userCountry}` : ''
-        throw new Error(`Could not find the location "${effectiveLocation}"${locationHint}. Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
+        const locationHint = contextAnalysis.country ? ` in ${contextAnalysis.country}` : ''
+        throw new Error(`Could not find the location "${contextAnalysis.location}"${locationHint}. Please provide a more specific location in the advanced settings or describe the location more clearly in your dream tour.`)
       }
       
       console.log('TourGenerator: About to find nearby places')
       const centerLocation = `${locationData.lat},${locationData.lng}`
-      const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000, dreamTourDescription, toggleOptions)
+      const nearbyPlaces = await this.placesService.findInterestingPlaces(centerLocation, 2000, dreamTourDescription, contextAnalysis.enhancedToggles)
       console.log('TourGenerator: Found nearby places:', nearbyPlaces.length)
       
       console.log('TourGenerator: Creating prompt')
-      const prompt = this.createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces, userCountry)
+      const prompt = this.createPrompt(dreamTourDescription, contextAnalysis.location, contextAnalysis.enhancedToggles, tourLength, locationData, nearbyPlaces, contextAnalysis.country, contextAnalysis)
       console.log('TourGenerator: Prompt created, length:', prompt.length)
       
       try {
@@ -45,7 +47,7 @@ export class TourGenerator {
         if (this.shouldUseMockData()) {
           console.log('TourGenerator: Using mock data')
           return {
-            tourText: this.generateMockTour(dreamTourDescription, effectiveLocation, toggleOptions, tourLength),
+            tourText: this.generateMockTour(dreamTourDescription, contextAnalysis.location, contextAnalysis.enhancedToggles, tourLength),
             prompt: prompt
           }
         }
@@ -99,10 +101,110 @@ export class TourGenerator {
         throw error
       }
     } else {
-      throw new Error('No location could be determined from your tour description. Please provide a more specific location.')
+      throw new Error('No location could be determined from your tour description. Please provide a more specific location in the advanced settings.')
     }
   }
 
+  async analyzeUserContext(dreamTourDescription, specificLocation, toggleOptions, userCurrentLocation, userCountry) {
+    console.log('TourGenerator: Analyzing user context with AI')
+    
+    // Create a focused prompt for context analysis
+    const analysisPrompt = `You are an expert tour planning assistant. Analyze the user's request and extract key information.
+
+USER INPUT:
+Dream Tour: "${dreamTourDescription}"
+Specific Location: "${specificLocation || 'Not specified'}"
+Current Toggle Options: ${toggleOptions.join(', ') || 'None'}
+User's Current Country: ${userCountry || 'Unknown'}
+
+TASK: Extract and analyze the following information from the user's input:
+
+1. LOCATION: What specific location are they interested in? Look for:
+   - City names, neighborhoods, regions
+   - Country/region identifiers (NZ, UK, NYC, etc.)
+   - Geographic references
+   
+2. PRIMARY INTERESTS: What are they most interested in? Categories like:
+   - Food & Drink (cafes, restaurants, bars, pubs, food markets)
+   - Sports & Recreation (football clubs, stadiums, sports venues)
+   - Arts & Culture (galleries, street art, music venues, theaters)
+   - History & Heritage (historical sites, museums, monuments)
+   - Nature & Outdoors (parks, beaches, hiking trails)
+   - Shopping & Local Business (markets, boutiques, local shops)
+   - Nightlife & Entertainment (clubs, bars, live music)
+   - Architecture & Landmarks (buildings, churches, unique structures)
+
+3. TRANSPORTATION: What mode seems most appropriate?
+   - Walking (short distances, urban exploration)
+   - Cycling (medium distances, bike-friendly areas)
+   - Driving (longer distances, multiple locations)
+
+4. TOUR STYLE: What type of experience do they want?
+   - Hidden gems and local secrets
+   - Popular attractions and landmarks  
+   - Cultural immersion
+   - Active/adventure focused
+   - Relaxed and leisurely
+
+Respond in this EXACT JSON format:
+{
+  "location": "extracted location (e.g., 'North Shore, Auckland, New Zealand')",
+  "country": "country name if identifiable",
+  "primaryInterests": ["interest1", "interest2", "interest3"],
+  "suggestedTransportation": "walking|cycling|driving",
+  "tourStyle": "description of preferred tour style",
+  "enhancedToggles": ["suggested toggle options based on interests"],
+  "confidence": "high|medium|low",
+  "reasoning": "brief explanation of your analysis"
+}`
+
+    try {
+      // For development, use mock analysis if no API key
+      if (this.shouldUseMockData()) {
+        console.log('TourGenerator: Using mock context analysis')
+        return this.generateMockContextAnalysis(dreamTourDescription, specificLocation, toggleOptions, userCountry)
+      }
+
+      console.log('TourGenerator: Making API call for context analysis')
+      const chatHistory = [{ role: "user", parts: [{ text: analysisPrompt }] }]
+      const payload = { contents: chatHistory }
+      
+      const response = await fetch(`${this.apiUrl}?key=${this.apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+
+      if (!response.ok) {
+        console.warn('Context analysis API call failed, using fallback')
+        return this.generateMockContextAnalysis(dreamTourDescription, specificLocation, toggleOptions, userCountry)
+      }
+
+      const result = await response.json()
+      
+      if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+        const analysisText = result.candidates[0].content.parts[0].text
+        console.log('TourGenerator: Raw AI analysis response:', analysisText)
+        
+        // Extract JSON from the response
+        const jsonMatch = analysisText.match(/\{[\s\S]*\}/)
+        if (jsonMatch) {
+          const contextAnalysis = JSON.parse(jsonMatch[0])
+          console.log('TourGenerator: Parsed context analysis:', contextAnalysis)
+          return contextAnalysis
+        } else {
+          console.warn('Could not extract JSON from AI response, using fallback')
+          return this.generateMockContextAnalysis(dreamTourDescription, specificLocation, toggleOptions, userCountry)
+        }
+      } else {
+        console.warn('Unexpected AI response structure, using fallback')
+        return this.generateMockContextAnalysis(dreamTourDescription, specificLocation, toggleOptions, userCountry)
+      }
+    } catch (error) {
+      console.error('Error in context analysis:', error)
+      return this.generateMockContextAnalysis(dreamTourDescription, specificLocation, toggleOptions, userCountry)
+    }
+  }
   getEffectiveLocation(dreamTourDescription, specificLocation) {
     // First check if specific location is provided
     if (specificLocation && specificLocation.trim()) {
@@ -167,7 +269,7 @@ export class TourGenerator {
     return null
   }
 
-  createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces, userCountry = null) {
+  createPrompt(dreamTourDescription, effectiveLocation, toggleOptions, tourLength, locationData, nearbyPlaces, userCountry = null, contextAnalysis = null) {
     // Determine tour parameters based on toggles
     const isBiking = toggleOptions.includes('biking')
     const isDriving = toggleOptions.includes('driving')
@@ -270,10 +372,22 @@ export class TourGenerator {
     // Add country context if available
     const countryContext = userCountry ? ` Note: The user is currently in ${userCountry}, so focus on the ${effectiveLocation} in ${userCountry} specifically.` : ''
     
+    // Add AI context analysis if available
+    const aiContextSection = contextAnalysis ? `
+
+AI CONTEXT ANALYSIS:
+- Primary Interests Detected: ${contextAnalysis.primaryInterests.join(', ')}
+- Tour Style: ${contextAnalysis.tourStyle}
+- Suggested Transportation: ${contextAnalysis.suggestedTransportation}
+- AI Reasoning: ${contextAnalysis.reasoning}
+- Confidence Level: ${contextAnalysis.confidence}
+
+IMPORTANT: Use this AI analysis to better understand the user's intent and tailor the tour accordingly. The detected interests should heavily influence your stop selection and content focus.` : ''
+    
     return `You are an expert local tour guide renowned for creating immersive, authentic experiences that go beyond typical tourist attractions.
 
 USER'S DREAM TOUR: "${dreamTourDescription}"
-LOCATION: ${effectiveLocation} (coordinates: ${locationData.lat}, ${locationData.lng})${countryContext}
+LOCATION: ${effectiveLocation} (coordinates: ${locationData.lat}, ${locationData.lng})${countryContext}${aiContextSection}
 
 PRIMARY DIRECTIVE - CONTENT-FIRST APPROACH:
 Your #1 priority is fulfilling the user's specific dream tour request: "${dreamTourDescription}"
@@ -421,5 +535,92 @@ As we leave the square, notice the narrow alleyway to your left. This was once t
 Our journey through ${effectiveLocation} has brought your dream tour to life, revealing exactly the kind of experiences you were hoping for. From the historic square where generations have gathered to the cozy café where authentic local connections happen daily, we've discovered the heart of what makes this place special. Your vision of "${dreamTourDescription}" has guided us to these meaningful encounters and hidden gems. As you continue exploring ${effectiveLocation}, remember that the experiences you sought are all around you – every doorway, every corner, every friendly face has a story to tell. The real magic you were looking for isn't in the grand monuments but in these authentic moments that make this place uniquely special. Your dream tour has become reality – you're now part of its ongoing story.`
   }
 
+  generateMockContextAnalysis(dreamTourDescription, specificLocation, toggleOptions, userCountry) {
+    // Fallback logic that's smarter than regex but doesn't require API
+    let location = specificLocation || null
+    let country = userCountry || null
+    let primaryInterests = []
+    let enhancedToggles = [...toggleOptions]
+    
+    const description = dreamTourDescription.toLowerCase()
+    
+    // Extract location using improved logic
+    if (!location) {
+      // Look for common location patterns
+      const locationPatterns = [
+        /^([A-Z][a-zA-Z\s,'-]+?\s+(?:NZ|NYC|UK|USA|AU|CA|US))/i,
+        /^([A-Z][a-zA-Z\s,'-]+?\s+(?:New Zealand|Australia|United Kingdom|United States|Canada))/i,
+        /\bin\s+([A-Z][a-zA-Z\s,'-]+?)(?:\s|,|\.|\?|!|$)/i,
+        /^([A-Z][a-zA-Z\s,'-]{2,}?)(?:\s+(?:football|soccer|rugby|cricket|tennis|sports|clubs|venues|stadiums|grounds|cafes|coffee|restaurants|pubs|bars|art|street|culture|music|nightlife|history|historical|heritage|parks|beaches|hiking|shopping|markets|boutiques))/i
+      ]
+      
+      for (const pattern of locationPatterns) {
+        const match = dreamTourDescription.match(pattern)
+        if (match && match[1]) {
+          location = match[1].trim()
+          break
+        }
+      }
+    }
+    
+    // Detect country from location
+    if (location && !country) {
+      if (location.includes('NZ') || location.toLowerCase().includes('new zealand')) {
+        country = 'New Zealand'
+      } else if (location.includes('NYC') || location.toLowerCase().includes('new york')) {
+        country = 'United States'
+      } else if (location.includes('UK') || location.toLowerCase().includes('united kingdom')) {
+        country = 'United Kingdom'
+      } else if (location.includes('AU') || location.toLowerCase().includes('australia')) {
+        country = 'Australia'
+      }
+    }
+    
+    // Detect primary interests
+    const interestMap = {
+      'food': ['cafe', 'coffee', 'restaurant', 'food', 'dining', 'eat', 'bakery', 'market'],
+      'sports': ['football', 'soccer', 'rugby', 'cricket', 'tennis', 'sports', 'clubs', 'stadium', 'ground'],
+      'arts': ['art', 'gallery', 'street art', 'music', 'theater', 'culture', 'creative'],
+      'history': ['history', 'historical', 'heritage', 'museum', 'monument', 'ancient'],
+      'nightlife': ['pub', 'bar', 'nightlife', 'club', 'drinks', 'beer', 'wine'],
+      'nature': ['park', 'beach', 'hiking', 'nature', 'outdoor', 'garden', 'trail']
+    }
+    
+    for (const [interest, keywords] of Object.entries(interestMap)) {
+      if (keywords.some(keyword => description.includes(keyword))) {
+        primaryInterests.push(interest)
+        
+        // Add relevant toggles
+        if (interest === 'food' && !enhancedToggles.includes('cafe')) {
+          enhancedToggles.push('cafe')
+        }
+        if (interest === 'nightlife' && !enhancedToggles.includes('pub')) {
+          enhancedToggles.push('pub')
+        }
+        if (interest === 'history' && !enhancedToggles.includes('history')) {
+          enhancedToggles.push('history')
+        }
+      }
+    }
+    
+    // Suggest transportation
+    let suggestedTransportation = 'walking'
+    if (description.includes('drive') || description.includes('car')) {
+      suggestedTransportation = 'driving'
+    } else if (description.includes('bike') || description.includes('cycle')) {
+      suggestedTransportation = 'cycling'
+    }
+    
+    return {
+      location: location,
+      country: country,
+      primaryInterests: primaryInterests,
+      suggestedTransportation: suggestedTransportation,
+      tourStyle: primaryInterests.length > 0 ? `Focused on ${primaryInterests.join(', ')}` : 'General exploration',
+      enhancedToggles: enhancedToggles,
+      confidence: location ? 'medium' : 'low',
+      reasoning: `Extracted location: "${location}", detected interests: ${primaryInterests.join(', ') || 'general'}`
+    }
+  }
 
 }
