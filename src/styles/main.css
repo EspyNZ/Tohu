@@ -383,10 +383,10 @@ h3 { font-size: var(--font-size-xl); }
 /* Slider Labels */
 .slider-labels {
   display: flex;
-  justify-content: space-between;
-  margin-top: var(--spacing-sm);
-  padding: 0 8px; /* Better alignment with slider track */
   position: relative;
+  margin-top: var(--spacing-sm);
+  padding: 0 10px; /* Account for slider thumb width */
+  height: 20px;
 }
 
 .slider-label {
@@ -397,24 +397,29 @@ h3 { font-size: var(--font-size-xl); }
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: color var(--transition-fast);
-  position: relative;
+  position: absolute;
   text-align: center;
-  flex: 1;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* Position labels at actual slider values */
+.slider-label:nth-child(1) {
+  left: 11.11%; /* Position for value 2 on 1-10 scale: (2-1)/(10-1) = 1/9 ≈ 11.11% */
+}
+
+.slider-label:nth-child(2) {
+  left: 44.44%; /* Position for value 5 on 1-10 scale: (5-1)/(10-1) = 4/9 ≈ 44.44% */
+}
+
+.slider-label:nth-child(3) {
+  left: 77.78%; /* Position for value 8 on 1-10 scale: (8-1)/(10-1) = 7/9 ≈ 77.78% */
 }
 
 .slider-label:hover {
   color: var(--primary-color);
 }
 
-.slider-label:not(:last-child)::after {
-  content: '•';
-  position: absolute;
-  right: -50%;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--border-medium);
-  font-size: var(--font-size-xs);
-}
 
 /* Slider Styling */
 #tourLengthSlider {
