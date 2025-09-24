@@ -385,7 +385,8 @@ h3 { font-size: var(--font-size-xl); }
   display: flex;
   position: relative;
   margin-top: var(--spacing-sm);
-  padding: 0 10px; /* Account for slider thumb width */
+  width: calc(100% - 20px);
+  left: 10px;
   height: 20px;
 }
 
