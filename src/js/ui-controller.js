@@ -212,7 +212,7 @@ export class UIController {
   async generateTour() {
     const dreamTour = this.elements.dreamTourInput.value.trim()
     const specificLocation = this.elements.locationInput.value.trim()
-    const tourLength = parseInt(this.elements.tourLengthSlider.value)
+    const tourLength = this.getTourLength()
     const toggleOptions = Array.from(this.activeToggles)
     let capturedPrompt = ''
 
