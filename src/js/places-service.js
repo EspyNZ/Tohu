@@ -130,6 +130,9 @@ export class PlacesService {
   }
 
   async geocodeLocation(address, biasLocation = null, countryHint = null) {
+    // Initialize enhancedAddress outside try block to ensure it's always defined
+    let enhancedAddress = address
+    
     try {
       if (!window.google || !window.google.maps || !window.google.maps.places) {
         console.warn('Google Maps Places API not loaded')
@@ -137,7 +140,6 @@ export class PlacesService {
       }
 
       // Enhance address with country hint if provided and address doesn't already contain country info
-      let enhancedAddress = address
       if (countryHint && !this.containsCountryInfo(address)) {
         enhancedAddress = `${address}, ${countryHint}`
         console.log('Enhanced address with country hint:', enhancedAddress)
