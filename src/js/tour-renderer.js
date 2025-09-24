@@ -4,6 +4,7 @@ export class TourRenderer {
   constructor() {
     this.bindElements()
     this.placesService = new PlacesService()
+    this.overviewMapController = null
   }
 
   bindElements() {
@@ -15,7 +16,8 @@ export class TourRenderer {
       summaryNotableStops: document.getElementById('summaryNotableStops'),
       tourIntro: document.getElementById('tourIntro'),
       tourStopsContainer: document.getElementById('tourStopsContainer'),
-      tourConclusion: document.getElementById('tourConclusion')
+      tourConclusion: document.getElementById('tourConclusion'),
+      tourOverviewMap: document.getElementById('tourOverviewMap')
     }
   }
 
@@ -23,6 +25,7 @@ export class TourRenderer {
     this.renderHeader(tour)
     this.renderSummary(tour)
     this.renderIntroduction(tour)
+    await this.renderOverviewMap(tour)
     await this.renderStops(tour)
     this.renderConclusion(tour)
   }
@@ -237,5 +240,33 @@ export class TourRenderer {
     const shortenedConclusion = sentences.slice(0, halfLength).join('. ')
     
     this.elements.tourConclusion.textContent = shortenedConclusion
+  }
+
+  async renderOverviewMap(tour) {
+    // Wait for Google Maps to be available
+    if (!window.google || !window.google.maps) {
+      console.warn('Google Maps API not loaded for overview map')
+      return
+    }
+
+    try {
+      // Import MapController dynamically to avoid circular dependencies
+      const { MapController } = await import('./map-controller.js')
+      
+      // Initialize the overview map controller
+      this.overviewMapController = new MapController()
+      
+      // Initialize the map with tour stops
+      this.overviewMapController.initMap('tourOverviewMap', tour.stops)
+      
+      console.log('Tour overview map initialized successfully')
+    } catch (error) {
+      console.error('Error initializing tour overview map:', error)
+      // Hide the map section if there's an error
+      const mapSection = this.elements.tourOverviewMap.closest('.tour-section')
+      if (mapSection) {
+        mapSection.style.display = 'none'
+      }
+    }
   }
 }
