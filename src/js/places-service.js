@@ -185,34 +185,108 @@ export class PlacesService {
         console.log('Enhanced address with country hint:', enhancedAddress)
       }
 
-      const request = {
-        textQuery: enhancedAddress,
-        fields: ['id', 'displayName', 'location', 'formattedAddress']
-      }
-      
-      // Add location bias if user's current location is available
-      if (biasLocation) {
-        request.locationBias = {
-          center: { lat: biasLocation.lat, lng: biasLocation.lng },
-          radius: 200000 // 200km radius bias (increased for stronger bias)
-        }
-        console.log('Geocoding with location bias:', biasLocation)
+      // Initialize Geocoder service if not already done
+      if (!this.geocoder) {
+        this.initializeServices()
       }
 
-      const { places } = await google.maps.places.Place.searchByText(request)
-      
-      if (places && places.length > 0) {
-        const place = places[0]
-        console.log('Geocoded location:', place.formattedAddress, 'from query:', enhancedAddress)
-        return {
-          lat: place.location.lat(),
-          lng: place.location.lng(),
-          formatted_address: place.formattedAddress
+      // Attempt 1: Use Places API searchByText with location bias
+      console.log('Attempt 1: Places API searchByText with location bias')
+      try {
+        const request = {
+          textQuery: enhancedAddress,
+          fields: ['id', 'displayName', 'location', 'formattedAddress']
         }
-      } else {
-        console.warn('Geocoding failed: No results found for:', enhancedAddress)
-        return null
+        
+        // Add location bias if user's current location is available
+        if (biasLocation) {
+          request.locationBias = {
+            center: { lat: biasLocation.lat, lng: biasLocation.lng },
+            radius: 200000 // 200km radius bias
+          }
+          console.log('Geocoding with location bias:', biasLocation)
+        }
+
+        const { places } = await google.maps.places.Place.searchByText(request)
+        
+        if (places && places.length > 0) {
+          const place = places[0]
+          console.log('Geocoded location (Attempt 1):', place.formattedAddress, 'from query:', enhancedAddress)
+          return {
+            lat: place.location.lat(),
+            lng: place.location.lng(),
+            formatted_address: place.formattedAddress
+          }
+        }
+      } catch (error) {
+        console.warn('Attempt 1 failed:', error)
       }
+
+      // Attempt 2: Use Places API searchByText without location bias (if bias was used)
+      if (biasLocation) {
+        console.log('Attempt 2: Places API searchByText without location bias')
+        try {
+          const request = {
+            textQuery: enhancedAddress,
+            fields: ['id', 'displayName', 'location', 'formattedAddress']
+          }
+
+          const { places } = await google.maps.places.Place.searchByText(request)
+          
+          if (places && places.length > 0) {
+            const place = places[0]
+            console.log('Geocoded location (Attempt 2):', place.formattedAddress, 'from query:', enhancedAddress)
+            return {
+              lat: place.location.lat(),
+              lng: place.location.lng(),
+              formatted_address: place.formattedAddress
+            }
+          }
+        } catch (error) {
+          console.warn('Attempt 2 failed:', error)
+        }
+      }
+
+      // Attempt 3: Fallback to traditional Geocoder API
+      console.log('Attempt 3: Traditional Geocoder API fallback')
+      if (this.geocoder) {
+        try {
+          const geocodeRequest = { address: enhancedAddress }
+          
+          // Add location bias for traditional geocoder if available
+          if (biasLocation) {
+            geocodeRequest.bounds = new google.maps.LatLngBounds(
+              new google.maps.LatLng(biasLocation.lat - 0.1, biasLocation.lng - 0.1),
+              new google.maps.LatLng(biasLocation.lat + 0.1, biasLocation.lng + 0.1)
+            )
+          }
+
+          const result = await new Promise((resolve, reject) => {
+            this.geocoder.geocode(geocodeRequest, (results, status) => {
+              if (status === 'OK' && results && results.length > 0) {
+                resolve(results)
+              } else {
+                reject(new Error(`Geocoding failed: ${status}`))
+              }
+            })
+          })
+
+          if (result && result.length > 0) {
+            const location = result[0]
+            console.log('Geocoded location (Attempt 3):', location.formatted_address, 'from query:', enhancedAddress)
+            return {
+              lat: location.geometry.location.lat(),
+              lng: location.geometry.location.lng(),
+              formatted_address: location.formatted_address
+            }
+          }
+        } catch (error) {
+          console.warn('Attempt 3 failed:', error)
+        }
+      }
+
+      console.warn('All geocoding attempts failed for:', enhancedAddress)
+      return null
     } catch (error) {
       console.warn('Geocoding failed for:', enhancedAddress, error)
       return null
