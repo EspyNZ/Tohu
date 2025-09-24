@@ -268,14 +268,19 @@ h3 { font-size: var(--font-size-xl); }
   overflow: hidden;
 }
 
+.details-content {
+  border-top: 1px solid var(--border-light);
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-2xl);
+}
+
 .details-summary {
   padding: var(--spacing-lg);
-  padding-bottom: var(--spacing-lg);
   cursor: pointer;
   font-weight: 600;
   color: var(--text-primary);
   background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
   transition: background-color var(--transition-fast);
   display: flex;
   align-items: center;
@@ -290,23 +295,20 @@ h3 { font-size: var(--font-size-xl); }
   display: none;
 }
 
-.details-summary::after {
-  content: '▼';
-  font-size: var(--font-size-sm);
+.details-container[open] .details-summary {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.details-arrow-icon {
+  width: 20px;
+  height: 20px;
   color: var(--text-muted);
   transition: transform var(--transition-fast);
 }
 
-.details-container[open] .details-summary::after {
-  transform: rotate(180deg);
-}
-
-.details-container {
-  padding-bottom: var(--spacing-2xl);
-}
-
-.details-content {
-  padding-top: var(--spacing-md);
+.details-container[open] .details-arrow-icon {
+  transform: rotate(90deg);
 }
 
 /* Advanced Input Groups */
