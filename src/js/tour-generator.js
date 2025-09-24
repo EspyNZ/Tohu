@@ -269,6 +269,22 @@ TOUR PARAMETERS:
 ${tourLengthGuidance}
 ${transportationGuidance}${contentFocusSection}
 
+AUTHENTICITY & HIDDEN GEMS REQUIREMENTS:
+- PRIORITIZE LOCAL SECRETS: Focus on places locals love but tourists rarely discover
+- AVOID OBVIOUS ATTRACTIONS: Skip the main tourist sites unless they have genuinely hidden aspects
+- SEEK AUTHENTIC EXPERIENCES: Choose locations where real local life happens, not staged tourist experiences
+- FIND THE UNTOLD STORIES: Every stop should reveal something most visitors never learn
+- EMPHASIZE COMMUNITY CONNECTIONS: Include places that are meaningful to local residents
+- DISCOVER THE UNEXPECTED: Look for surprising elements that challenge assumptions about the area
+
+ROUTING REQUIREMENTS:
+- CREATE A LOGICAL PATH: Plan stops in geographical order to minimize backtracking
+- OPTIMIZE FOR TRANSPORTATION: Consider the chosen mode (walking/cycling/driving) when sequencing stops
+- USE EFFICIENT ROUTING: If stops are A, B, C, D - route them as A→B→C→D, not A→C→B→D
+- MINIMIZE TRAVEL TIME: Keep transitions between stops as short as practical
+- CONSIDER NATURAL FLOW: Route should feel like a natural journey, not random jumping around
+- REFERENCE COORDINATES: Use the provided coordinates from verified nearby places to plan optimal sequencing
+
 CRITICAL TECHNICAL REQUIREMENTS:
 - Every stop MUST have accurate coordinates (latitude, longitude) and valid Google Place ID
 - Research real locations in ${effectiveLocation} - do not approximate or invent coordinates
@@ -280,6 +296,8 @@ TOUR CREATION APPROACH:
 3. CREATE AUTHENTIC EXPERIENCES: Focus on genuine local culture, not tourist traps
 4. TELL COMPELLING STORIES: Every stop should have a narrative that connects to the user's interests
 5. PROVIDE PRACTICAL VALUE: Include actionable tips, hidden gems, and local insights
+6. PLAN EFFICIENT ROUTING: Sequence stops geographically to create a smooth, logical journey
+7. MAXIMIZE LOCAL INSIGHT: Each stop should teach something most visitors never discover
 
 Structure your response EXACTLY as follows:
 
@@ -299,14 +317,6 @@ ${tourLength === 'flexible' ? '**Stop 1: [Location Name]**' : `**Stop 1: [Locati
 - **Coordinates:** [latitude, longitude]
 - **Google Place ID:** [Google Place ID]
 - **The Hook:** [Connect this location to the user's dream tour interests with an intriguing question or revelation]
-- **Fascinating Facts:** [2-3 specific facts that relate to "${dreamTourDescription}" themes]
-- **Stories & Voices:** [Compelling anecdote or quote that brings the location to life]
-- **Hidden History:** [Deeper story that most visitors miss]
-- **Interactive Moment:** [Something specific to do, look for, or experience]
-- **Local Tip:** [Insider knowledge that enhances the experience]
-- **Photo Op:** [Best angle or timing for memorable photos]
-- **Nearby Businesses:** [2-3 relevant local businesses with specific details]
-- **Directions to Next Stop:** [Clear, step-by-step directions with landmarks and timing]
 
 **Journey to Stop 2:**
 [Brief description of what to notice during travel, connecting the narrative between stops]
