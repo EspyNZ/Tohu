@@ -23,6 +23,9 @@ export class UIController {
     this.bindElements()
     this.attachEventListeners()
     this.initializeSliders()
+    
+    // Request user's location on page load for better geocoding
+    this.requestLocationOnLoad()
   }
 
   bindElements() {
@@ -506,6 +509,36 @@ export class UIController {
     } finally {
       button.classList.remove('loading')
       button.disabled = false
+    }
+  }
+
+  async requestLocationOnLoad() {
+    // Only request location if geolocation is supported and we don't already have it
+    if (!navigator.geolocation || this.userCurrentLocation) {
+      return
+    }
+
+    try {
+      // Request location silently without showing loading states
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: false, // Use less accurate but faster location
+          timeout: 5000, // Shorter timeout for background request
+          maximumAge: 600000 // Accept location up to 10 minutes old
+      this.userCurrentLocation = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      }
+        })
+      // Subtly indicate location is being used without being intrusive
+      this.elements.locationInput.placeholder = '📍 e.g., Bloomsbury, London (location detected for better results)'
+      
+      console.log('Background location detected:', this.userCurrentLocation)
+      })
+    } catch (error) {
+      // Silently fail - don't show error messages for background location requests
+      console.log('Background location request failed (this is normal):', error.message)
+      this.userCurrentLocation = null
     }
   }
 }
