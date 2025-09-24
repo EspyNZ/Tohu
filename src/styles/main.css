@@ -304,6 +304,11 @@ h3 { font-size: var(--font-size-xl); }
 .details-container {
   padding-bottom: var(--spacing-2xl);
 }
+
+.details-content {
+  padding-top: var(--spacing-md);
+}
+
 /* Advanced Input Groups */
 .advanced-input-group {
   padding-left: var(--spacing-lg);
