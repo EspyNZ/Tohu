@@ -115,11 +115,21 @@ export class TourGenerator {
   _extractLocationFromDreamTour(dreamTour) {
     // Enhanced location extraction for freeform input
     const locationPatterns = [
+      // Country/region abbreviations with locations (e.g., "North shore NZ", "Brooklyn NYC")
+      /^([A-Z][a-zA-Z\s,'-]+?\s+(?:NZ|NYC|UK|USA|AU|CA|US))\s+/i,
+      /^([A-Z][a-zA-Z\s,'-]+?\s+(?:New Zealand|Australia|United Kingdom|United States|Canada))\s+/i,
+      
+      // Location + country/region patterns
+      /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:NZ|NYC|UK|USA|AU|CA|US)\s+/i,
+      /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:New Zealand|Australia|United Kingdom|United States|Canada)\s+/i,
+      
       // Direct location patterns (most common in freeform input)
       /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:local|history|tour|walk|guide|experience|adventure)/i,
       /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:hidden|secret|gems|spots|places)/i,
       /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:food|cafe|coffee|restaurant|pub|bar)/i,
       /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:art|street|culture|music|nightlife)/i,
+      /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:football|soccer|rugby|cricket|tennis|sports)/i,
+      /^([A-Z][a-zA-Z\s,'-]+?)\s+(?:clubs|venues|stadiums|grounds)/i,
       
       // Preposition-based patterns
       /\bin\s+([A-Z][a-zA-Z\s,]+?)(?:\s|,|\.|\?|!|$)/g,
@@ -145,7 +155,7 @@ export class TourGenerator {
           
           // Filter out very short matches and common words
           if (location.length > 2 && 
-              !location.match(/^(the|a|an|my|your|our|their|this|that|some|many|few|local|history|tour|walk|guide|experience|adventure|hidden|secret|gems|spots|places|food|cafe|coffee|restaurant|pub|bar|art|street|culture|music|nightlife)$/i)) {
+              !location.match(/^(the|a|an|my|your|our|their|this|that|some|many|few|local|history|tour|walk|guide|experience|adventure|hidden|secret|gems|spots|places|food|cafe|coffee|restaurant|pub|bar|art|street|culture|music|nightlife|football|soccer|rugby|cricket|tennis|sports|clubs|venues|stadiums|grounds)$/i)) {
             console.log('Extracted location from dream tour:', location)
             return location
           }
