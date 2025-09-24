@@ -303,11 +303,11 @@ h3 { font-size: var(--font-size-xl); }
 /* Advanced Input Groups */
 .advanced-input-group {
   padding: 0 var(--spacing-lg);
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-2xl);
 }
 
 .advanced-input-group:first-child {
-  padding-top: var(--spacing-lg);
+  padding-top: var(--spacing-2xl);
 }
 
 /* Slider Group */

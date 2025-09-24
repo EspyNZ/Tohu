@@ -183,7 +183,7 @@ export class UIController {
     const tourLengthValue = document.getElementById('tourLengthValue')
     
     if (this.elements.flexibleLengthToggle.checked) {
-      tourLengthValue.textContent = 'Flexible (AI decides)'
+      tourLengthValue.textContent = 'Flexible'
     } else {
       const tourLength = parseInt(this.elements.tourLengthSlider.value)
       const numberOfStops = Math.max(3, Math.min(10, Math.round(2 + (tourLength * 0.8))))
