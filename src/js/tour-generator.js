@@ -81,18 +81,25 @@ export class TourGenerator {
         }
       } catch (error) {
         console.error('Error generating tour:', error)
+        
+        // Check for network/API key issues
+        if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+          throw new Error('Unable to connect to the tour generation service. Please check your internet connection and ensure your VITE_GEMINI_API_KEY is valid and enabled for the Gemini API in Google Cloud Console. If using localhost, verify there are no IP restrictions on your API key.')
+        }
+        
+        // Check for quota exceeded errors and fall back to mock data
+        if (error.message && (error.message.includes('429') || error.message.includes('quota exceeded'))) {
+          console.warn('TourGenerator: Gemini API quota exceeded, falling back to mock data')
+          return {
+            tourText: this.generateMockTour(dreamTourDescription, effectiveLocation, toggleOptions, tourLength),
+            prompt: prompt
+          }
+        }
+        
         throw error
       }
     } else {
-      
-      // Check if this is a quota exceeded error (429)
-      if (error.message && error.message.includes('429')) {
-        console.warn('TourGenerator: Gemini API quota exceeded, falling back to mock data');
-        // Return mock tour data when quota is exceeded
-        return this.generateMockTour(effectiveLocation, tourLength);
-      }
-      
-      throw error;
+      throw new Error('No location could be determined from your tour description. Please provide a more specific location.')
     }
   }
 
@@ -377,56 +384,5 @@ As we leave the square, notice the narrow alleyway to your left. This was once t
 Our journey through ${effectiveLocation} has brought your dream tour to life, revealing exactly the kind of experiences you were hoping for. From the historic square where generations have gathered to the cozy café where authentic local connections happen daily, we've discovered the heart of what makes this place special. Your vision of "${dreamTourDescription}" has guided us to these meaningful encounters and hidden gems. As you continue exploring ${effectiveLocation}, remember that the experiences you sought are all around you – every doorway, every corner, every friendly face has a story to tell. The real magic you were looking for isn't in the grand monuments but in these authentic moments that make this place uniquely special. Your dream tour has become reality – you're now part of its ongoing story.`
   }
 
-  generateMockTour(location, tourLength) {
-    console.log('TourGenerator: Generating mock tour data for:', location);
-    
-    const mockPlaces = [
-      {
-        name: `${location} Historic Center`,
-        description: `Explore the historic heart of ${location} with its charming architecture and local culture.`,
-        location: { lat: 51.4545, lng: 0.3 },
-        duration: 60,
-        category: 'Historical'
-      },
-      {
-        name: `${location} Local Market`,
-        description: `Visit the bustling local market in ${location} for authentic local products and atmosphere.`,
-        location: { lat: 51.4555, lng: 0.31 },
-        duration: 45,
-        category: 'Shopping'
-      },
-      {
-        name: `${location} Scenic Viewpoint`,
-        description: `Enjoy panoramic views of ${location} from this popular scenic overlook.`,
-        location: { lat: 51.4535, lng: 0.29 },
-        duration: 30,
-        category: 'Nature'
-      },
-      {
-        name: `${location} Cultural Museum`,
-        description: `Learn about the rich history and culture of ${location} at this local museum.`,
-        location: { lat: 51.4565, lng: 0.32 },
-        duration: 90,
-        category: 'Culture'
-      },
-      {
-        name: `${location} Riverside Walk`,
-        description: `Take a peaceful stroll along the riverside paths in ${location}.`,
-        location: { lat: 51.4525, lng: 0.28 },
-        duration: 40,
-        category: 'Nature'
-      }
-    ];
 
-    // Select places based on tour length
-    const selectedPlaces = mockPlaces.slice(0, Math.min(tourLength, mockPlaces.length));
-
-    return {
-      title: `Discover ${location}`,
-      description: `A wonderful tour exploring the highlights of ${location}`,
-      places: selectedPlaces,
-      totalDuration: selectedPlaces.reduce((sum, place) => sum + place.duration, 0),
-      isFromMockData: true
-    };
-  }
 }
