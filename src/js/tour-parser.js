@@ -19,11 +19,6 @@ export class TourParser {
       tour.distance = this.extractField(text, 'DISTANCE') || 'N/A'
       tour.startingPoint = this.extractField(text, 'STARTING POINT') || 'N/A'
       
-      // Parse notable stops
-      const notableStopsText = this.extractField(text, 'NOTABLE STOPS')
-      if (notableStopsText) {
-        tour.notableStops = notableStopsText.split(',').map(stop => stop.trim())
-      }
 
       // Parse introduction and conclusion
       tour.introduction = this.extractSection(text, 'INTRODUCTION', 'STOPS') || 'Welcome to this hidden gems tour!'
@@ -72,16 +67,26 @@ export class TourParser {
         name: stopMatch[2].trim(),
         description: '',
         coordinates: null,
-        pexelsPhotoId: null,
+        googlePlaceId: null,
         hiddenHistory: '',
         localTip: ''
       }
 
       const stopContent = stopMatch[3].trim()
       
+      // Debug logging to see what content we're parsing
+      console.log(`Parsing stop ${stop.number}: ${stop.name}`)
+      console.log('Stop content:', stopContent.substring(0, 500) + '...')
+      
       // Parse stop details
       stop.description = this.extractStopDetail(stopContent, 'Description')
-      stop.pexelsPhotoId = this.extractStopDetail(stopContent, 'Pexels Photo ID')
+      stop.googlePlaceId = this.extractStopDetail(stopContent, 'Google Place ID')
+      stop.coordinates = this.extractCoordinates(stopContent)
+      
+      // Debug logging for extracted data
+      console.log(`Extracted coordinates for ${stop.name}:`, stop.coordinates)
+      console.log(`Extracted Google Place ID for ${stop.name}:`, stop.googlePlaceId)
+      
       stop.youAreHere = this.extractStopDetail(stopContent, 'You Are Here')
       stop.theHook = this.extractStopDetail(stopContent, 'The Hook')
       stop.fascinatingFacts = this.extractStopDetail(stopContent, 'Fascinating Facts')
@@ -90,7 +95,6 @@ export class TourParser {
       stop.photoOp = this.extractStopDetail(stopContent, 'Photo Op')
       stop.hiddenHistory = this.extractStopDetail(stopContent, 'Hidden History')
       stop.localTip = this.extractStopDetail(stopContent, 'Local Tip')
-      stop.coordinates = this.extractCoordinates(stopContent)
 
       stops.push(stop)
     }
@@ -114,13 +118,13 @@ export class TourParser {
   }
 
   extractStopDetail(content, detailName) {
-    const regex = new RegExp(`- \\*\\*${detailName}:\\*\\*\\s*([^-]+)`, 'i')
+    const regex = new RegExp(`- \\*\\*${detailName}:\\*\\*\\s*([\\s\\S]+?)(?=\\n- \\*\\*|$)`, 'i')
     const match = content.match(regex)
-    return match ? match[1].trim() : ''
+    return match ? match[1].trim().replace(/\n\s*/g, ' ') : ''
   }
 
   extractCoordinates(content) {
-    const coordMatch = content.match(/- \*\*Coordinates:\*\*\s*\[([^,]+),\s*([^\]]+)\]/i)
+    const coordMatch = content.match(/- \*\*Coordinates:\*\*\s*(?:\[|\()?\s*([^,\]\)]+)\s*,\s*([^\]\)]+)\s*(?:\]|\))?/i)
     if (coordMatch) {
       return {
         latitude: parseFloat(coordMatch[1].trim()),

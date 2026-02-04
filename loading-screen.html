@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Screen - Tohu Tours</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-animation">
+                <div class="discovery-orb"></div>
+            </div>
+            <h2 class="loading-title">Crafting Your Adventure...</h2>
+            <p id="loadingMessage" class="loading-message">Putting on our explorer hat...</p>
+        </div>
+    </div>
+
+    <script>
+        // Loading messages array - matches src/js/ui-controller.js
+        const loadingMessages = [
+            "Putting on our explorer hat...",
+            "Mapping hidden pathways and secret corners...",
+            "Consulting local storytellers and historians...",
+            "Uncovering tales that guidebooks never tell...",
+            "Finding the heartbeat of your destination...",
+            "Weaving together stories of past and present...",
+            "Discovering the soul behind the scenery...",
+            "Connecting you with authentic local experiences...",
+            "Revealing the layers beneath the surface...",
+            "Crafting your personalized adventure...",
+            "Gathering whispers from ancient walls...",
+            "Unlocking doors to hidden histories...",
+            "Curating moments that matter...",
+            "Building bridges between you and place...",
+            "Almost ready to blow your mind..."
+        ];
+
+        let currentMessageIndex = 0;
+        let messageInterval = null;
+
+        function cycleLoadingMessages() {
+            const loadingMessageElement = document.getElementById('loadingMessage');
+            loadingMessageElement.textContent = loadingMessages[currentMessageIndex];
+            currentMessageIndex = (currentMessageIndex + 1) % loadingMessages.length;
+        }
+
+        function toggleLoadingMessages() {
+            if (messageInterval) {
+                clearInterval(messageInterval);
+                messageInterval = null;
+            } else {
+                cycleLoadingMessages();
+                messageInterval = setInterval(cycleLoadingMessages, 2000);
+            }
+        }
+
+        // Auto-start cycling messages
+        document.addEventListener('DOMContentLoaded', () => {
+            cycleLoadingMessages();
+            messageInterval = setInterval(cycleLoadingMessages, 2000);
+        });
+    </script>
+</body>
+</html>
+
+<!-- Debug Panel -->
+<div id="debugPanel" class="debug-panel">
+    <button id="debugToggleBtn" class="debug-toggle-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 5l7 7-7 7"/>
+        </svg>
+    </button>
+    <div class="debug-panel-content">
+        <h4>Debug Information</h4>
+        <div class="debug-section">
+            <h5>Loading Screen Test:</h5>
+            <div class="debug-links-panel">
+                <a href="#" onclick="toggleLoadingMessages()">🔄 Cycle Messages</a>
+            </div>
+        </div>
+        <div class="debug-section">
+            <h5>Debug Pages:</h5>
+            <div class="debug-links-panel">
+                <a href="index.html">🔍 Search</a>
+                <a href="loading-screen.html">⏳ Loading Screen</a>
+                <a href="dummy-tour.html">🎯 Dummy Tour Page</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

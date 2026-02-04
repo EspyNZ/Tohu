@@ -7,7 +7,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>TOHU</h1>
+        <img id="tohuLogo" src="https://i.ibb.co/0RqCZ25d/Chat-GPT-Image-Jul-26-2025-03-15-12-PM.png" alt="Tohu Logo">
         <p class="subtitle text-center mb-6">
             Discover your destination, get a custom tour beyond the guidebook
         </p>
@@ -91,7 +91,7 @@
                     <span id="summaryStartingPoint"></span>
                 </div>
                 <div class="tour-summary-notable-stops">
-                    <strong>Notable Stops</strong>
+                    <strong>Stops</strong>
                     <ul id="summaryNotableStops"></ul>
                 </div>
             </div>
@@ -128,12 +128,7 @@
         <div id="loadingScreen" class="loading-screen hidden">
             <div class="loading-content">
                 <div class="loading-animation">
-                    <div class="walking-person">🚶‍♂️</div>
-                    <div class="loading-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
+                    <div class="discovery-orb"></div>
                 </div>
                 <h2 class="loading-title">Crafting Your Adventure...</h2>
                 <p id="loadingMessage" class="loading-message">Putting on our explorer hat...</p>
@@ -141,16 +136,66 @@
         </div>
 
         <!-- Debug info (hidden by default) -->
-        <div id="debugInfo" class="debug-info">
-            <h4>Debug Information:</h4>
-            <pre id="debugContent"></pre>
-            <h4>Generated Prompt:</h4>
-            <pre id="promptContent"></pre>
-        </div>
     </div>
     
     <!-- Google Maps JavaScript API -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJ4MO0ke4jgEFq7f27KWyeg9_ehPR7xME&callback=initGoogleMaps"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDJ4MO0ke4jgEFq7f27KWyeg9_ehPR7xME&libraries=places,geometry"></script>
     <script type="module" src="src/main.js"></script>
+</body>
+</html>
+
+<!-- Debug Panel -->
+<div id="debugPanel" class="debug-panel">
+    <button id="debugToggleBtn" class="debug-toggle-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M9 5l7 7-7 7"/>
+        </svg>
+    </button>
+    <div class="debug-panel-content">
+        <h4>Debug Information</h4>
+        <div class="debug-section">
+            <h5>Quick Access:</h5>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+                • Press <kbd>Ctrl+D</kbd> to toggle<br>
+                • Triple-click logo to open<br>
+                • Click the green DEBUG button
+            </p>
+        </div>
+        <div class="debug-section">
+            <h5>Raw Response:</h5>
+            <pre id="debugContent">No debug data available yet. Generate a tour to see the raw API response.</pre>
+        </div>
+        <div class="debug-section">
+            <h5>Generated Prompt:</h5>
+            <pre id="promptContent">No prompt data available yet. Generate a tour to see the prompt sent to the API.</pre>
+        </div>
+        <div class="debug-section">
+            <h5>Debug Pages:</h5>
+            <div class="debug-links-panel">
+                <a href="index.html">🔍 Search</a>
+                <a href="loading-screen.html">⏳ Loading Screen</a>
+                <a href="dummy-tour.html">🎯 Dummy Tour Page</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Simple Debug Button (always visible) -->
+<div style="position: fixed; top: 20px; right: 20px; z-index: 1002;">
+    <button id="simpleDebugBtn" style="
+        background: var(--tohu-green-600);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    " onmouseover="this.style.background='var(--tohu-green-700)'" onmouseout="this.style.background='var(--tohu-green-600)'">
+        🐛 DEBUG
+    </button>
+</div>
 </body>
 </html>

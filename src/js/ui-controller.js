@@ -1,3 +1,4 @@
+import { validateApiKeys } from './config.js'
 import { TourParser } from './tour-parser.js'
 import { TourRenderer } from './tour-renderer.js'
 import { MapController } from './map-controller.js'
@@ -8,11 +9,16 @@ export class UIController {
     this.tourParser = new TourParser()
     this.tourRenderer = new TourRenderer()
     this.mapController = new MapController()
-    this.isDebugMode = false
     this.currentTour = null
   }
 
   init() {
+    // Validate API keys on startup
+    if (!validateApiKeys()) {
+      this.showError('Missing API keys. Please check your environment configuration.')
+      return
+    }
+    
     this.bindElements()
     this.attachEventListeners()
     this.initializeSliders()
@@ -37,25 +43,29 @@ export class UIController {
       newTourBtn: document.getElementById('newTourBtn'),
       viewMapBtn: document.getElementById('viewMapBtn'),
       mapContainer: document.getElementById('mapContainer'),
-      backToTourBtn: document.getElementById('backToTourBtn')
+      backToTourBtn: document.getElementById('backToTourBtn'),
+      debugPanel: document.getElementById('debugPanel'),
+      debugToggleBtn: document.getElementById('debugToggleBtn'),
+      debugContent: document.getElementById('debugContent'),
+      promptContent: document.getElementById('promptContent')
     }
     
     // Loading messages
     this.loadingMessages = [
       "Putting on our explorer hat...",
-      "Consulting the local pigeons for insider tips...",
-      "Bribing the neighborhood cats for secret routes...",
-      "Asking the coffee shops where they hide the good stuff...",
-      "Convincing the street art to reveal its stories...",
-      "Negotiating with the local ghosts for historical gossip...",
-      "Teaching our AI to walk in comfortable shoes...",
-      "Collecting whispers from the old buildings...",
-      "Decoding the secret language of park benches...",
-      "Interviewing the most interesting lamp posts...",
-      "Finding the spots even Google Maps doesn't know...",
-      "Asking the locals 'but where do YOU actually go?'...",
-      "Discovering places that don't exist on Instagram...",
-      "Uncovering the neighborhood's best-kept secrets...",
+      "Mapping hidden pathways and secret corners...",
+      "Consulting local storytellers and historians...",
+      "Uncovering tales that guidebooks never tell...",
+      "Finding the heartbeat of your destination...",
+      "Weaving together stories of past and present...",
+      "Discovering the soul behind the scenery...",
+      "Connecting you with authentic local experiences...",
+      "Revealing the layers beneath the surface...",
+      "Crafting your personalized adventure...",
+      "Gathering whispers from ancient walls...",
+      "Unlocking doors to hidden histories...",
+      "Curating moments that matter...",
+      "Building bridges between you and place...",
       "Almost ready to blow your mind..."
     ]
     
@@ -68,14 +78,49 @@ export class UIController {
       this.generateTour()
     })
 
-    // Enable debug mode with Ctrl+D
+    // Debug panel toggle
+    if (this.elements.debugToggleBtn) {
+      this.elements.debugToggleBtn.addEventListener('click', () => {
+        this.toggleDebugPanel()
+      })
+    }
+
+    // Simple debug button
+    const simpleDebugBtn = document.getElementById('simpleDebugBtn')
+    if (simpleDebugBtn) {
+      simpleDebugBtn.addEventListener('click', () => {
+        this.toggleDebugPanel()
+      })
+    }
+
+    // Enable debug panel with Ctrl+D
     document.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.key === 'd') {
         e.preventDefault()
-        this.toggleDebugMode()
+        this.toggleDebugPanel()
       }
     })
 
+    // Enable debug panel with Ctrl+Shift+D as alternative
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        e.preventDefault()
+        this.toggleDebugPanel()
+      }
+    })
+
+    // Show debug panel on triple-click of logo
+    const logo = document.getElementById('tohuLogo')
+    if (logo) {
+      let clickCount = 0
+      logo.addEventListener('click', () => {
+        clickCount++
+        setTimeout(() => { clickCount = 0 }, 500)
+        if (clickCount === 3) {
+          this.toggleDebugPanel()
+        }
+      })
+    }
     // Allow Enter key to generate tour
     this.elements.locationInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
@@ -128,8 +173,9 @@ export class UIController {
       const tourText = result.tourText
       capturedPrompt = result.prompt
       
-      if (this.isDebugMode) {
-        this.elements.debugContent.textContent = `Raw tour text length: ${tourText.length}\n\n${tourText.substring(0, 500)}...`
+      // Update debug panel content
+      if (this.elements.debugContent && this.elements.promptContent) {
+        this.elements.debugContent.textContent = `Raw tour text length: ${tourText.length} characters\n\n${tourText.substring(0, 1000)}${tourText.length > 1000 ? '...' : ''}`
         this.elements.promptContent.textContent = capturedPrompt
       }
 
@@ -151,7 +197,7 @@ export class UIController {
       // Hide search interface and show new tour button
       this.showTourInterface()
       
-      this.tourRenderer.render(tour)
+      await this.tourRenderer.render(tour)
       
       this.elements.tourOutput.classList.remove('hidden')
       this.showInfo('Tour generated successfully! Scroll down to explore.')
@@ -161,8 +207,9 @@ export class UIController {
       this.showError(`Failed to generate tour: ${error.message}. Please try again.`)
       console.error('Error generating tour:', error)
       
-      if (this.isDebugMode) {
-        this.elements.debugInfo.style.display = 'block'
+      // Update debug panel with error info
+      if (this.elements.debugContent && this.elements.promptContent) {
+        this.elements.debugContent.textContent = `Error: ${error.message}`
         this.elements.promptContent.textContent = capturedPrompt
       }
     }
@@ -215,9 +262,10 @@ export class UIController {
     this.elements.infoMessage.classList.add('hidden')
   }
 
-  toggleDebugMode() {
-    this.isDebugMode = !this.isDebugMode
-    this.elements.debugInfo.style.display = this.isDebugMode ? 'block' : 'none'
+  toggleDebugPanel() {
+    if (this.elements.debugPanel) {
+      this.elements.debugPanel.classList.toggle('is-open')
+    }
   }
 
   showTourInterface() {
@@ -261,6 +309,12 @@ export class UIController {
     setTimeout(() => {
       this.mapController.initMap('map', this.currentTour.stops)
       this.mapController.showMap()
+      
+      // Pass the map instance to PlacesService instances for proper initialization
+      if (this.mapController.map) {
+        this.tourGenerator.placesService.setMap(this.mapController.map)
+        this.tourRenderer.placesService.setMap(this.mapController.map)
+      }
     }, 100)
   }
 
